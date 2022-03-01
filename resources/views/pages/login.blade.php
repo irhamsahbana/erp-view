@@ -62,5 +62,7 @@
 <script src="{{ asset('assets') }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset('assets') }}/dist/js/adminlte.min.js"></script>
+<!-- Workspace Dark Mode -->
+<script src="{{ asset('assets') }}/workspace/adminLte3DarkMode.js"></script>
 </body>
 </html>

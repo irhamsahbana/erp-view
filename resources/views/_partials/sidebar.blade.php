@@ -25,24 +25,21 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-header">LABELS</li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-circle text-danger"></i>
-              <p class="text">Important</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-circle text-warning"></i>
-              <p>Warning</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-circle text-info"></i>
-              <p>Informational</p>
-            </a>
+          <li class="nav-header">TRANSAKSI</li>
+            <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'"/>
+            <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" :href="'/transaksi/mutasi-hutang'"/>
+          <li class="nav-header">MASTER DATA</li>
+            <x-nav-item :icon="'fas fa-sitemap'" :text="'Cabang'" :href="'/master-data/cabang'"/>
+            <x-nav-item :icon="'fas fa-users'" :text="'Pengguna'" :href="'/master-data/pengguna'"/>
+            <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" :href="'/master-data/proyek'"/>
+            <x-nav-item :icon="'fas fa-truck-moving'" :text="'Kendaraan'" :href="'/master-data/kendaraan'"/>
+            <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" :href="'/master-data/pengendara'"/>
+            <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" :href="'/master-data/vendor'"/>
+            <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" :href="'/master-data/material'"/>
+            <x-nav-item :icon="'fas fa-balance-scale'" :text="'Jenis Mutasi Hutang'" :href="'/master-data/jenis-mutasi-hutang'"/>
+            <x-nav-item :icon="'fas fa-book'" :text="'Saldo Normal XXX'" :href="'/master-data/saldo-normal'"/>
+            <x-nav-item :icon="'fas fa-book'" :text="'Jenis Jurnal XXX'" :href="'/master-data/jenis-jurnal'"/>
+            <x-nav-item :icon="'fas fa-balance-scale'" :text="'Jenis Laporan XXX'" :href="'/master-data/jenis-laporan'"/>
           </li>
         </ul>
       </nav>
