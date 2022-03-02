@@ -14,14 +14,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <x-form>
-                    {{ $slot }}
-
-                    <x-col class="text-right">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </x-col>
-                </x-form>
+                {{ $slot }}
             </div>
         </div>
         <!-- /.modal-content -->
