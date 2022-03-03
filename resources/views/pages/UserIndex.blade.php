@@ -1,46 +1,6 @@
 @extends('App')
 
 @php
-    $dummyRole = ['owner', 'kacab', 'kasir', 'material'];
-
-    $dummyCabang = [
-        [
-            'text' => 'Cabang A',
-            'value' => 'A'
-        ],
-        [
-            'text' => 'Cabang B',
-            'value' => 'B'
-        ],
-        [
-            'text' => 'Cabang C',
-            'value' => 'C'
-        ],
-        [
-            'text' => 'Cabang D',
-            'value' => 'D'
-        ],
-    ];
-
-    $dummyRoleO = [
-        [
-            'text' => 'Owner',
-            'value' => 'owner'
-        ],
-        [
-            'text' => 'Kepala Cabang',
-            'value' => 'kacab'
-        ],
-        [
-            'text' => 'Kasir',
-            'value' => 'kasir'
-        ],
-        [
-            'text' => 'Material',
-            'value' => 'material'
-        ],
-    ];
-
     $breadcrumbList = [
         [
             'name' => 'Home',
@@ -68,24 +28,39 @@
                     </x-col>
 
                     <x-table :thead="['Cabang', 'Role', 'Username', 'Aksi']">
-                        @for($i = 0; $i < 10; $i++)
+                        @foreach($datas as $data)
                             <tr>
-                                <td>{{ $i + 1 }}</td>
-                                <td>{{ $dummyCabang[array_rand($dummyCabang)]['text']  }}</td>
-                                <td>{{ $dummyRoleO[array_rand($dummyRoleO)]['text'] }}</td>
-                                <td>{{ \Str::random(4) }}</td>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $data->branch->name ?? null }}</td>
+                                <td>
+                                    @foreach ($options['roles'] as $role)
+                                        @if($role['value'] == $data->role)
+                                            {{ $role['text'] }}
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td>{{ $data->username }}</td>
                                 <td>
                                     <a
-                                        href="#"
+                                        href="{{ route('user.show', $data->id) }}"
                                         class="btn btn-warning"
                                         title="Ubah"><i class="fas fa-pencil-alt"></i></a>
-                                    <button
-                                        type="button"
-                                        class="btn btn-danger"
-                                        title="Hapus"><i class="fas fa-trash-alt"></i> </button>
+                                    <form
+                                        style=" display:inline!important;"
+                                        method="POST"
+                                        action="{{ route('user.destroy', $data->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-danger"
+                                            onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+                                            title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
                                 </td>
                             </tr>
-                        @endfor
+                        @endforeach
                     </x-table>
                 </x-row>
             </x-card-collapsible>
@@ -93,39 +68,49 @@
     </x-content>
 
     <x-modal :title="'Tambah Data'" :id="'add-modal'">
-        <x-row>
-            <x-in-select
-                :label="'Cabang'"
-                :placeholder="'Pilih Cabang'"
-                :col="6"
-                :name="'cabangId'"
-                :options="$dummyCabang"
-                :required="true"></x-in-select>
-            <x-in-select
-                :label="'Role'"
-                :placeholder="'Pilih Role'"
-                :col="6"
-                :name="'role'"
-                :options="$dummyRoleO"
-                :required="true"></x-in-select>
-            <x-in-text
-                :label="'Username'"
-                :placeholder="'Masukkan Username'"
-                :col="4"
-                :name="'username'"
-                :required="true"></x-in-text>
-            <x-in-text
-                :label="'Password'"
-                :placeholder="'Masukkan Password'"
-                :col="4"
-                :name="'password'"
-                :required="true"></x-in-text>
-            <x-in-text
-                :label="'Konfirmasi Password'"
-                :placeholder="'Masukkan Konfirmasi Password'"
-                :col="4"
-                :name="'password_confirm'"
-                :required="true"></x-in-text>
-        </x-row>
+        <form style="width: 100%" action="{{ route('user.store') }}" method="POST">
+            @csrf
+            @method('POST')
+
+            <x-row>
+                <x-in-select
+                    :label="'Cabang'"
+                    :placeholder="'Pilih Cabang'"
+                    :col="12"
+                    :name="'branch_id'"
+                    :options="$options['branches']"
+                    :required="true"></x-in-select>
+                <x-in-select
+                    :label="'Role'"
+                    :placeholder="'Pilih Role'"
+                    :col="12"
+                    :name="'role'"
+                    :options="$options['roles']"
+                    :required="true"></x-in-select>
+                <x-in-text
+                    :label="'Username'"
+                    :placeholder="'Masukkan Username'"
+                    :col="12"
+                    :name="'username'"
+                    :required="true"></x-in-text>
+                <x-in-text
+                    :label="'Password'"
+                    :placeholder="'Masukkan Password'"
+                    :col="12"
+                    :name="'password'"
+                    :required="true"></x-in-text>
+                <x-in-text
+                    :label="'Konfirmasi Password'"
+                    :placeholder="'Masukkan Konfirmasi Password'"
+                    :col="12"
+                    :name="'password_confirmation'"
+                    :required="true"></x-in-text>
+
+                <x-col class="text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </x-col>
+            </x-row>
+        </form>
     </x-modal>
 @endsection

@@ -15,6 +15,6 @@ class DummyMaterialSeeder extends Seeder
      */
     public function run()
     {
-        Material::factory()->count(10)->create();
+        Material::factory()->count(100)->create();
     }
 }

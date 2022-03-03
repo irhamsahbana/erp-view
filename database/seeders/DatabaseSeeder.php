@@ -20,5 +20,9 @@ class DatabaseSeeder extends Seeder
         $this->call(DummyUserSeeder::class);
         $this->call(DummyDriverSeeder::class);
         $this->call(DummyMaterialSeeder::class);
+        $this->call(DummyProjectSeeder::class);
+        $this->call(DummyVehicleSeeder::class);
+
+        $this->call(DummyFuelSeeder::class);
     }
 }

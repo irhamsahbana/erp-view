@@ -15,6 +15,6 @@ class DummyDriverSeeder extends Seeder
      */
     public function run()
     {
-        Driver::factory()->count(10)->create();
+        Driver::factory()->count(200)->create();
     }
 }

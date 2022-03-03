@@ -1,25 +1,6 @@
 @extends('App')
 
 @php
-    $dummyCabang = [
-        [
-            'text' => 'Cabang A',
-            'value' => 'A'
-        ],
-        [
-            'text' => 'Cabang B',
-            'value' => 'B'
-        ],
-        [
-            'text' => 'Cabang C',
-            'value' => 'C'
-        ],
-        [
-            'text' => 'Cabang D',
-            'value' => 'D'
-        ],
-    ];
-
     $breadcrumbList = [
         [
             'name' => 'Home',
@@ -48,35 +29,25 @@
 
                     <x-col>
                         <x-table :thead="['Cabang', 'Aksi']">
-                            {{-- @for($i = 0; $i < count($dummyCabang); $i++)
-                                <tr>
-                                    <td>{{ $i + 1 }}</td>
-                                    <td>{{ $dummyCabang[$i]['text'] }}</td>
-                                    <td>
-                                        <a
-                                            href="#"
-                                            class="btn btn-warning"
-                                            title="Ubah"><i class="fas fa-pencil-alt"></i></a>
-                                        <button
-                                            type="button"
-                                            class="btn btn-danger"
-                                            title="Hapus"><i class="fas fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                            @endfor --}}
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->name }}</td>
                                     <td>
                                         <a
-                                            href="#"
+                                            href="{{ route('branch.show', $data->id) }}"
                                             class="btn btn-warning"
                                             title="Ubah"><i class="fas fa-pencil-alt"></i></a>
-                                        <button
-                                            type="button"
-                                            class="btn btn-danger"
-                                            title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                        <form style=" display:inline!important;" method="POST" action="{{ route('branch.destroy', $data->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+                                                title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
@@ -87,24 +58,6 @@
         </x-row>
     </x-content>
 
-    {{-- <x-modal :title="'Tambah Data'" :id="'add-modal'" :size="'lg'">
-        <x-form :method="'POST'" :action="'{{ route("branch.store") }}'">
-            <x-row>
-                <x-in-text
-                    :label="'Nama'"
-                    :placeholder="'Masukkaan Nama Cabang'"
-                    :col="12"
-                    :name="'name'"
-                    :required="true"></x-in-text>
-            </x-row>
-
-            <x-col class="text-right">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </x-col>
-        </x-form>
-    </x-modal> --}}
-
     <x-modal :title="'Tambah Data'" :id="'add-modal'" :size="'lg'">
         <form style="width: 100%" action="{{ route('branch.store') }}" method="POST">
             @csrf
@@ -113,7 +66,7 @@
             <x-row>
                 <x-in-text
                     :label="'Nama'"
-                    :placeholder="'Masukkaan Nama Cabang'"
+                    :placeholder="'Masukkan Nama Cabang'"
                     :col="12"
                     :name="'name'"
                     :required="true"></x-in-text>

@@ -91,8 +91,15 @@
 <script src="{{ asset('assets') }}/dist/js/adminlte.js"></script>
 <!-- Workspace Dark Mode -->
 <script src="{{ asset('assets') }}/workspace/adminLte3DarkMode.js"></script>
+<script>
+  $(function () {
+    $.fn.exists = function(){ return this.length > 0; };
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+  })
+</script>
 
 @stack('js')
 
+@include('_partials.toast')
 </body>
 </html>

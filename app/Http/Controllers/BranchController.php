@@ -18,7 +18,7 @@ class BranchController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id' => ['nullable'],
+            'id' => ['nullable', 'exists:branches,id'],
             'name' => ['required', 'string', 'max:255'],
         ]);
 
@@ -26,6 +26,21 @@ class BranchController extends Controller
         $row->name = $request->name;
         $row->save();
 
-        return redirect()->back()->with('success', 'Cabang berhasil disimpan');
+        return redirect()->back()->with('f-msg', 'Cabang berhasil disimpan.');
+    }
+
+    public function show($id)
+    {
+        $data = Model::findOrFail($id);
+
+        return view('Pages.BranchDetail', compact('data'));
+    }
+
+    public function destroy($id)
+    {
+        $row = Model::findOrFail($id);
+        $row->delete();
+
+        return redirect()->back()->with('f-msg', 'Cabang berhasil dihapus.');
     }
 }

@@ -29,23 +29,36 @@
 
                     <x-col>
                         <x-table :thead="['Material', 'Aksi']">
-                            @for($i = 0; $i < 10; $i++)
+                            @foreach($datas as $data)
                                 <tr>
-                                    <td>{{ $i + 1 }}</td>
-                                    <td>{{ \Str::random(4) }}</td>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $data->name }}</td>
                                     <td>
                                         <a
-                                            href="#"
-                                            class="btn btn-warning"
-                                            title="Ubah"><i class="fas fa-pencil-alt"></i></a>
-                                        <button
-                                            type="button"
-                                            class="btn btn-danger"
-                                            title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                        href="{{ route('material.show', $data->id) }}"
+                                        class="btn btn-warning"
+                                        title="Ubah"><i class="fas fa-pencil-alt"></i></a>
+                                        <form
+                                            style=" display:inline!important;"
+                                            method="POST"
+                                            action="{{ route('material.destroy', $data->id) }}">
+                                                @csrf
+                                                @method('DELETE')
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+                                                title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
                                     </td>
                                 </tr>
-                            @endfor
+                            @endforeach
                         </x-table>
+                    </x-col>
+
+                    <x-col class="d-flex justify-content-end">
+                        {{ $datas->links() }}
                     </x-col>
                 </x-row>
             </x-card-collapsible>
@@ -53,13 +66,23 @@
     </x-content>
 
     <x-modal :title="'Tambah Data'" :id="'add-modal'" :size="'lg'">
-        <x-row>
-            <x-in-text
-                :label="'Nama'"
-                :placeholder="'Masukkaan Nama Material'"
-                :col="12"
-                :name="'namaMaterial'"
-                :required="true"></x-in-text>
-        </x-row>
+        <form style="width: 100%" action="{{ route('material.store') }}" method="POST">
+            @csrf
+            @method('POST')
+
+            <x-row>
+                <x-in-text
+                    :label="'Nama'"
+                    :placeholder="'Masukkan Nama Material'"
+                    :col="12"
+                    :name="'name'"
+                    :required="true"></x-in-text>
+
+                <x-col class="text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </x-col>
+            </x-row>
+        </form>
     </x-modal>
 @endsection

@@ -1,17 +1,14 @@
-@php
-    $hash = \Str::random(4);
-@endphp
-
 @props([
     'col' => 12,
 
     'label' => null,
     'id' => $id ? $id : $name,
-    'name' => $hash,
+    'name' => null,
     'type' => 'text',
     'placeholder' => null,
     'value' => null,
     'required' => false,
+    'step' => null,
 ])
 
 <div {{ $attributes->merge([ 'class' => 'form-group col-sm-'.$col ]) }}>
@@ -27,7 +24,8 @@
             type="{{ $type }}"
             placeholder="{{ $placeholder }}"
             name="{{ $name }}"
-            value="{{ old($name) ? old($name) : $value ? $value : '' }}"
+            value="{{ old($name) ?? $value ?? '' }}"
+            @if($step) step="{{ $step }}" @endif
             @if($required) required @endif>
     </div>
   </div>
