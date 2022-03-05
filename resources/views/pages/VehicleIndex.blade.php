@@ -1,0 +1,104 @@
+@extends('App')
+
+@php
+    $breadcrumbList = [
+        [
+            'name' => 'Home',
+            'href' => '/'
+        ],
+        [
+            'name' => 'Kendaraan'
+        ],
+    ];
+@endphp
+
+@section('content-header', 'Kendaraan')
+
+@section('breadcrumb')
+    <x-breadcrumb :list="$breadcrumbList"/>
+@endsection
+
+@section('content')
+    <x-content>
+        <x-row>
+            <x-card-collapsible :title="'Pencarian'">
+                <form style="width: 100%">
+                    <x-row>
+                        <x-in-select
+                            :label="'Cabang'"
+                            :placeholder="'Pilih Cabang'"
+                            :col="12"
+                            :name="'branch_id'"
+                            :options="$options['branches']"
+                            :value="app('request')->input('branch_id') ?? null"
+                            :required="false"></x-in-select>
+                        <x-col class="text-right">
+                            <button type="submit" class="btn btn-primary">Cari</button>
+                        </x-col>
+                    </x-row>
+                </form>
+            </x-card-collapsible>
+
+            <x-card-collapsible>
+                <x-row>
+                    <x-col class="mb-3">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-modal">Tambah</button>
+                    </x-col>
+
+                    <x-col>
+                        <x-table :thead="['Cabang', 'Nomor Plat', 'Aksi']">
+                            @foreach($datas as $data)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $data->branch->name }}</td>
+                                    <td>{{ $data->license_plate }}</td>
+                                    <td>
+                                        <a
+                                        href="{{ route('vehicle.show', $data->id) }}"
+                                        class="btn btn-warning"
+                                        title="Ubah"><i class="fas fa-pencil-alt"></i></a>
+                                        <form
+                                            style=" display:inline!important;"
+                                            method="POST"
+                                            action="{{ route('vehicle.destroy', $data->id) }}">
+                                                @csrf
+                                                @method('DELETE')
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+                                                title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </x-table>
+                    </x-col>
+
+                    <x-col class="d-flex justify-content-end">
+                        {{ $datas->links() }}
+                    </x-col>
+                </x-row>
+            </x-card-collapsible>
+        </x-row>
+    </x-content>
+
+    <x-modal :title="'Tambah Data'" :id="'add-modal'">
+        <x-row>
+            <x-in-select
+                :label="'Cabang'"
+                :placeholder="'Pilih Cabang'"
+                :col="6"
+                :name="'branch_id'"
+                :options="$options['branches']"
+                :required="true"></x-in-select>
+            <x-in-text
+                :label="'Nama'"
+                :placeholder="'Masukkaan Nama Proyek'"
+                :col="6"
+                :name="'proyek_name'"
+                :required="true"></x-in-text>
+        </x-row>
+    </x-modal>
+@endsection
