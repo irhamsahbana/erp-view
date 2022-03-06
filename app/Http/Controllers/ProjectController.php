@@ -9,12 +9,25 @@ use App\Models\Branch;
 
 class ProjectController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function index(Request $request)
     {
         $query = Model::select('*');
 
         if ($request->branch_id)
             $query->where('branch_id', $request->branch_id);
+
+        if ($request->ajax()) {
+            $datas = $query->get();
+
+            return response()->json([
+                'datas' => $datas,
+            ]);
+        }
 
         $datas = $query->paginate(40)->withQueryString();
 
@@ -32,7 +45,7 @@ class ProjectController extends Controller
             'branches' => $branches,
         ];
 
-        return view('Pages.ProjectIndex', compact('datas', 'options'));
+        return view('pages.ProjectIndex', compact('datas', 'options'));
     }
 
     public function store(Request $request)
@@ -70,7 +83,7 @@ class ProjectController extends Controller
             'branches' => $branches,
         ];
 
-        return view('Pages.ProjectDetail', compact('data', 'options'));
+        return view('pages.ProjectDetail', compact('data', 'options'));
     }
 
     public function destroy($id)

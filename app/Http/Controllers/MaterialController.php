@@ -8,14 +8,22 @@ use App\Models\Material as Model;
 
 class MaterialController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $query = Model::select('*');
         $query->orderBy('id', 'desc');
 
+        if ($request->ajax()) {
+            $datas = $query->get();
+
+            return response()->json([
+                'datas' => $datas,
+            ]);
+        }
+
         $datas = $query->paginate(40);
 
-        return view('Pages.MaterialIndex', compact('datas'));
+        return view('pages.MaterialIndex', compact('datas'));
     }
 
     public function store(Request $request)
@@ -32,11 +40,17 @@ class MaterialController extends Controller
         return redirect()->back()->with('f-msg', 'Material berhasil disimpan.');
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $data = Model::findOrFail($id);
 
-        return view('Pages.MaterialDetail', compact('data'));
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $data,
+            ]);
+        }
+
+        return view('pages.MaterialDetail', compact('data'));
     }
 
     public function destroy($id)

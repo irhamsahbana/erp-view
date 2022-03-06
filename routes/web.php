@@ -4,13 +4,15 @@ use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\{
+    AuthController,
     BranchController,
     FuelController,
     UserController,
     ProjectController,
     VehicleController,
     MaterialController,
-    DriverController
+    DriverController,
+    MaterialMutationController,
 };
 
 /*
@@ -24,10 +26,15 @@ use App\Http\Controllers\{
 |
 */
 
-Route::view('/', 'app');
-Route::view('/login', 'Pages.Login')->name('login');
+Route::group(['middleware' =>['guest']], function() {
+    Route::view('/login', 'pages.Login')->name('login');
+    Route::post('login', [AuthController::class, 'attempt'])->name('login.attempt');
+});
 
-// Route::group(['middleware' => ['auth']], function(){
+Route::group(['middleware' => ['auth']], function(){
+    Route::view('/', 'App')->name('app');
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
     Route::group(['prefix' => 'master-data'], function() {
         Route::get('/', function() {
             return redirect('/');
@@ -63,10 +70,10 @@ Route::view('/login', 'Pages.Login')->name('login');
         Route::get('material/{id}', [MaterialController::class, 'show'])->name('material.show');
         Route::delete('material/{id}', [MaterialController::class, 'destroy'])->name('material.destroy');
 
-        // Route::view('pengendara', 'Pages.DriverIndex');
-        // Route::view('material', 'Pages.MaterialIndex');
-        // Route::view('vendor', 'Pages.VendorIndex');
-        // Route::view('jenis-mutasi-hutang', 'Pages.DebtFlowCategoryIndex');
+        // Route::view('pengendara', 'pages.DriverIndex');
+        // Route::view('material', 'pages.MaterialIndex');
+        // Route::view('vendor', 'pages.VendorIndex');
+        // Route::view('jenis-mutasi-hutang', 'pages.DebtFlowCategoryIndex');
     });
 
     Route::group(['prefix' => 'transaksi'], function() {
@@ -80,11 +87,17 @@ Route::view('/login', 'Pages.Login')->name('login');
         Route::delete('solar/{id}', [FuelController::class, 'destroy'])->name('fuel.destroy');
         Route::put('solar/ubah-status/{id}', [FuelController::class, 'changeIsOpen'])->name('fuel.change-status');
 
-        // Route::view('solar', 'Pages.HSDIndex');
-        // Route::view('mutasi-hutang', 'Pages.DebtTransactionIndex');
+        Route::get('mutasi-material', [MaterialMutationController::class, 'index'])->name('material-mutation.index');
+        Route::post('mutasi-material', [MaterialMutationController::class, 'store'])->name('material-mutation.store');
+        Route::get('mutasi-material/{id}', [MaterialMutationController::class, 'show'])->name('material-mutation.show');
+        Route::delete('mutasi-material/{id}', [MaterialMutationController::class, 'destroy'])->name('material-mutation.destroy');
+        Route::put('mutasi-material/ubah-status/{id}', [MaterialMutationController::class, 'changeIsOpen'])->name('material-mutation.change-status');
+
+        // Route::view('solar', 'pages.HSDIndex');
+        // Route::view('mutasi-hutang', 'pages.DebtTransactionIndex');
     });
 
-// });
+});
 
 
 Route::get('/test', [TestController::class, 'test']);

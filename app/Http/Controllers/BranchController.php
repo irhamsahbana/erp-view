@@ -8,11 +8,16 @@ use App\Models\Branch as Model;
 
 class BranchController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function index()
     {
         $datas = Model::all();
 
-        return view('Pages.BranchIndex', compact('datas'));
+        return view('pages.BranchIndex', compact('datas'));
     }
 
     public function store(Request $request)
@@ -33,7 +38,7 @@ class BranchController extends Controller
     {
         $data = Model::findOrFail($id);
 
-        return view('Pages.BranchDetail', compact('data'));
+        return view('pages.BranchDetail', compact('data'));
     }
 
     public function destroy($id)

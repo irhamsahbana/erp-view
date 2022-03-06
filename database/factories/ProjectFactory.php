@@ -15,7 +15,7 @@ class ProjectFactory extends Factory
     {
         return [
             'branch_id' => $this->faker->numberBetween(1, 2),
-            'name' => $this->faker->name,
+            'name' => $this->faker->city()
         ];
     }
 }

@@ -38,7 +38,7 @@ class UserController extends Controller
             'roles' => $roles,
         ];
 
-        return view('Pages.UserIndex', compact('datas', 'options'));
+        return view('pages.UserIndex', compact('datas', 'options'));
     }
 
     public function store(Request $request)
@@ -94,7 +94,7 @@ class UserController extends Controller
             'roles' => $roles,
         ];
 
-        return view('Pages.UserDetail', compact('data', 'options'));
+        return view('pages.UserDetail', compact('data', 'options'));
     }
 
     public function destroy($id)

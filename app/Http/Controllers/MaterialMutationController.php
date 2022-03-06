@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
+use App\Models\MaterialMutation as Model;
+use App\Models\Branch;
 use Illuminate\Support\Facades\Auth;
 
-use App\Models\Fuel as Model;
-use App\Models\Branch;
-
-class FuelController extends Controller
+class MaterialMutationController extends Controller
 {
     public function index(Request $request)
     {
@@ -23,8 +23,14 @@ class FuelController extends Controller
                 $query->where('branch_id', $request->branch_id);
         }
 
-        if ($request->vehicle_id)
-            $query->where('vehicle_id', $request->vehicle_id);
+        if ($request->project_id)
+            $query->where('project_id', $request->project_id);
+
+        if ($request->material_id)
+            $query->where('material_id', $request->material_id);
+
+        if ($request->driver_id)
+            $query->where('driver_id', $request->driver_id);
 
         if ($request->is_open) {
             $isOpen = $request->is_open;
@@ -33,6 +39,15 @@ class FuelController extends Controller
                 $query->where('is_open', 1);
             else
                 $query->where('is_open', 0);
+        }
+
+        if ($request->type) {
+            $type = $request->type;
+
+            if ($type == 'in')
+                $query->where('type', 1);
+            else
+                $query->where('type', 0);
         }
 
         if ($request->date_start)
@@ -68,34 +83,55 @@ class FuelController extends Controller
             ['text' => 'Close', 'value' => 'close'],
         ];
 
+        $types = [
+            ['text' => 'Masuk', 'value' => 'in'],
+            ['text' => 'Keluar', 'value' => 'out'],
+        ];
+
         $options = [
             'branches' => $branches,
             'status' => $status,
+            'types' => $types,
         ];
 
-        return view('Pages.FuelIndex', compact('datas', 'options'));
+        return view('pages.MaterialMutationIndex', compact('datas', 'options'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'id' => ['nullable', 'exists:fuels,id'],
+            'id' => ['nullable', 'exists:material_mutations,id'],
             'branch_id' => ['required', 'exists:branches,id'],
-            'vehicle_id' => ['required', 'exists:vehicles,id'],
-            'amount' => ['required', 'numeric'],
+            'project_id' => ['required', 'exists:projects,id'],
+            'material_id' => ['required', 'exists:materials,id'],
+            'driver_id' => ['required', 'exists:drivers,id'],
+
+            'type' => ['required', 'in:in,out'],
+            'volume' => ['required', 'numeric'],
+            'material_price' => ['required', 'numeric'],
+            'cost' => ['required', 'numeric'],
             'created' => ['required', 'date'],
-            'is_open' => ['nullable', 'boolean'],
         ]);
 
         $row = Model::findOrNew($request->id);
         $row->branch_id = $request->branch_id;
-        $row->vehicle_id = $request->vehicle_id;
-        $row->amount = $request->amount;
+        $row->project_id = $request->project_id;
+        $row->material_id = $request->material_id;
+        $row->driver_id = $request->driver_id;
+
+        $row->volume = $request->volume;
+        $row->material_price = $request->material_price;
+        $row->cost = $request->cost;
         $row->created = $request->created;
+
+        if ($request->type == 'in')
+            $row->type = 1;
+        else
+            $row->type = 0;
 
         $row->save();
 
-        return redirect()->back()->with('f-msg', 'Solar berhasil disimpan.');
+        return redirect()->back()->with('f-msg', 'Mutasi Material berhasil disimpan.');
     }
 
     public function show($id)
@@ -124,12 +160,18 @@ class FuelController extends Controller
             ['text' => 'Close', 'value' => 'close'],
         ];
 
+        $types = [
+            ['text' => 'Masuk', 'value' => 'in'],
+            ['text' => 'Keluar', 'value' => 'out'],
+        ];
+
         $options = [
             'branches' => $branches,
             'status' => $status,
+            'types' => $types,
         ];
 
-        return view('Pages.FuelDetail', compact('data', 'options'));
+        return view('pages.MaterialMutationDetail', compact('data', 'options'));
     }
 
     public function destroy($id)
@@ -137,7 +179,7 @@ class FuelController extends Controller
         $row = Model::findOrFail($id);
         $row->delete();
 
-        return redirect()->back()->with('f-msg', 'Solar berhasil dihapus.');
+        return redirect()->back()->with('f-msg', 'Mutasi material berhasil dihapus.');
     }
 
     public function changeIsOpen($id)
