@@ -64,6 +64,7 @@
                             :value="app('request')->input('date_finish') ?? null"
                             :name="'date_finish'"></x-in-text>
                         <x-col class="text-right">
+                            <a type="button" class="btn btn-default" href="{{ route('fuel.index') }}">reset</a>
                             <button type="submit" class="btn btn-primary">Cari</button>
                         </x-col>
                     </x-row>
@@ -93,36 +94,40 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a
-                                        href="{{ route('fuel.show', $data->id) }}"
-                                        class="btn btn-warning"
-                                        title="Ubah"><i class="fas fa-pencil-alt"></i></a>
-                                        <form
-                                            style=" display:inline!important;"
-                                            method="POST"
-                                            action="{{ route('fuel.destroy', $data->id) }}">
-                                                @csrf
-                                                @method('DELETE')
+                                        @if ($data->is_open)
+                                            <a
+                                                href="{{ route('fuel.show', $data->id) }}"
+                                                class="btn btn-warning"
+                                                title="Ubah"><i class="fas fa-pencil-alt"></i></a>
+                                            <form
+                                                style=" display:inline!important;"
+                                                method="POST"
+                                                action="{{ route('fuel.destroy', $data->id) }}">
+                                                    @csrf
+                                                    @method('DELETE')
 
-                                            <button
-                                                type="submit"
-                                                class="btn btn-danger"
-                                                onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
-                                                title="Hapus"><i class="fas fa-trash-alt"></i></button>
-                                        </form>
-                                        <form
-                                            style=" display:inline!important;"
-                                            method="POST"
-                                            action="{{ route('fuel.change-status', $data->id) }}">
-                                                @csrf
-                                                @method('PUT')
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-danger"
+                                                    onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+                                                    title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                            </form>
+                                        @endif
+                                        @if(Auth::user()->role == 'owner')
+                                            <form
+                                                style=" display:inline!important;"
+                                                method="POST"
+                                                action="{{ route('fuel.change-status', $data->id) }}">
+                                                    @csrf
+                                                    @method('PUT')
 
-                                            <button
-                                                type="submit"
-                                                class="btn btn-secondary"
-                                                onclick="return confirm('Apakah anda yakin ingin mengubah staus data ini?')"
-                                                title="Ubah"><i class="fas fa-sync-alt"></i></button>
-                                        </form>
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-secondary"
+                                                    onclick="return confirm('Apakah anda yakin ingin mengubah staus data ini?')"
+                                                    title="Ubah"><i class="fas fa-sync-alt"></i></button>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -187,15 +192,16 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="url-vehicle" content="{{ route('vehicle.index') }}">
+    <meta name="search-vehicle" content="{{ app('request')->input('vehicle_id') ?? null }}">
     <meta name="user-branch" content="{{ Auth::user()->branch_id ?? null }}">
 
     <script>
         $(function () {
-            var selectBranch = $('#branch_id');
-            var selectVehicle = $('#vehicle_id');
+            let selectBranch = $('#branch_id');
+            let selectVehicle = $('#vehicle_id');
 
-            var selectBranchIn = $('#in_branch_id');
-            var selectVehicleIn = $('#in_vehicle_id');
+            let selectBranchIn = $('#in_branch_id');
+            let selectVehicleIn = $('#in_vehicle_id');
 
             selectBranch.on('change', function() {
                 let branchId = $('#branch_id').val();
@@ -212,6 +218,7 @@
                     dataType: 'json',
                     success: function(data) {
                         let vehicle = $('#vehicle_id');
+                        let searchVehicle = $('meta[name="search-vehicle"]').attr('content');
 
                         vehicle.empty();
                         vehicle.append('<option value="">Pilih Nomor Kendaraan</option>');
@@ -225,6 +232,9 @@
                             placeholder: 'Pilih Nomor Kendaraan',
                             allowClear: true
                         });
+
+                        if (searchVehicle != null)
+                            vehicle.val(searchVehicle).trigger('change');
                     }
                 });
             });
@@ -313,6 +323,10 @@
                         });
                     }
                 });
+            }
+
+            if (selectBranch.val() != '') {
+                selectBranch.trigger('change');
             }
 
         });

@@ -9,6 +9,11 @@ use App\Models\Branch;
 
 class VehicleController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function index(Request $request)
     {
         $query = Model::select('*');
@@ -40,7 +45,7 @@ class VehicleController extends Controller
             'branches' => $branches,
         ];
 
-        return view('Pages.VehicleIndex', compact('datas', 'options'));
+        return view('pages.VehicleIndex', compact('datas', 'options'));
     }
 
     public function store(Request $request)
@@ -78,7 +83,7 @@ class VehicleController extends Controller
             'branches' => $branches,
         ];
 
-        return view('Pages.ProjectDetail', compact('data', 'options'));
+        return view('pages.ProjectDetail', compact('data', 'options'));
     }
 
     public function destroy($id)

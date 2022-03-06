@@ -9,6 +9,11 @@ use App\Models\Branch;
 
 class DriverController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function index(Request $request)
     {
         $query = Model::select('*');
@@ -17,6 +22,14 @@ class DriverController extends Controller
             $query->where('branch_id', $request->branch_id);
 
         $query->orderBy('id', 'desc');
+
+        if ($request->ajax()) {
+            $datas = $query->get();
+
+            return response()->json([
+                'datas' => $datas,
+            ]);
+        }
 
         $datas = $query->paginate(40)->withQueryString();
 
@@ -34,7 +47,7 @@ class DriverController extends Controller
             'branches' => $branches,
         ];
 
-        return view('Pages.DriverIndex', compact('datas', 'options'));
+        return view('pages.DriverIndex', compact('datas', 'options'));
     }
 
     public function store(Request $request)
@@ -72,7 +85,7 @@ class DriverController extends Controller
             'branches' => $branches,
         ];
 
-        return view('Pages.DriverDetail', compact('data', 'options'));
+        return view('pages.DriverDetail', compact('data', 'options'));
     }
 
     public function destroy($id)

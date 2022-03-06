@@ -15,6 +15,15 @@
           <i class="fas fa-moon"></i>
         </button>
       </li>
+
+      <li class="nav-item">
+        <a href="{{ route('logout') }}">
+          <button class="nav-link btn" id="toggle-dark-mode">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </a>
+      </li>
+
     </ul>
   </nav>
   <!-- /.navbar -->

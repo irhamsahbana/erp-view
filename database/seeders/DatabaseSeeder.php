@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Auth;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,5 +25,9 @@ class DatabaseSeeder extends Seeder
         $this->call(DummyVehicleSeeder::class);
 
         $this->call(DummyFuelSeeder::class);
+        $this->call(DummyMaterialMutationSeeder::class);
+
+        Auth::logout();
+        session()->flush();
     }
 }

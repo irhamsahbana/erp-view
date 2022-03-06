@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+
 class Controller extends LaravelController
 {
-    public $hostname = 'http://localhost:3001';
+    public function __construct()
+    {
+        if (Auth::check()) {
+            $authUser = Auth::user();
+        }
+    }
 }
