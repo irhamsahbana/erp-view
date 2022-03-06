@@ -73,7 +73,7 @@ class FuelController extends Controller
             'status' => $status,
         ];
 
-        return view('Pages.FuelIndex', compact('datas', 'options'));
+        return view('pages.FuelIndex', compact('datas', 'options'));
     }
 
     public function store(Request $request)
@@ -129,7 +129,7 @@ class FuelController extends Controller
             'status' => $status,
         ];
 
-        return view('Pages.FuelDetail', compact('data', 'options'));
+        return view('pages.FuelDetail', compact('data', 'options'));
     }
 
     public function destroy($id)
