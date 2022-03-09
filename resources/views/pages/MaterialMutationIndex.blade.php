@@ -32,7 +32,7 @@
                         <x-in-select
                             :label="'Cabang'"
                             :placeholder="'Pilih Cabang'"
-                            :col="12"
+                            :col="6"
                             :name="'branch_id'"
                             :options="$options['branches']"
                             :value="app('request')->input('branch_id') ?? null"
@@ -40,19 +40,19 @@
                         <x-in-select
                             :label="'Proyek'"
                             :placeholder="'Pilih Proyek'"
-                            :col="12"
+                            :col="6"
                             :name="'project_id'"
                             :required="false"></x-in-select>
                         <x-in-select
                             :label="'Material'"
                             :placeholder="'Pilih Material'"
-                            :col="12"
+                            :col="6"
                             :name="'material_id'"
                             :required="false"></x-in-select>
                         <x-in-select
                             :label="'Pengendara'"
                             :placeholder="'Pilih Pengendara'"
-                            :col="12"
+                            :col="6"
                             :name="'driver_id'"
                             :required="false"></x-in-select>
                         <x-in-select
@@ -182,7 +182,7 @@
                 <x-in-select
                     :label="'Cabang'"
                     :placeholder="'Pilih Cabang'"
-                    :col="12"
+                    :col="6"
                     :id="'in_branch_id'"
                     :name="'branch_id'"
                     :options="$options['branches']"
@@ -191,28 +191,28 @@
                 <x-in-select
                     :label="'Proyek'"
                     :placeholder="'Pilih Proyek'"
-                    :col="12"
+                    :col="6"
                     :id="'in_project_id'"
                     :name="'project_id'"
                     :required="true"></x-in-select>
                 <x-in-select
                     :label="'Material'"
                     :placeholder="'Pilih Material'"
-                    :col="12"
+                    :col="4"
                     :id="'in_material_id'"
                     :name="'material_id'"
                     :required="true"></x-in-select>
                 <x-in-select
                     :label="'Pengendara'"
                     :placeholder="'Pilih Pengendara'"
-                    :col="12"
+                    :col="4"
                     :id="'in_driver_id'"
                     :name="'driver_id'"
                     :required="true"></x-in-select>
                 <x-in-select
                     :label="'Jenis'"
                     :placeholder="'Pilih Jenis'"
-                    :col="12"
+                    :col="4"
                     :id="'in_type'"
                     :name="'type'"
                     :options="$options['types']"
