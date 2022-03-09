@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DummyVehicleSeeder::class);
 
         $this->call(DummyFuelSeeder::class);
-        $this->call(DummyMaterialMutationSeeder::class);
+        // $this->call(DummyMaterialMutationSeeder::class);
 
         Auth::logout();
         session()->flush();

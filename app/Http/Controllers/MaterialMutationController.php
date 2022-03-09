@@ -6,13 +6,14 @@ use Illuminate\Http\Request;
 
 use App\Models\MaterialMutation as Model;
 use App\Models\Branch;
+use App\Models\MaterialBalance;
 use Illuminate\Support\Facades\Auth;
 
 class MaterialMutationController extends Controller
 {
     public function index(Request $request)
     {
-        $fullAccess = ['owner'];
+        $fullAccess = ['owner', 'admin'];
 
         $query = Model::select('*');
 
@@ -113,8 +114,15 @@ class MaterialMutationController extends Controller
             'created' => ['required', 'date'],
         ]);
 
+        $fullAccess = ['owner', 'admin'];
+
         $row = Model::findOrNew($request->id);
-        $row->branch_id = $request->branch_id;
+
+        if (in_array(Auth::user()->role, $fullAccess))
+            $row->branch_id = $request->branch_id;
+        else
+            $row->branch_id = Auth::user()->branch_id;
+
         $row->project_id = $request->project_id;
         $row->material_id = $request->material_id;
         $row->driver_id = $request->driver_id;
@@ -124,10 +132,55 @@ class MaterialMutationController extends Controller
         $row->cost = $request->cost;
         $row->created = $request->created;
 
-        if ($request->type == 'in')
+        $balance = MaterialBalance::firstOrNew([
+                                'branch_id' => $row->branch_id,
+                                'project_id' => $request->project_id,
+                                'material_id' => $request->material_id
+                            ]);
+
+        if ($request->type == 'in') {
             $row->type = 1;
-        else
+
+            if (!$balance->id) {
+                $balance->qty = $request->volume;
+                $balance->total = $request->material_price;
+                $balance->unit_price = (float) $request->material_price / (float) $request->volume;
+            } else {
+                $balance->qty += $request->volume;
+                $balance->total += $request->material_price;
+                $balance->unit_price = $balance->total / $balance->qty;
+            }
+
+            $balance->save();
+        } else {
             $row->type = 0;
+
+            if ($balance->id) {
+                if ($balance->qty >= $request->volume) {
+                    $outPrice = $balance->total / $balance->qty * $request->volume;
+
+                    if ($balance->qty == $request->volume)
+                        $outPrice = $balance->total;
+
+                    $row->material_price = $outPrice;
+
+                    $newQty = $balance->qty - $request->volume;
+                    $newTotal = $balance->total - $balance->unit_price * $request->volume;
+
+                    if ($balance->qty == $request->volume)
+                        $newTotal = 0;
+
+                    $balance->qty = $newQty;
+                    $balance->total = $newTotal;
+
+                    $balance->save();
+                } else {
+                    return redirect()->back()->withErrors(['messages' => 'Saldo material kurang dari yang tersedia.']);
+                }
+            } else {
+                return redirect()->back()->withErrors(['messages' => 'Saldo material tidak ada, lakukan penambahan terlebih dahulu.']);
+            }
+        }
 
         $row->save();
 
@@ -136,7 +189,7 @@ class MaterialMutationController extends Controller
 
     public function show($id)
     {
-        $fullAccess = ['owner'];
+        $fullAccess = ['owner', 'admin'];
 
         $data = Model::findOrFail($id);
 
