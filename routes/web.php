@@ -13,6 +13,7 @@ use App\Http\Controllers\{
     MaterialController,
     DriverController,
     MaterialMutationController,
+    OrderController,
 };
 
 /*
@@ -81,6 +82,12 @@ Route::group(['middleware' => ['auth']], function(){
             return redirect('/');
         });
 
+        Route::get('order', [OrderController::class, 'index'])->name('order.index');
+        Route::post('order', [OrderController::class, 'store'])->name('order.store');
+        Route::get('order/{id}', [OrderController::class, 'show'])->name('order.show');
+        Route::delete('order/{id}', [OrderController::class, 'destroy'])->name('order.destroy');
+        Route::put('order/ubah-status/{id}', [OrderController::class, 'changeIsOpen'])->name('order.change-status');
+
         Route::get('solar', [FuelController::class, 'index'])->name('fuel.index');
         Route::post('solar', [FuelController::class, 'store'])->name('fuel.store');
         Route::get('solar/{id}', [FuelController::class, 'show'])->name('fuel.show');
@@ -93,7 +100,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('mutasi-material/{id}', [MaterialMutationController::class, 'destroy'])->name('material-mutation.destroy');
         Route::put('mutasi-material/ubah-status/{id}', [MaterialMutationController::class, 'changeIsOpen'])->name('material-mutation.change-status');
 
-        // Route::view('solar', 'pages.HSDIndex');
+        // Route::view('order', 'pages.HSDIndex');
         // Route::view('mutasi-hutang', 'pages.DebtTransactionIndex');
     });
 

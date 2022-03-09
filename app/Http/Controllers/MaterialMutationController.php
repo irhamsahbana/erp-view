@@ -47,7 +47,7 @@ class MaterialMutationController extends Controller
 
             if ($type == 'in')
                 $query->where('type', 1);
-            else
+            else if ($type == 'out')
                 $query->where('type', 0);
         }
 
@@ -55,7 +55,7 @@ class MaterialMutationController extends Controller
             $query->whereDate('created', '>=', new \DateTime($request->date_start));
 
         if ($request->date_finish)
-            $query->whereDate('created', '<=', new \DateTime($request->date_start));
+            $query->whereDate('created', '<=', new \DateTime($request->date_finish));
 
         $query->orderBy('created', 'desc');
 
@@ -117,6 +117,9 @@ class MaterialMutationController extends Controller
         $fullAccess = ['owner', 'admin'];
 
         $row = Model::findOrNew($request->id);
+
+        if ($row->id && !$row->is_open)
+            return redirect()->back()->withErrors(['messages' => 'Sudah ditutup.']);
 
         if (in_array(Auth::user()->role, $fullAccess))
             $row->branch_id = $request->branch_id;
@@ -237,6 +240,11 @@ class MaterialMutationController extends Controller
 
     public function changeIsOpen($id)
     {
+        $hasAccess = ['owner'];
+
+        if (!in_array(Auth::user()->role, $hasAccess))
+            return redirect()->back()->withErrors(['messages' => 'Anda tidak memiliki akses.']);
+
         $row = Model::findOrFail($id);
         $row->is_open = !$row->is_open;
 
