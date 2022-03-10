@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Project as Model;
+use App\Models\Vendor as Model;
 use App\Models\Branch;
 
-class ProjectController extends Controller
+class VendorController extends Controller
 {
     public function index(Request $request)
     {
@@ -40,13 +40,13 @@ class ProjectController extends Controller
             'branches' => $branches,
         ];
 
-        return view('pages.ProjectIndex', compact('datas', 'options'));
+        return view('pages.VendorIndex', compact('datas', 'options'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'id' => ['nullable', 'exists:projects,id'],
+            'id' => ['nullable', 'exists:vendors,id'],
             'branch_id' => ['required', 'exists:branches,id'],
             'name' => ['required', 'string', 'max:255'],
         ]);
@@ -57,7 +57,7 @@ class ProjectController extends Controller
 
         $row->save();
 
-        return redirect()->back()->with('f-msg', 'Proyek berhasil disimpan.');
+        return redirect()->back()->with('f-msg', 'Vendor berhasil disimpan.');
     }
 
     public function show($id)
@@ -78,7 +78,7 @@ class ProjectController extends Controller
             'branches' => $branches,
         ];
 
-        return view('pages.ProjectDetail', compact('data', 'options'));
+        return view('pages.VendorDetail', compact('data', 'options'));
     }
 
     public function destroy($id)
@@ -86,6 +86,6 @@ class ProjectController extends Controller
         $row = Model::findOrFail($id);
         $row->delete();
 
-        return redirect()->back()->with('f-msg', 'Proyek berhasil dihapus.');
+        return redirect()->back()->with('f-msg', 'Vendor berhasil dihapus.');
     }
 }

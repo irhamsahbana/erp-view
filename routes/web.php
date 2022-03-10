@@ -13,7 +13,9 @@ use App\Http\Controllers\{
     MaterialController,
     DriverController,
     MaterialMutationController,
+    DebtMutationController,
     OrderController,
+    VendorController,
 };
 
 /*
@@ -71,10 +73,12 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('material/{id}', [MaterialController::class, 'show'])->name('material.show');
         Route::delete('material/{id}', [MaterialController::class, 'destroy'])->name('material.destroy');
 
-        // Route::view('pengendara', 'pages.DriverIndex');
-        // Route::view('material', 'pages.MaterialIndex');
+        Route::get('vendor', [VendorController::class, 'index'])->name('vendor.index');
+        Route::post('vendor', [VendorController::class, 'store'])->name('vendor.store');
+        Route::get('vendor/{id}', [VendorController::class, 'show'])->name('vendor.show');
+        Route::delete('vendor/{id}', [VendorController::class, 'destroy'])->name('vendor.destroy');
+
         // Route::view('vendor', 'pages.VendorIndex');
-        // Route::view('jenis-mutasi-hutang', 'pages.DebtFlowCategoryIndex');
     });
 
     Route::group(['prefix' => 'transaksi'], function() {
@@ -100,7 +104,12 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('mutasi-material/{id}', [MaterialMutationController::class, 'destroy'])->name('material-mutation.destroy');
         Route::put('mutasi-material/ubah-status/{id}', [MaterialMutationController::class, 'changeIsOpen'])->name('material-mutation.change-status');
 
-        // Route::view('order', 'pages.HSDIndex');
+        Route::get('mutasi-hutang', [DebtMutationController::class, 'index'])->name('debt-mutation.index');
+        Route::post('mutasi-hutang', [DebtMutationController::class, 'store'])->name('debt-mutation.store');
+        Route::get('mutasi-hutang/{id}', [DebtMutationController::class, 'show'])->name('debt-mutation.show');
+        Route::delete('mutasi-hutang/{id}', [DebtMutationController::class, 'destroy'])->name('debt-mutation.destroy');
+        Route::put('mutasi-hutang/ubah-status/{id}', [DebtMutationController::class, 'changeIsOpen'])->name('debt-mutation.change-status');
+
         // Route::view('mutasi-hutang', 'pages.DebtTransactionIndex');
     });
 

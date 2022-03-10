@@ -1,30 +1,6 @@
 @extends('App')
 
 @php
-    $dummyCabang = [
-        [
-            'text' => 'Cabang A',
-            'value' => 'A'
-        ],
-        [
-            'text' => 'Cabang B',
-            'value' => 'B'
-        ],
-        [
-            'text' => 'Cabang C',
-            'value' => 'C'
-        ],
-        [
-            'text' => 'Cabang D',
-            'value' => 'D'
-        ],
-    ];
-
-    $dummyJenisMutasi = [
-        ['text' => 'Hutang', 'value' => 'hutang'],
-        ['text' => 'Piutang', 'value' => 'piutang'],
-    ];
-
     $breadcrumbList = [
         [
             'name' => 'Home',
@@ -46,27 +22,21 @@
     <x-content>
         <x-row>
             <x-card-collapsible :title="'Pencarian'">
-                <x-form>
+                <form style="width: 100%">
                     <x-row>
                         <x-in-select
                             :label="'Cabang'"
                             :placeholder="'Pilih Cabang'"
-                            :col="6"
-                            :name="'cabang_id'"
-                            :options="$dummyCabang"
-                            :required="false"></x-in-select>
-                        <x-in-select
-                            :label="'Jenis Mutasi'"
-                            :placeholder="'Pilih Jenis Mutasi'"
-                            :col="6"
-                            :name="'cabang_id'"
-                            :options="$dummyJenisMutasi"
+                            :col="12"
+                            :name="'branch_id'"
+                            :options="$options['branches']"
+                            :value="app('request')->input('branch_id') ?? null"
                             :required="false"></x-in-select>
                         <x-col class="text-right">
                             <button type="submit" class="btn btn-primary">Cari</button>
                         </x-col>
                     </x-row>
-                </x-form>
+                </form>
             </x-card-collapsible>
 
             <x-card-collapsible>
@@ -76,27 +46,38 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Cabang', 'Proyek', 'Jenis Mutasi', 'Nama', 'Aksi']">
-                            @for($i = 0; $i < 10; $i++)
+                        <x-table :thead="['Cabang', 'Vendor', 'Aksi']">
+                            @foreach($datas as $data)
                                 <tr>
-                                    <td>{{ $i + 1 }}</td>
-                                    <td>{{ $dummyCabang[array_rand($dummyCabang)]['text'] }}</td>
-                                    <td>{{ \Str::random(4) }}</td>
-                                    <td>{{ $dummyJenisMutasi[array_rand($dummyJenisMutasi)]['text'] }}</td>
-                                    <td>{{ \Str::random(4) }}</td>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $data->branch->name }}</td>
+                                    <td>{{ $data->name}}</td>
                                     <td>
                                         <a
-                                            href="#"
-                                            class="btn btn-warning"
-                                            title="Ubah"><i class="fas fa-pencil-alt"></i></a>
-                                        <button
-                                            type="button"
-                                            class="btn btn-danger"
-                                            title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                        href="{{ route('vendor.show', $data->id) }}"
+                                        class="btn btn-warning"
+                                        title="Ubah"><i class="fas fa-pencil-alt"></i></a>
+                                        <form
+                                            style=" display:inline!important;"
+                                            method="POST"
+                                            action="{{ route('vendor.destroy', $data->id) }}">
+                                                @csrf
+                                                @method('DELETE')
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+                                                title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
                                     </td>
                                 </tr>
-                            @endfor
+                            @endforeach
                         </x-table>
+                    </x-col>
+
+                    <x-col class="d-flex justify-content-end">
+                        {{ $datas->links() }}
                     </x-col>
                 </x-row>
             </x-card-collapsible>
@@ -104,20 +85,30 @@
     </x-content>
 
     <x-modal :title="'Tambah Data'" :id="'add-modal'">
-        <x-row>
-            <x-in-select
-                :label="'Cabang'"
-                :placeholder="'Pilih Cabang'"
-                :col="6"
-                :name="'cabang_id'"
-                :options="$dummyCabang"
-                :required="true"></x-in-select>
-            <x-in-text
-                :label="'Nama'"
-                :placeholder="'Masukkaan Nama Proyek'"
-                :col="6"
-                :name="'proyek_name'"
-                :required="true"></x-in-text>
-        </x-row>
+        <form style="width: 100%" action="{{ route('vendor.store') }}" method="POST">
+            @csrf
+            @method('POST')
+
+            <x-row>
+                <x-in-select
+                    :label="'Cabang'"
+                    :placeholder="'Pilih Cabang'"
+                    :col="12"
+                    :name="'branch_id'"
+                    :options="$options['branches']"
+                    :required="true"></x-in-select>
+                <x-in-text
+                    :label="'Nama'"
+                    :placeholder="'Masukkaan Nama Vendor'"
+                    :col="12"
+                    :name="'name'"
+                    :required="true"></x-in-text>
+
+                <x-col class="text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </x-col>
+            </x-row>
+        </form>
     </x-modal>
 @endsection

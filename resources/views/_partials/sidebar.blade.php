@@ -56,7 +56,7 @@
               <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" href="{{ route('project.index') }}"/>
               <x-nav-item :icon="'fas fa-truck-moving'" :text="'Kendaraan'" href="{{ route('vehicle.index') }}"/>
               <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" href="{{ route('driver.index') }}"/>
-              {{-- <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" :href="'/master-data/vendor'"/> --}}
+              <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href={{ route('vendor.index') }}/>
               <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}"/>
               {{-- <x-nav-item :icon="'fas fa-balance-scale'" :text="'Jenis Mutasi Hutang'" :href="'/master-data/jenis-mutasi-hutang'"/> --}}
               {{-- <x-nav-item :icon="'fas fa-book'" :text="'Saldo Normal XXX'" :href="'/master-data/saldo-normal'"/>
