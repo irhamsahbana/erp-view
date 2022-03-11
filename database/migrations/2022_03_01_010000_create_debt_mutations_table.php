@@ -21,6 +21,7 @@ class CreateDebtMutationsTable extends Migration
             $table->unsignedTinyInteger('type')->comment('1 = Hutang, 2 = Piutang');
             $table->unsignedTinyInteger('transaction_type')->comment('1 = Penambahan, 2 = Pengurangan');
             $table->float('amount', 15, 2);
+            $table->string('notes')->nullable();
             $table->boolean('is_open')->default(false);
             $table->date('created');
             $table->timestamps();

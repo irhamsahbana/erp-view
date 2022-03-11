@@ -105,12 +105,13 @@ class MaterialMutationController extends Controller
             'branch_id' => ['required', 'exists:branches,id'],
             'project_id' => ['required', 'exists:projects,id'],
             'material_id' => ['required', 'exists:materials,id'],
-            'driver_id' => ['required', 'exists:drivers,id'],
+            'driver_id' => ['nullable', 'required_if:type,out', 'exists:drivers,id'],
 
             'type' => ['required', 'in:in,out'],
             'volume' => ['required', 'numeric'],
-            'material_price' => ['required', 'numeric'],
-            'cost' => ['required', 'numeric'],
+            'material_price' => ['nullable', 'required_if:type,in', 'numeric'],
+            'cost' => ['nullable', 'required_if:type,out', 'numeric'],
+            'notes' => ['nullable'],
             'created' => ['required', 'date'],
         ]);
 
@@ -128,11 +129,8 @@ class MaterialMutationController extends Controller
 
         $row->project_id = $request->project_id;
         $row->material_id = $request->material_id;
-        $row->driver_id = $request->driver_id;
 
         $row->volume = $request->volume;
-        $row->material_price = $request->material_price;
-        $row->cost = $request->cost;
         $row->created = $request->created;
 
         $balance = MaterialBalance::firstOrNew([
@@ -143,6 +141,8 @@ class MaterialMutationController extends Controller
 
         if ($request->type == 'in') {
             $row->type = 1;
+            $row->material_price = $request->material_price;
+
 
             if (!$balance->id) {
                 $balance->qty = $request->volume;
@@ -157,6 +157,8 @@ class MaterialMutationController extends Controller
             $balance->save();
         } else {
             $row->type = 0;
+            $row->driver_id = $request->driver_id;
+            $row->cost = $request->cost;
 
             if ($balance->id) {
                 if ($balance->qty >= $request->volume) {
@@ -198,18 +200,16 @@ class MaterialMutationController extends Controller
 
         $branches = Branch::all();
 
-        if (!in_array(Auth::user()->role, $fullAccess)) {
+        if (!in_array(Auth::user()->role, $fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
-        }
 
-        if ($branches->isNotEmpty()) {
+        if ($branches->isNotEmpty())
             $branches = $branches->map(function ($branch) {
                 return [
                     'text' => $branch->name,
                     'value' => $branch->id,
                 ];
             });
-        }
 
         $status = [
             ['text' => 'Open', 'value' => 'open'],

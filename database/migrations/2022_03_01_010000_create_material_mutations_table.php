@@ -18,11 +18,12 @@ class CreateMaterialMutationsTable extends Migration
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('material_id');
-            $table->unsignedBigInteger('driver_id');
+            $table->unsignedBigInteger('driver_id')->nullable();
             $table->boolean('type')->comment('1 = Masuk, 0 = Keluar');
-            $table->float('material_price', 15, 2);
+            $table->float('material_price', 15, 2)->nullable();
             $table->float('volume', 15, 2);
-            $table->float('cost', 15, 2);
+            $table->float('cost', 15, 2)->nullable();
+            $table->string('notes')->nullable();
             $table->boolean('is_open')->default(false);
             $table->date('created');
             $table->timestamps();

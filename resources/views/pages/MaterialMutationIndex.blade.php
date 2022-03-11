@@ -285,6 +285,7 @@
     <meta name="old-status" content="{{ old('is_open') ?? null }}">
     <meta name="old-material-price" content="{{ old('material_price') ?? null }}">
     <meta name="old-cost" content="{{ old('cost') ?? null }}">
+    <meta name="old-type" content="{{ old('type') ?? null }}">
 
     <meta name="url-branch" content="{{ route('branch.index') }}">
     <meta name="url-project" content="{{ route('project.index') }}">
@@ -569,6 +570,38 @@
                     });
                 });
             }
+
+            if (selectBranchIn.val() != '')
+                selectBranchIn.trigger('change');
+        });
+    </script>
+
+    {{-- Functionality for disabled --}}
+    <script>
+        $(function () {
+            let selectType = $('#in_type');
+            let oldType = $('meta[name="old-type"]').attr('content');
+
+                if (oldType == 'in') {
+                    $( "#in_driver_id" ).prop( "disabled", true );
+                    $( "#in_cost" ).prop( "disabled", true );
+                } else if (oldType == 'out') {
+                    $( "#in_material_price" ).prop( "disabled", true );
+                }
+
+            selectType.on('change', function() {
+                if (this.value == 'in' || this.value == '') {
+                    $( "#in_driver_id" ).prop( "disabled", true );
+                    $( "#in_cost" ).prop( "disabled", true );
+
+                    $( "#in_material_price" ).prop( "disabled", false );
+                } else if (this.value == 'out'){
+                    $( "#in_driver_id" ).prop( "disabled", false );
+                    $( "#in_cost" ).prop( "disabled", false );
+
+                    $( "#in_material_price" ).prop( "disabled", true );
+                }
+            });
         });
     </script>
 @endpush

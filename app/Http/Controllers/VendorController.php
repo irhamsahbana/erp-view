@@ -3,18 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Vendor as Model;
 use App\Models\Branch;
 
 class VendorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('has.access:owner,admin,branch_head,accountant,cashier', ['only' => ['index', 'store']]);
+        $this->middleware('has.access:owner,admin', ['only' => ['destroy']]);
+    }
+
     public function index(Request $request)
     {
+        $fullAccess = ['owner', 'admin'];
+
         $query = Model::select('*');
 
-        if ($request->branch_id)
-            $query->where('branch_id', $request->branch_id);
+        if ($request->branch_id) {
+            if (!in_array(Auth::user()->role, $fullAccess))
+                $query->where('branch_id', Auth::user()->branch_id);
+            else
+                $query->where('branch_id', $request->branch_id);
+        }
 
         if ($request->ajax()) {
             $datas = $query->get();
@@ -45,6 +58,8 @@ class VendorController extends Controller
 
     public function store(Request $request)
     {
+        $fullAccess = ['owner', 'admin'];
+
         $request->validate([
             'id' => ['nullable', 'exists:vendors,id'],
             'branch_id' => ['required', 'exists:branches,id'],
@@ -52,6 +67,13 @@ class VendorController extends Controller
         ]);
 
         $row = Model::findOrNew($request->id);
+
+        if ($request->branch_id) {
+            if (!in_array(Auth::user()->role, $fullAccess))
+            $row->branch_id = Auth::user()->branch_id;
+            else
+                $row->branch_id = $request->branch_id;
+        }
         $row->branch_id = $request->branch_id;
         $row->name = $request->name;
 
@@ -83,6 +105,11 @@ class VendorController extends Controller
 
     public function destroy($id)
     {
+        $hasAccess = ['owner'];
+
+        if (!in_array(Auth::user()->role, $hasAccess))
+            return redirect()->back()->withErrors(['messages' => 'Anda tidak memiliki akses.']);
+
         $row = Model::findOrFail($id);
         $row->delete();
 

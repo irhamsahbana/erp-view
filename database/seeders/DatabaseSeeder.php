@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DummyVendorSeeder::class);
 
         // $this->call(DummyMaterialMutationSeeder::class);
-        $this->call(DummyDebtMutationSeeder::class);
+        // $this->call(DummyDebtMutationSeeder::class);
         $this->call(DummyFuelSeeder::class);
         $this->call(DummyOrderSeeder::class);
     }

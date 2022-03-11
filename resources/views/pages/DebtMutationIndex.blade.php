@@ -52,7 +52,7 @@
                         <x-in-select
                             :label="'Status'"
                             :placeholder="'Pilih Status'"
-                            :col="6"
+                            :col="4"
                             :name="'is_open'"
                             :options="$options['status']"
                             :value="app('request')->input('is_open') ?? null"
@@ -60,10 +60,18 @@
                         <x-in-select
                             :label="'Jenis Mutasi'"
                             :placeholder="'Pilih Jenis Mutasi'"
-                            :col="6"
+                            :col="4"
                             :name="'type'"
                             :options="$options['types']"
                             :value="app('request')->input('type') ? app('request')->input('type') : ''"
+                            :required="false"></x-in-select>
+                        <x-in-select
+                            :label="'Jenis Transaksi'"
+                            :placeholder="'Pilih Jenis Transaksi'"
+                            :col="4"
+                            :name="'transaction_type'"
+                            :options="$options['transactionTypes']"
+                            :value="app('request')->input('transaction_type') ? app('request')->input('transaction_type') : ''"
                             :required="false"></x-in-select>
                         <x-in-text
                             :type="'date'"
@@ -180,77 +188,59 @@
                 <x-in-select
                     :label="'Cabang'"
                     :placeholder="'Pilih Cabang'"
-                    :col="6"
+                    :col="4"
                     :id="'in_branch_id'"
                     :name="'branch_id'"
                     :options="$options['branches']"
                     :value="old('branch_id')"
-                    :required="true"></x-in-select>
+                    :required="false"></x-in-select>
                 <x-in-select
                     :label="'Proyek'"
                     :placeholder="'Pilih Proyek'"
-                    :col="6"
+                    :col="4"
                     :id="'in_project_id'"
                     :name="'project_id'"
-                    :required="true"></x-in-select>
+                    :required="false"></x-in-select>
                 <x-in-select
-                    :label="'Hutang'"
-                    :placeholder="'Pilih Hutang'"
+                    :label="'Vendor'"
+                    :placeholder="'Pilih Vendor'"
                     :col="4"
-                    :id="'in_material_id'"
-                    :name="'material_id'"
-                    :required="true"></x-in-select>
+                    :id="'in_vendor_id'"
+                    :name="'vendor_id'"
+                    :required="false"></x-in-select>
                 <x-in-select
-                    :label="'Pengendara'"
-                    :placeholder="'Pilih Pengendara'"
-                    :col="4"
-                    :id="'in_driver_id'"
-                    :name="'driver_id'"
-                    :required="true"></x-in-select>
-                <x-in-select
-                    :label="'Jenis'"
-                    :placeholder="'Pilih Jenis'"
-                    :col="4"
-                    :id="'in_type'"
+                    :label="'Jenis Mutasi'"
+                    :placeholder="'Pilih Jenis Mutasi'"
+                    :col="6"
                     :name="'type'"
                     :options="$options['types']"
                     :value="old('type')"
-                    :required="true"></x-in-select>
+                    :required="false"></x-in-select>
+                <x-in-select
+                    :label="'Jenis Transaksi'"
+                    :placeholder="'Pilih Jenis Transaksi'"
+                    :col="6"
+                    :name="'transaction_type'"
+                    :options="$options['transactionTypes']"
+                    :value="old('transaction_type')"
+                    :required="false"></x-in-select>
                 <x-in-text
                     :type="'number'"
-                    :step="'0.01'"
-                    :label="'Harga Hutang'"
-                    :col="4"
-                    :id="'in_material_price'"
-                    :name="'material_price'"
-                    :value="old('material_price')"
-                    :required="true"></x-in-text>
-                <x-in-text
-                    :type="'number'"
-                    :step="'0.01'"
-                    :label="'Volume'"
-                    :col="4"
-                    :id="'in_volume'"
-                    :name="'volume'"
-                    :value="old('volume')"
-                    :required="true"></x-in-text>
-                <x-in-text
-                    :type="'number'"
-                    :step="'0.01'"
-                    :label="'Biaya'"
-                    :col="4"
-                    :id="'in_cost'"
-                    :name="'cost'"
-                    :value="old('cost')"
-                    :required="true"></x-in-text>
+                    :step="0.01"
+                    :label="'Jumlah'"
+                    :col="6"
+                    :value="old('amount')"
+                    :name="'amount'"></x-in-text>
                 <x-in-text
                     :type="'date'"
                     :label="'Tanggal'"
-                    :col="12"
-                    :id="'in_created'"
-                    :name="'created'"
-                    :required="true"></x-in-text>
-
+                    :col="6"
+                    :value="old('created')"
+                    :name="'created'"></x-in-text>
+                <x-in-text
+                    :label="'Catatan'"
+                    :value="old('notes')"
+                    :name="'notes'"></x-in-text>
                 <x-col class="text-right">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
@@ -449,6 +439,9 @@
                     }
                 });
             });
+
+            if (selectBranchIn.val() != '')
+                selectBranchIn.trigger('change');
         });
     </script>
 @endpush
