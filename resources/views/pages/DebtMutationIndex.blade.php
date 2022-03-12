@@ -193,21 +193,21 @@
                     :name="'branch_id'"
                     :options="$options['branches']"
                     :value="old('branch_id')"
-                    :required="false"></x-in-select>
+                    :required="true"></x-in-select>
                 <x-in-select
                     :label="'Proyek'"
                     :placeholder="'Pilih Proyek'"
                     :col="4"
                     :id="'in_project_id'"
                     :name="'project_id'"
-                    :required="false"></x-in-select>
+                    :required="true"></x-in-select>
                 <x-in-select
                     :label="'Vendor'"
                     :placeholder="'Pilih Vendor'"
                     :col="4"
                     :id="'in_vendor_id'"
                     :name="'vendor_id'"
-                    :required="false"></x-in-select>
+                    :required="true"></x-in-select>
                 <x-in-select
                     :label="'Jenis Mutasi'"
                     :placeholder="'Pilih Jenis Mutasi'"
@@ -215,7 +215,7 @@
                     :name="'type'"
                     :options="$options['types']"
                     :value="old('type')"
-                    :required="false"></x-in-select>
+                    :required="true"></x-in-select>
                 <x-in-select
                     :label="'Jenis Transaksi'"
                     :placeholder="'Pilih Jenis Transaksi'"
@@ -223,20 +223,22 @@
                     :name="'transaction_type'"
                     :options="$options['transactionTypes']"
                     :value="old('transaction_type')"
-                    :required="false"></x-in-select>
+                    :required="true"></x-in-select>
                 <x-in-text
                     :type="'number'"
                     :step="0.01"
                     :label="'Jumlah'"
                     :col="6"
                     :value="old('amount')"
-                    :name="'amount'"></x-in-text>
+                    :name="'amount'"
+                    :required="true"></x-in-text>
                 <x-in-text
                     :type="'date'"
                     :label="'Tanggal'"
                     :col="6"
                     :value="old('created')"
-                    :name="'created'"></x-in-text>
+                    :name="'created'"
+                    :required="true"></x-in-text>
                 <x-in-text
                     :label="'Catatan'"
                     :value="old('notes')"

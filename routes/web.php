@@ -103,7 +103,9 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('mutasi-material/{id}', [MaterialMutationController::class, 'show'])->name('material-mutation.show');
         Route::delete('mutasi-material/{id}', [MaterialMutationController::class, 'destroy'])->name('material-mutation.destroy');
         Route::put('mutasi-material/ubah-status/{id}', [MaterialMutationController::class, 'changeIsOpen'])->name('material-mutation.change-status');
+        Route::get('mutasi-material/saldo', [MaterialMutationController::class, 'balance'])->name('material-mutation.balance');
 
+        Route::get('mutasi-hutang/saldo', [DebtMutationController::class, 'balance'])->name('debt-mutation.balance');
         Route::get('mutasi-hutang', [DebtMutationController::class, 'index'])->name('debt-mutation.index');
         Route::post('mutasi-hutang', [DebtMutationController::class, 'store'])->name('debt-mutation.store');
         Route::get('mutasi-hutang/{id}', [DebtMutationController::class, 'show'])->name('debt-mutation.show');

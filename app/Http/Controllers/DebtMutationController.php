@@ -92,6 +92,15 @@ class DebtMutationController extends Controller
         if ($row->id && !$row->is_open)
             return redirect()->back()->withErrors(['messages' => 'Sudah ditutup.']);
 
+        $oldbranchId = $row->branch_id;
+        $oldprojectId = $row->project_id;
+        $oldvendorId = $row->vendor_id;
+        $oldType = $row->type;
+        $oldTransactionType = $row->transaction_type;
+        $oldCreated = $row->created;
+        $oldAmount = $row->amount;
+        $oldNotes = $row->notes;
+
         if (in_array(Auth::user()->role, $fullAccess))
             $row->branch_id = $request->branch_id;
         else
@@ -148,15 +157,30 @@ class DebtMutationController extends Controller
     public function show($id)
     {
         $data = Model::findOrFail($id);
-
         $options = self::staticOptions();
 
-        return view('pages.MaterialMutationDetail', compact('data', 'options'));
+        return view('pages.DebtMutationDetail', compact('data', 'options'));
     }
 
     public function destroy($id)
     {
         $row = Model::findOrFail($id);
+
+        $balance = DebtBalance::firstOrNew([
+            'branch_id' => $row->branch_id,
+            'project_id' => $row->project_id,
+            'vendor_id' => $row->vendor_id,
+            'type' => $row->type
+        ]);
+
+        if ($row->transaction_type == 1) { // penambahan
+            $balance->total -= $row->amount;
+            $balance->save();
+        } else if ($row->transaction_type == 2) { //pengurangan
+            $balance->total += $row->amount;
+            $balance->save();
+        }
+
         $row->delete();
 
         return redirect()->back()->with('f-msg', 'Mutasi hutang/piutang berhasil dihapus.');
@@ -170,6 +194,20 @@ class DebtMutationController extends Controller
         $row->save();
 
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
+    }
+
+    public function balance()
+    {
+        $fullAccess = ['owner', 'admin'];
+
+        $query = DebtBalance::select('*');
+
+        if (!in_array(Auth::user()->role, $fullAccess))
+            $query->where('branch_id', Auth::user()->branch_id);
+
+        $datas = $query->paginate(40)->withQueryString();
+
+        return view('pages.DebtBalanceIndex', compact('datas'));
     }
 
     public static function staticOptions()
