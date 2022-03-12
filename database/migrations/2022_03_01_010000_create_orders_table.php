@@ -17,7 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedTinyInteger('status')->comment('1 = waiting, 2 = accepted, 3 = rejected, 4 = hold, 5 = urgent');
+            $table->unsignedTinyInteger('status')->comment('1 = waiting, 2 = accepted, 3 = rejected, 4 = hold');
             $table->float('amount', 15, 2);
             $table->string('notes')->nullable();
             $table->boolean('is_open')->default(0);

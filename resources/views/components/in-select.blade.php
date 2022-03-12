@@ -12,6 +12,7 @@
     'options' => [],
     'value' => null,
     'required' => false,
+    'disabled' => false,
 ])
 
 @php
@@ -35,10 +36,9 @@
             class="form-control"
             id="{{ $id }}"
             name="{{ $name }}"
-            @if ($required)
-                required
-            @endif
-        >
+            @if ($required) required @endif
+            @if ($disabled) disabled @endif>
+
                 @if(!empty($placeholder))
                     <option value="">{{ $placeholder }}</option>
                 @endif

@@ -86,10 +86,11 @@ Route::group(['middleware' => ['auth']], function(){
             return redirect('/');
         });
 
+        Route::get('order/{id}', [OrderController::class, 'show'])->name('order.show');
         Route::get('order', [OrderController::class, 'index'])->name('order.index');
         Route::post('order', [OrderController::class, 'store'])->name('order.store');
-        Route::get('order/{id}', [OrderController::class, 'show'])->name('order.show');
         Route::delete('order/{id}', [OrderController::class, 'destroy'])->name('order.destroy');
+        Route::put('order/ubah-status-order/{id}', [OrderController::class, 'changeStatus'])->name('order.change-order-status');
         Route::put('order/ubah-status/{id}', [OrderController::class, 'changeIsOpen'])->name('order.change-status');
 
         Route::get('solar', [FuelController::class, 'index'])->name('fuel.index');

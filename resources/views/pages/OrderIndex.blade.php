@@ -92,8 +92,6 @@
                                             Rejected
                                         @elseif($data->status == '4')
                                             Hold
-                                        @elseif($data->status == '5')
-                                            Closed
                                         @endif
                                     </td>
                                     <td>
@@ -123,7 +121,7 @@
                                                     title="Hapus"><i class="fas fa-trash-alt"></i></button>
                                             </form>
                                         @endif
-                                        @if(Auth::user()->role == 'owner')
+                                        @if(Auth::user()->role == 'owner' && ($data->status == 1 || $data->status == 4))
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"
@@ -137,6 +135,13 @@
                                                     onclick="return confirm('Apakah anda yakin ingin mengubah staus data ini?')"
                                                     title="Ubah"><i class="fas fa-sync-alt"></i></button>
                                             </form>
+                                        @endif
+                                        @if ($data->status == 1 || $data->status == 4)
+                                            <a
+                                                type="button"
+                                                class="btn btn-primary"
+                                                onclick="changeStatus({{ $data->id }})"
+                                                href="javascript:void(0)"><i class="fas fa-stream"></i></a>
                                         @endif
                                     </td>
                                 </tr>
@@ -192,4 +197,95 @@
             </x-row>
         </form>
     </x-modal>
+
+    <x-modal :title="'Ubah Status Order'" :id="'modal-change-status'" :size="'md'">
+        <form style="width: 100%" action="" method="POST" id="form-status-change">
+            @csrf
+            @method('PUT')
+
+            <x-row>
+                <input type="hidden" name="id" id="order_id" value="">
+                <x-in-select
+                    :label="'Status Order'"
+                    :placeholder="'Pilih Status Order'"
+                    :id="'in_status'"
+                    :name="'status'"
+                    :options="$options['statusOrder']"
+                    :required="true"></x-in-select>
+                <x-in-select
+                    :label="'Cabang'"
+                    :placeholder="'Pilih Cabang'"
+                    :id="'info_branch'"
+                    :options="$options['branches']"
+                    :disabled="true"></x-in-select>
+                <x-in-text
+                    :label="'Pembuat'"
+                    :id="'info_user'"
+                    name="info_user"
+                    :disabled="true"></x-in-text>
+                <x-in-text
+                    :type="'number'"
+                    :step="'0.01'"
+                    :label="'Jumlah'"
+                    :id="'info_amount'"
+                    name="info_amount"
+                    :disabled="true"></x-in-text>
+                <x-in-text
+                    :type="'date'"
+                    :label="'Tanggal'"
+                    :id="'info_created'"
+                    name="info_created"
+                    :disabled="true"></x-in-text>
+                <x-col class="text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </x-col>
+            </x-row>
+        </form>
+    </x-modal>
 @endsection
+
+@push('js')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="url-order-show" content="{{ route('order.show', 'dummy-id') }}">
+    <meta name="url-order-change-status" content="{{ route('order.change-order-status', 'dummy-id') }}">
+
+    <script>
+        function changeStatus(id) {
+            $('#modal-change-status').modal('show');
+            $('#form-status-change').trigger('reset');
+
+            let url = $('meta[name="url-order-show"]').attr('content');
+            url = url.replace('dummy-id', id);
+
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    $('#order_id').val(data.id);
+                    $('#in_status').val(data.status);
+                    $('#info_branch').val(data.branch_id);
+                    $('#info_user').val(data.username);
+                    $('#info_amount').val(data.amount);
+                    $('#info_created').val(data.created);
+
+                    //change form action
+                    let url = $('meta[name="url-order-change-status"]').attr('content');
+                    url = url.replace('dummy-id', data.id);
+                    $('#form-status-change').attr('action', url);
+
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+        }
+
+        $(function() {
+
+        });
+    </script>
+@endpush
