@@ -243,6 +243,20 @@ class MaterialMutationController extends Controller
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
     }
 
+    public function balance()
+    {
+        $fullAccess = ['owner', 'admin'];
+
+        $query = MaterialBalance::select('*');
+
+        if (!in_array(Auth::user()->role, $fullAccess))
+            $query->where('branch_id', Auth::user()->branch_id);
+
+        $datas = $query->paginate(40)->withQueryString();
+
+        return view('pages.MaterialBalanceIndex', compact('datas'));
+    }
+
     public static function staticOptions()
     {
         $fullAccess = ['owner', 'admin'];

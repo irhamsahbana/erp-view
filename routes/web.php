@@ -98,6 +98,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('solar/{id}', [FuelController::class, 'destroy'])->name('fuel.destroy');
         Route::put('solar/ubah-status/{id}', [FuelController::class, 'changeIsOpen'])->name('fuel.change-status');
 
+        Route::get('mutasi-material/saldo', [MaterialMutationController::class, 'balance'])->name('material-mutation.balance');
         Route::get('mutasi-material', [MaterialMutationController::class, 'index'])->name('material-mutation.index');
         Route::post('mutasi-material', [MaterialMutationController::class, 'store'])->name('material-mutation.store');
         Route::get('mutasi-material/{id}', [MaterialMutationController::class, 'show'])->name('material-mutation.show');
