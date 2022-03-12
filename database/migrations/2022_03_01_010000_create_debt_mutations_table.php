@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMaterialMutationsTable extends Migration
+class CreateDebtMutationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class CreateMaterialMutationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('material_mutations', function (Blueprint $table) {
+        Schema::create('debt_mutations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('project_id');
-            $table->unsignedBigInteger('material_id');
-            $table->unsignedBigInteger('driver_id')->nullable();
-            $table->boolean('type')->comment('1 = Masuk, 0 = Keluar');
-            $table->float('material_price', 15, 2)->nullable();
-            $table->float('volume', 15, 2);
-            $table->float('cost', 15, 2)->nullable();
+            $table->unsignedBigInteger('vendor_id');
+            $table->unsignedTinyInteger('type')->comment('1 = Hutang, 2 = Piutang');
+            $table->unsignedTinyInteger('transaction_type')->comment('1 = Penambahan, 2 = Pengurangan');
+            $table->float('amount', 15, 2);
             $table->string('notes')->nullable();
             $table->boolean('is_open')->default(false);
             $table->date('created');
@@ -37,6 +35,6 @@ class CreateMaterialMutationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('material_mutations');
+        Schema::dropIfExists('debt_mutations');
     }
 }

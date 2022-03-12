@@ -46,8 +46,9 @@
           <li class="nav-header">TRANSAKSI</li>
             <x-nav-item :icon="'fas fa-receipt'" :text="'Order'" :href="route('order.index')"/>
             <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'"/>
-            <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" :href="'/transaksi/mutasi-hutang'"/>
+            <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}"/>
             <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}"/>
+            <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}"/>
 
           @if (Auth::user()->role == 'owner' || Auth::user()->role == 'admin')
             <li class="nav-header">MASTER DATA</li>
@@ -56,12 +57,8 @@
               <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" href="{{ route('project.index') }}"/>
               <x-nav-item :icon="'fas fa-truck-moving'" :text="'Kendaraan'" href="{{ route('vehicle.index') }}"/>
               <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" href="{{ route('driver.index') }}"/>
-              {{-- <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" :href="'/master-data/vendor'"/> --}}
+              <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}"/>
               <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}"/>
-              {{-- <x-nav-item :icon="'fas fa-balance-scale'" :text="'Jenis Mutasi Hutang'" :href="'/master-data/jenis-mutasi-hutang'"/> --}}
-              {{-- <x-nav-item :icon="'fas fa-book'" :text="'Saldo Normal XXX'" :href="'/master-data/saldo-normal'"/>
-              <x-nav-item :icon="'fas fa-book'" :text="'Jenis Jurnal XXX'" :href="'/master-data/jenis-jurnal'"/>
-              <x-nav-item :icon="'fas fa-balance-scale'" :text="'Jenis Laporan XXX'" :href="'/master-data/jenis-laporan'"/> --}}
             </li>
           @endif
         </ul>

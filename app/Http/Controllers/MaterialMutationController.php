@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Auth;
 
 class MaterialMutationController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
+    }
+
     public function index(Request $request)
     {
         $fullAccess = ['owner', 'admin'];
@@ -63,37 +68,7 @@ class MaterialMutationController extends Controller
             $query->where('branch_id', Auth::user()->branch_id);
 
         $datas = $query->paginate(40)->withQueryString();
-
-        $branches = Branch::all();
-
-        if (!in_array(Auth::user()->role, $fullAccess)) {
-            $branches = $branches->where('id', Auth::user()->branch_id);
-        }
-
-        if ($branches->isNotEmpty()) {
-            $branches = $branches->map(function ($branch) {
-                return [
-                    'text' => $branch->name,
-                    'value' => $branch->id,
-                ];
-            });
-        }
-
-        $status = [
-            ['text' => 'Open', 'value' => 'open'],
-            ['text' => 'Close', 'value' => 'close'],
-        ];
-
-        $types = [
-            ['text' => 'Masuk', 'value' => 'in'],
-            ['text' => 'Keluar', 'value' => 'out'],
-        ];
-
-        $options = [
-            'branches' => $branches,
-            'status' => $status,
-            'types' => $types,
-        ];
+        $options = self::staticOptions();
 
         return view('pages.MaterialMutationIndex', compact('datas', 'options'));
     }
@@ -105,12 +80,13 @@ class MaterialMutationController extends Controller
             'branch_id' => ['required', 'exists:branches,id'],
             'project_id' => ['required', 'exists:projects,id'],
             'material_id' => ['required', 'exists:materials,id'],
-            'driver_id' => ['required', 'exists:drivers,id'],
+            'driver_id' => ['nullable', 'required_if:type,out', 'exists:drivers,id'],
 
             'type' => ['required', 'in:in,out'],
             'volume' => ['required', 'numeric'],
-            'material_price' => ['required', 'numeric'],
-            'cost' => ['required', 'numeric'],
+            'material_price' => ['nullable', 'required_if:type,in', 'numeric'],
+            'cost' => ['nullable', 'required_if:type,out', 'numeric'],
+            'notes' => ['nullable'],
             'created' => ['required', 'date'],
         ]);
 
@@ -128,11 +104,8 @@ class MaterialMutationController extends Controller
 
         $row->project_id = $request->project_id;
         $row->material_id = $request->material_id;
-        $row->driver_id = $request->driver_id;
 
         $row->volume = $request->volume;
-        $row->material_price = $request->material_price;
-        $row->cost = $request->cost;
         $row->created = $request->created;
 
         $balance = MaterialBalance::firstOrNew([
@@ -143,6 +116,8 @@ class MaterialMutationController extends Controller
 
         if ($request->type == 'in') {
             $row->type = 1;
+            $row->material_price = $request->material_price;
+
 
             if (!$balance->id) {
                 $balance->qty = $request->volume;
@@ -155,8 +130,10 @@ class MaterialMutationController extends Controller
             }
 
             $balance->save();
-        } else {
+        } else if ($request->type == 'out') {
             $row->type = 0;
+            $row->driver_id = $request->driver_id;
+            $row->cost = $request->cost;
 
             if ($balance->id) {
                 if ($balance->qty >= $request->volume) {
@@ -167,13 +144,12 @@ class MaterialMutationController extends Controller
 
                     $row->material_price = $outPrice;
 
-                    $newQty = $balance->qty - $request->volume;
                     $newTotal = $balance->total - $balance->unit_price * $request->volume;
 
                     if ($balance->qty == $request->volume)
                         $newTotal = 0;
 
-                    $balance->qty = $newQty;
+                    $balance->qty -= $request->volume;
                     $balance->total = $newTotal;
 
                     $balance->save();
@@ -198,18 +174,16 @@ class MaterialMutationController extends Controller
 
         $branches = Branch::all();
 
-        if (!in_array(Auth::user()->role, $fullAccess)) {
+        if (!in_array(Auth::user()->role, $fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
-        }
 
-        if ($branches->isNotEmpty()) {
+        if ($branches->isNotEmpty())
             $branches = $branches->map(function ($branch) {
                 return [
                     'text' => $branch->name,
                     'value' => $branch->id,
                 ];
             });
-        }
 
         $status = [
             ['text' => 'Open', 'value' => 'open'],
@@ -233,6 +207,27 @@ class MaterialMutationController extends Controller
     public function destroy($id)
     {
         $row = Model::findOrFail($id);
+
+        $balance = MaterialBalance::firstOrNew([
+            'branch_id' => $row->branch_id,
+            'project_id' => $row->project_id,
+            'material_id' => $row->material_id
+        ]);
+
+        if ($row->type == 1) { //masuk, lakukan pengurangan terhadap saldo
+            $balance->qty -= $row->volume;
+            $balance->total -= $row->material_price;
+            $balance->unit_price = $balance->total / $balance->qty;
+
+            $balance->save();
+        } else if ($row->type == 0) { //keluar, lakukan penambahan terhadap saldo
+            $balance->qty += $row->volume;
+            $balance->total += $row->material_price;
+            $balance->unit_price = $balance->total / $balance->qty;
+
+            $balance->save();
+        }
+
         $row->delete();
 
         return redirect()->back()->with('f-msg', 'Mutasi material berhasil dihapus.');
@@ -240,16 +235,47 @@ class MaterialMutationController extends Controller
 
     public function changeIsOpen($id)
     {
-        $hasAccess = ['owner'];
-
-        if (!in_array(Auth::user()->role, $hasAccess))
-            return redirect()->back()->withErrors(['messages' => 'Anda tidak memiliki akses.']);
-
         $row = Model::findOrFail($id);
         $row->is_open = !$row->is_open;
 
         $row->save();
 
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
+    }
+
+    public static function staticOptions()
+    {
+        $fullAccess = ['owner', 'admin'];
+
+        $branches = Branch::all();
+
+        if (!in_array(Auth::user()->role, $fullAccess))
+            $branches = $branches->where('id', Auth::user()->branch_id);
+
+        if ($branches->isNotEmpty())
+            $branches = $branches->map(function ($branch) {
+                return [
+                    'text' => $branch->name,
+                    'value' => $branch->id,
+                ];
+            });
+
+        $status = [
+            ['text' => 'Open', 'value' => 'open'],
+            ['text' => 'Close', 'value' => 'close'],
+        ];
+
+        $types = [
+            ['text' => 'Masuk', 'value' => 'in'],
+            ['text' => 'Keluar', 'value' => 'out'],
+        ];
+
+        $options = [
+            'branches' => $branches,
+            'status' => $status,
+            'types' => $types,
+        ];
+
+        return $options;
     }
 }

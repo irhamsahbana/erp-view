@@ -22,9 +22,11 @@ class DatabaseSeeder extends Seeder
         $this->call(DummyMaterialSeeder::class);
         $this->call(DummyProjectSeeder::class);
         $this->call(DummyVehicleSeeder::class);
+        $this->call(DummyVendorSeeder::class);
 
-        $this->call(DummyFuelSeeder::class);
         // $this->call(DummyMaterialMutationSeeder::class);
+        // $this->call(DummyDebtMutationSeeder::class);
+        $this->call(DummyFuelSeeder::class);
         $this->call(DummyOrderSeeder::class);
     }
 }
