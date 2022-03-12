@@ -106,7 +106,7 @@
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->project->name }}</td>
                                     <td>{{ $data->material->name }}</td>
-                                    <td>{{ $data->driver->name }}</td>
+                                    <td>{{ $data->driver->name ?? null }}</td>
                                     <td>
                                         @if($data->type)
                                             Masuk
