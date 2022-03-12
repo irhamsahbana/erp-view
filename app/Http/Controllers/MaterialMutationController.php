@@ -171,35 +171,7 @@ class MaterialMutationController extends Controller
         $fullAccess = ['owner', 'admin'];
 
         $data = Model::findOrFail($id);
-
-        $branches = Branch::all();
-
-        if (!in_array(Auth::user()->role, $fullAccess))
-            $branches = $branches->where('id', Auth::user()->branch_id);
-
-        if ($branches->isNotEmpty())
-            $branches = $branches->map(function ($branch) {
-                return [
-                    'text' => $branch->name,
-                    'value' => $branch->id,
-                ];
-            });
-
-        $status = [
-            ['text' => 'Open', 'value' => 'open'],
-            ['text' => 'Close', 'value' => 'close'],
-        ];
-
-        $types = [
-            ['text' => 'Masuk', 'value' => 'in'],
-            ['text' => 'Keluar', 'value' => 'out'],
-        ];
-
-        $options = [
-            'branches' => $branches,
-            'status' => $status,
-            'types' => $types,
-        ];
+        $options = self::staticOptions();
 
         return view('pages.MaterialMutationDetail', compact('data', 'options'));
     }
@@ -217,13 +189,11 @@ class MaterialMutationController extends Controller
         if ($row->type == 1) { //masuk, lakukan pengurangan terhadap saldo
             $balance->qty -= $row->volume;
             $balance->total -= $row->material_price;
-            $balance->unit_price = $balance->total / $balance->qty;
 
             $balance->save();
         } else if ($row->type == 0) { //keluar, lakukan penambahan terhadap saldo
             $balance->qty += $row->volume;
             $balance->total += $row->material_price;
-            $balance->unit_price = $balance->total / $balance->qty;
 
             $balance->save();
         }
