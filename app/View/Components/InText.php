@@ -14,6 +14,7 @@ class InText extends Component
     public $type;
     public $placeholder;
     public $required;
+    public $disabled;
     public $step;
     public $name;
 
@@ -30,6 +31,7 @@ class InText extends Component
         $type = null,
         $placeholder = null,
         $required = null,
+        $disabled = null,
         $step = null,
         $name = null
     ) {
@@ -40,6 +42,7 @@ class InText extends Component
         $this->type = $type;
         $this->placeholder = $placeholder;
         $this->required = $required;
+        $this->disabled = $disabled;
         $this->step = $step;
         $this->name = $name;
     }

@@ -16,21 +16,27 @@ class OrderFactory extends Factory
         $users = \App\Models\User::all();
         $user = $users->random();
 
-        if ($user->role == 'owner') {
+        if ($user->role == 'owner')
             $branchId = 1;
-        } else {
+        else
             $branchId = $user->branch_id;
-        }
+
+        $status = $this->faker->numberBetween(1, 4);
+
+        if ($status == 1 || $status == 4)
+            $isOpen = 1;
+        else
+            $isOpen = 0;
 
         $notes = [null, $this->faker->sentence(5)];
 
         return [
             'branch_id' => $branchId,
             'user_id' => $user->id,
-            'status' => $this->faker->numberBetween(1, 5),
+            'status' => $status,
             'amount' => $this->faker->randomFloat(2, 2_000_000, 10_000_000),
             'notes' => $this->faker->randomElement($notes),
-            'is_open' => $this->faker->boolean,
+            'is_open' => $isOpen,
             'created' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }

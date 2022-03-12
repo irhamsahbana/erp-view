@@ -8,6 +8,7 @@
     'placeholder' => null,
     'value' => null,
     'required' => false,
+    'disabled' => false,
     'step' => null,
 ])
 
@@ -26,6 +27,7 @@
             name="{{ $name }}"
             value="{{ old($name) ?? $value ?? '' }}"
             @if($step) step="{{ $step }}" @endif
-            @if($required) required @endif>
+            @if($required) required @endif
+            @if($disabled) disabled @endif>
     </div>
   </div>
