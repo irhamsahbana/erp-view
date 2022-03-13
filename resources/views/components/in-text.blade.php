@@ -1,9 +1,13 @@
+@php
+    $hash = \Str::random(4);
+@endphp
+
 @props([
     'col' => 12,
 
     'label' => null,
     'id' => $id ? $id : $name,
-    'name' => null,
+    'name' => $hash,
     'type' => 'text',
     'placeholder' => null,
     'value' => null,

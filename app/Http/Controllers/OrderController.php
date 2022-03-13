@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Validator;
+use Illuminate\Validation\Rule;
 
 use App\Models\Order as Model;
 use App\Models\Branch;
@@ -145,8 +147,11 @@ class OrderController extends Controller
         if ($row->is_open == Model::IS_OPEN_CLOSE)
             return redirect()->back()->withErrors(['messages' => 'Sudah ditutup.']);
 
+        if ($row->amount > 5_000_000 && Auth::user()->role != 'owner')
+            return redirect()->back()->withErrors(['messages' => 'Hanya owner yang bisa mengubah status dengan order lebih dari Rp. 5.000.000.']);
+
         $row->status = $request->status;
-        if ($request->status == Model::STATUS_ORDER_ACCEPTED || $request->status == Model::STATUS_ORDER_REJECTED)
+        if ($row->status == Model::STATUS_ORDER_ACCEPTED || $row->status == Model::STATUS_ORDER_REJECTED)
             $row->is_open = Model::IS_OPEN_CLOSE;
 
         $row->save();
