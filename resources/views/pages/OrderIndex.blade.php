@@ -132,12 +132,22 @@
                                                 <button
                                                     type="submit"
                                                     class="btn btn-secondary"
-                                                    onclick="return confirm('Apakah anda yakin ingin mengubah staus data ini?')"
+                                                    onclick="return confirm('Apakah anda yakin ingin mengubah status data ini?')"
                                                     title="Ubah"><i class="fas fa-sync-alt"></i></button>
                                             </form>
                                         @endif
-                                        @if ($data->status == 1 || $data->status == 4)
+                                        @if (($data->status == 1 || $data->status == 4) && Auth::user()->role == 'owner')
                                             <a
+                                                type="button"
+                                                class="btn btn-primary"
+                                                onclick="changeStatus({{ $data->id }})"
+                                                href="javascript:void(0)"><i class="fas fa-stream"></i></a>
+                                        @elseif(
+                                                    ($data->status == 1 || $data->status == 4) &&
+                                                    Auth::user()->role == 'branch_head' &&
+                                                    $data->amount <= 5_000_000
+                                                )
+                                                <a
                                                 type="button"
                                                 class="btn btn-primary"
                                                 onclick="changeStatus({{ $data->id }})"
@@ -221,24 +231,21 @@
                 <x-in-text
                     :label="'Pembuat'"
                     :id="'info_user'"
-                    name="info_user"
                     :disabled="true"></x-in-text>
                 <x-in-text
                     :type="'number'"
                     :step="'0.01'"
                     :label="'Jumlah'"
                     :id="'info_amount'"
-                    name="info_amount"
                     :disabled="true"></x-in-text>
                 <x-in-text
                     :type="'date'"
                     :label="'Tanggal'"
                     :id="'info_created'"
-                    name="info_created"
                     :disabled="true"></x-in-text>
                 <x-col class="text-right">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah anda yakin ingin mengubah status order data ini?')">Simpan</button>
                 </x-col>
             </x-row>
         </form>
