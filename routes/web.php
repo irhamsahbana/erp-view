@@ -16,6 +16,7 @@ use App\Http\Controllers\{
     DebtMutationController,
     OrderController,
     VendorController,
+    VoucherController,
 };
 
 /*
@@ -92,6 +93,12 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('order/{id}', [OrderController::class, 'destroy'])->name('order.destroy');
         Route::put('order/ubah-status-order/{id}', [OrderController::class, 'changeStatus'])->name('order.change-order-status');
         Route::put('order/ubah-status/{id}', [OrderController::class, 'changeIsOpen'])->name('order.change-status');
+
+        Route::get('voucher/{id}', [VoucherController::class, 'show'])->name('voucher.show');
+        Route::get('voucher', [VoucherController::class, 'index'])->name('voucher.index');
+        Route::post('voucher', [VoucherController::class, 'store'])->name('voucher.store');
+        Route::delete('voucher/{id}', [VoucherController::class, 'destroy'])->name('voucher.destroy');
+        Route::put('voucher/ubah-status/{id}', [VoucherController::class, 'changeIsOpen'])->name('voucher.change-status');
 
         Route::get('solar', [FuelController::class, 'index'])->name('fuel.index');
         Route::post('solar', [FuelController::class, 'store'])->name('fuel.store');

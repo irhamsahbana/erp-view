@@ -7,12 +7,17 @@
             'href' => '/'
         ],
         [
-            'name' => 'Order'
+            'name' => 'Voucher'
         ],
     ];
 @endphp
 
-@section('content-header', 'Order')
+@push('css')
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+@endpush
+
+@section('content-header', 'Voucher')
 
 @section('breadcrumb')
     <x-breadcrumb :list="$breadcrumbList"/>
@@ -27,25 +32,33 @@
                         <x-in-select
                             :label="'Cabang'"
                             :placeholder="'Pilih Cabang'"
-                            :col="4"
+                            :col="3"
                             :name="'branch_id'"
                             :options="$options['branches']"
                             :value="app('request')->input('branch_id') ?? null"
                             :required="false"></x-in-select>
                         <x-in-select
+                            :label="'Jenis Voucher'"
+                            :placeholder="'Pilih Jenis Voucher'"
+                            :col="3"
+                            :name="'type'"
+                            :options="$options['types']"
+                            :value="app('request')->input('type') ?? null"
+                            :required="false"></x-in-select>
+                        <x-in-select
                             :label="'Status'"
                             :placeholder="'Pilih Status'"
-                            :col="4"
+                            :col="3"
                             :name="'is_open'"
                             :options="$options['status']"
                             :value="app('request')->input('is_open') ?? null"
                             :required="false"></x-in-select>
                         <x-in-select
-                            :label="'Status Order'"
-                            :placeholder="'Pilih Status Order'"
-                            :col="4"
+                            :label="'Status Voucher'"
+                            :placeholder="'Pilih Status Voucher'"
+                            :col="3"
                             :name="'status'"
-                            :options="$options['statusOrder']"
+                            :options="$options['statusVoucher']"
                             :value="app('request')->input('status') ?? null"
                             :required="false"></x-in-select>
                         <x-in-text
@@ -61,7 +74,7 @@
                             :value="app('request')->input('date_finish') ?? null"
                             :name="'date_finish'"></x-in-text>
                         <x-col class="text-right">
-                            <a type="button" class="btn btn-default" href="{{ route('order.index') }}">reset</a>
+                            <a type="button" class="btn btn-default" href="{{ route('voucher.index') }}">reset</a>
                             <button type="submit" class="btn btn-primary">Cari</button>
                         </x-col>
                     </x-row>
@@ -75,24 +88,27 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Pembuat', 'Jumlah', 'Status Order', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Jenis Voucher', 'Jumlah', 'Keterangan', 'Status Voucher', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
                                     <td>{{ $data->ref_no }}</td>
                                     <td>{{ $data->branch->name }}</td>
-                                    <td>{{ $data->user->username }}</td>
+                                    <td>
+                                        @if($data->type == '1')
+                                            Pemasukan
+                                        @elseif($data->type == '2')
+                                            Pengeluaran
+                                        @endif
+                                    </td>
                                     <td>{{ 'Rp. ' . number_format($data->amount, 2) }}</td>
+                                    <td>{{ $data->notes }}</td>
                                     <td>
                                         @if($data->status == '1')
-                                            Waiting
+                                            Urgent
                                         @elseif($data->status == '2')
-                                            Accepted
-                                        @elseif($data->status == '3')
-                                            Rejected
-                                        @elseif($data->status == '4')
-                                            Hold
+                                            By Planning
                                         @endif
                                     </td>
                                     <td>
@@ -105,13 +121,13 @@
                                     <td>
                                         @if ($data->is_open)
                                             <a
-                                                href="{{ route('order.show', $data->id) }}"
+                                                href="{{ route('voucher.show', $data->id) }}"
                                                 class="btn btn-warning"
                                                 title="Ubah"><i class="fas fa-pencil-alt"></i></a>
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"
-                                                action="{{ route('order.destroy', $data->id) }}">
+                                                action="{{ route('voucher.destroy', $data->id) }}">
                                                     @csrf
                                                     @method('DELETE')
 
@@ -126,7 +142,7 @@
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"
-                                                action="{{ route('order.change-status', $data->id) }}">
+                                                action="{{ route('voucher.change-status', $data->id) }}">
                                                     @csrf
                                                     @method('PUT')
 
@@ -135,24 +151,7 @@
                                                     class="btn btn-secondary"
                                                     onclick="return confirm('Apakah anda yakin ingin mengubah status data ini?')"
                                                     title="Ubah"><i class="fas fa-sync-alt"></i></button>
-                                                </form>
-                                        @endif
-                                        @if (($data->status == 1 || $data->status == 4) && Auth::user()->role == 'owner')
-                                            <a
-                                                type="button"
-                                                class="btn btn-primary"
-                                                onclick="changeStatus({{ $data->id }})"
-                                                href="javascript:void(0)"><i class="fas fa-stream"></i></a>
-                                        @elseif(
-                                                    ($data->status == 1 || $data->status == 4) &&
-                                                    Auth::user()->role == 'branch_head' &&
-                                                    $data->amount <= 5_000_000
-                                                )
-                                                <a
-                                                type="button"
-                                                class="btn btn-primary"
-                                                onclick="changeStatus({{ $data->id }})"
-                                                href="javascript:void(0)"><i class="fas fa-stream"></i></a>
+                                            </form>
                                         @endif
                                     </td>
                                 </tr>
@@ -169,7 +168,7 @@
     </x-content>
 
     <x-modal :title="'Tambah Data'" :id="'add-modal'">
-        <form style="width: 100%" action="{{ route('order.store') }}" method="POST">
+        <form style="width: 100%" action="{{ route('voucher.store') }}" method="POST">
             @csrf
             @method('POST')
 
@@ -182,12 +181,35 @@
                     :name="'branch_id'"
                     :options="$options['branches']"
                     :required="true"></x-in-select>
+                <x-in-select
+                    :label="'Jenis Voucher'"
+                    :placeholder="'Pilih Jenis Voucher'"
+                    :col="4"
+                    :id="'in_type'"
+                    :name="'type'"
+                    :options="$options['types']"
+                    :required="true"></x-in-select>
+                <x-in-select
+                        :label="'Status Voucher'"
+                        :placeholder="'Pilih Status Voucher'"
+                        :col="4"
+                        :id="'in_add_status'"
+                        :name="'status'"
+                        :options="$options['statusVoucher']"
+                        :required="true"></x-in-select>
+                <x-in-select
+                    :label="'Order'"
+                    :placeholder="'Pilih Order'"
+                    :col="4"
+                    :id="'in_order_id'"
+                    :name="'order_id'"
+                    :required="true"></x-in-select>
                 <x-in-text
                     :type="'number'"
                     :step="'0.01'"
                     :label="'Jumlah'"
                     :col="4"
-                    :ID="'in_amount'"
+                    :id="'in_amount'"
                     :name="'amount'"
                     :required="true"></x-in-text>
                 <x-in-text
@@ -200,10 +222,14 @@
                 <x-in-text
                     :label="'Keterangan'"
                     :col="12"
-                    :name="'in_notes'"
+                    :id="'in_notes'"
                     :name="'notes'"
                     :required="true"></x-in-text>
 
+                <x-col class="text-left">
+                    <a class="btn btn-primary" id="autofill-amount-created" href="javascript:void(0)">
+                        Autofill Jumlah dan Tanggal</a>
+                </x-col>
                 <x-col class="text-right">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
@@ -212,7 +238,7 @@
         </form>
     </x-modal>
 
-    <x-modal :title="'Ubah Status Order'" :id="'modal-change-status'" :size="'md'">
+    <x-modal :title="'Ubah Status Voucher'" :id="'modal-change-status'" :size="'md'">
         <form style="width: 100%" action="" method="POST" id="form-status-change">
             @csrf
             @method('PUT')
@@ -220,11 +246,11 @@
             <x-row>
                 <input type="hidden" name="id" id="order_id" value="">
                 <x-in-select
-                    :label="'Status Order'"
-                    :placeholder="'Pilih Status Order'"
+                    :label="'Status Voucher'"
+                    :placeholder="'Pilih Status Voucher'"
                     :id="'in_status'"
                     :name="'status'"
-                    :options="$options['statusOrder']"
+                    :options="$options['statusVoucher']"
                     :required="true"></x-in-select>
                 <x-in-select
                     :label="'Cabang'"
@@ -257,42 +283,122 @@
 @endsection
 
 @push('js')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Select2 -->
+    <script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>
+
+    <meta name="url-order" content="{{ route('order.index') }}">
     <meta name="url-order-show" content="{{ route('order.show', 'dummy-id') }}">
-    <meta name="url-order-change-status" content="{{ route('order.change-order-status', 'dummy-id') }}">
 
+    {{-- Form --}}
     <script>
-        function changeStatus(id) {
-            $('#modal-change-status').modal('show');
-            $('#form-status-change').trigger('reset');
+        $(function() {
+            const selectBranch = $('#in_branch_id');
+            const selectType = $('#in_type');
+            const selectStatus = $('#in_add_status');
 
-            let url = $('meta[name="url-order-show"]').attr('content');
-            url = url.replace('dummy-id', id);
+            const autofill = $('#autofill-amount-created');
+
+            selectBranch.on('change', function() {
+                const branchId = $(this).val();
+                const urlOrder = $('meta[name="url-order"]').attr('content');
+                const acceptedOrder = 2;
+
+                $.ajax({
+                    url: urlOrder,
+                    type: 'GET',
+                    data: {
+                        branch_id: branchId,
+                        status: acceptedOrder,
+                    },
+                    success: function(data) {
+                        const selectOrder = $('#in_order_id');
+
+                        selectOrder.empty();
+                        selectOrder.append('<option value="">Pilih Order</option>');
+
+                        data.datas.forEach(function(item) {
+                            selectOrder.append(`<option value="${item.id}">${item.ref_no}</option>`);
+                        });
+
+                        selectOrder.select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Order',
+                            allowClear: true
+                        });
+                    }
+                });
+            });
+
+            selectType.on('change', function() {
+                const type = $(this).val();
+                const status = $('#in_add_status');
+                const order = $('#in_order_id');
 
 
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                cache: false,
-                success: function(data) {
-                    $('#order_id').val(data.id);
-                    $('#in_status').val(data.status);
-                    $('#info_branch').val(data.branch_id);
-                    $('#info_user').val(data.username);
-                    $('#info_amount').val(data.amount);
-                    $('#info_created').val(data.created);
+                if (type == 1) {
+                    status.prop('disabled', true);
+                    order.prop('disabled', true);
 
-                    //change form action
-                    let url = $('meta[name="url-order-change-status"]').attr('content');
-                    url = url.replace('dummy-id', data.id);
-                    $('#form-status-change').attr('action', url);
+                    status.val('');
+                    order.val('').trigger('change');
+                } else if (type == 2) {
+                    status.prop('disabled', false);
+                    order.prop('disabled', false);
 
-                },
-                error: function(data) {
-                    console.log(data);
+                    if (status.val() == 1) {
+                        order.prop('disabled', true);
+                    } else if (status.val() == 2) {
+                        order.prop('disabled', false);
+                    }
                 }
             });
-        }
+
+            selectStatus.on('change', function() {
+                const status = $(this).val();
+                const order = $('#in_order_id');
+                const type = $('#in_type').val();
+
+                if (type == 2) {
+                    if (status == 1) {
+                        order.prop('disabled', false);
+                    } else if (status == 2) {
+                        order.prop('disabled', false);
+                    } else {
+                        order.prop('disabled', false);
+                    }
+                }
+            });
+
+            autofill.on('click', function() {
+                const type = $('#in_type').val();
+                const status = $('#in_add_status').val();
+                const order = $('#in_order_id').val();
+
+                let update = confirm('Apakah anda yakin ingin mengubah jumnlah dan tanggal data ini?');
+
+                if (!update)
+                    return;
+
+                if (type == 2 && status == 2 && order != '') {
+                    const order = $('#in_order_id').val();
+                    let url = $('meta[name="url-order-show"]').attr('content');
+                    url = url.replace('dummy-id', order);
+
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        success: function(data) {
+                            $('#in_amount').val(data.amount);
+                            $('#in_created').val(data.created);
+                        }
+                    });
+                } else {
+                    $('#in_amount').val('');
+                    $('#in_created').val('');
+
+                    alert('Hanya bisa autofill jika jenis voucher adalah pengeluaran dan status voucher adalah by planinng, serta order terisi');
+                }
+            });
+        });
     </script>
 @endpush

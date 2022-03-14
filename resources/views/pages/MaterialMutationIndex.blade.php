@@ -579,8 +579,8 @@
     {{-- Functionality for disabled --}}
     <script>
         $(function () {
-            let selectType = $('#in_type');
-            let oldType = $('meta[name="old-type"]').attr('content');
+            const selectType = $('#in_type');
+            const oldType = $('meta[name="old-type"]').attr('content');
 
                 if (oldType == 'in') {
                     $( "#in_driver_id" ).prop( "disabled", true );

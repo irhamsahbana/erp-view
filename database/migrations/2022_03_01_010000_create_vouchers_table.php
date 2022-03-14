@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrdersTable extends Migration
+class CreateVouchersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,17 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('vouchers', function (Blueprint $table) {
             $table->id();
             $table->string('ref_no')->unique();
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedTinyInteger('status')->comment('1 = waiting, 2 = accepted, 3 = rejected, 4 = hold');
+            $table->unsignedBigInteger('order_id')->nullable();
+            $table->unsignedTinyInteger('status')->nullable()->comment('1 = Urgent, 2 = By planning');
+            $table->unsignedTinyInteger('type')->comment('1 = Pemasukan, 2 = Pengeluaran');
             $table->float('amount', 15, 2);
             $table->string('notes')->nullable();
-            $table->boolean('is_open')->default(0);
+            $table->boolean('is_open')->default(false);
             $table->date('created');
             $table->timestamps();
         });
@@ -34,6 +36,6 @@ class CreateOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('vouchers');
     }
 }

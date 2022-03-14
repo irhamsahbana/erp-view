@@ -31,6 +31,7 @@ class OrderFactory extends Factory
         $notes = [null, $this->faker->sentence(5)];
 
         return [
+            'ref_no' => 'O/' . $this->faker->unique()->randomNumber(6),
             'branch_id' => $branchId,
             'user_id' => $user->id,
             'status' => $status,

@@ -25,20 +25,7 @@ class ProjectController extends Controller
         }
 
         $datas = $query->paginate(40)->withQueryString();
-
-        $branches = Branch::all();
-        if ($branches->isNotEmpty()) {
-            $branches = $branches->map(function ($branch) {
-                return [
-                    'text' => $branch->name,
-                    'value' => $branch->id,
-                ];
-            });
-        }
-
-        $options = [
-            'branches' => $branches,
-        ];
+        $options = self::staticOptions();
 
         return view('pages.ProjectIndex', compact('datas', 'options'));
     }
@@ -63,8 +50,27 @@ class ProjectController extends Controller
     public function show($id)
     {
         $data = Model::findOrFail($id);
+        $options = self::staticOptions();
 
+        return view('pages.ProjectDetail', compact('data', 'options'));
+    }
+
+    public function destroy($id)
+    {
+        $row = Model::findOrFail($id);
+        $row->delete();
+
+        return redirect()->back()->with('f-msg', 'Proyek berhasil dihapus.');
+    }
+
+    public static function options()
+    {
+        $fullAccess = ['owner', 'admin'];
         $branches = Branch::all();
+
+        if (!in_array(Auth::user()->role, $fullAccess))
+            $branches = $branches->where('id', Auth::user()->branch_id);
+
         if ($branches->isNotEmpty()) {
             $branches = $branches->map(function ($branch) {
                 return [
@@ -78,14 +84,6 @@ class ProjectController extends Controller
             'branches' => $branches,
         ];
 
-        return view('pages.ProjectDetail', compact('data', 'options'));
-    }
-
-    public function destroy($id)
-    {
-        $row = Model::findOrFail($id);
-        $row->delete();
-
-        return redirect()->back()->with('f-msg', 'Proyek berhasil dihapus.');
+        return $options;
     }
 }
