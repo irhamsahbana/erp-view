@@ -9,6 +9,12 @@ class DebtMutation extends Model
 {
     use HasFactory;
 
+    const TYPE_DEBT = 1;
+    const TYPE_RECEIVABLE = 2;
+
+    const TRANSACTION_TYPE_ADD = 1;
+    const TRANSACTION_TYPE_SUBTRACT = 2;
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);

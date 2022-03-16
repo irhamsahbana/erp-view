@@ -242,6 +242,7 @@
                 <x-in-text
                     :label="'Catatan'"
                     :value="old('notes')"
+                    :required="true"
                     :name="'notes'"></x-in-text>
                 <x-col class="text-right">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>

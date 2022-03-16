@@ -228,7 +228,7 @@
 
                 <x-col class="text-left">
                     <a class="btn btn-primary" id="autofill-amount-created" href="javascript:void(0)">
-                        Autofill Jumlah dan Tanggal</a>
+                        Autofill Jumlah, Tanggal dan Keterangan</a>
                 </x-col>
                 <x-col class="text-right">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
@@ -374,7 +374,7 @@
                 const status = $('#in_add_status').val();
                 const order = $('#in_order_id').val();
 
-                let update = confirm('Apakah anda yakin ingin mengubah jumnlah dan tanggal data ini?');
+                let update = confirm('Apakah anda yakin ingin mengubah jumlah, tanggal dan keterangan data ini?');
 
                 if (!update)
                     return;
@@ -390,11 +390,13 @@
                         success: function(data) {
                             $('#in_amount').val(data.amount);
                             $('#in_created').val(data.created);
+                            $('#in_notes').val(data.notes);
                         }
                     });
                 } else {
                     $('#in_amount').val('');
                     $('#in_created').val('');
+                    $('#in_notes').val('');
 
                     alert('Hanya bisa autofill jika jenis voucher adalah pengeluaran dan status voucher adalah by planinng, serta order terisi');
                 }
