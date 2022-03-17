@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\Repositories\DebtMutation;
+
 use App\Models\DebtMutation as Model;
 use App\Models\Branch;
 use App\Models\DebtBalance;
+use App\View\Components\Modal;
 use Illuminate\Support\Facades\Auth;
 
 class DebtMutationController extends Controller
@@ -111,7 +114,10 @@ class DebtMutationController extends Controller
         $row->amount = $request->amount;
         $row->notes = $request->notes;
 
-        // if id != null
+        // $repo = new DebtMutation($row);
+        // $repo->setOldAmount($oldAmount);
+        // $repo->save();
+
         $balance = DebtBalance::firstOrNew([
                                 'branch_id' => $row->branch_id,
                                 'project_id' => $row->project_id,
@@ -123,7 +129,12 @@ class DebtMutationController extends Controller
                             ->where('project_id', $row->project_id)
                             ->where('vendor_id', $row->vendor_id)
                             ->where('type', $row->type)
-                            ->sum('amount');
+                            ->get();
+
+        $totalBalancePlus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_ADD)->sum('amount');
+        $totalBalanceMinus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_SUBTRACT)->sum('amount');
+        $totalBalance = $totalBalancePlus - $totalBalanceMinus;
+
 
         if ($row->transaction_type == Model::TRANSACTION_TYPE_ADD) {
             if (!$row->id)
