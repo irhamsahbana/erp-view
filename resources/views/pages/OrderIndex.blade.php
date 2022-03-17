@@ -122,7 +122,7 @@
                                                     title="Hapus"><i class="fas fa-trash-alt"></i></button>
                                             </form>
                                         @endif
-                                        @if(Auth::user()->role == 'owner')
+                                        @if(Auth::user()->role == 'owner' && ($data->status == 1 || $data->status == 4))
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"

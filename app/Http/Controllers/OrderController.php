@@ -167,6 +167,10 @@ class OrderController extends Controller
 
         $row->status = $request->status;
 
+        // auto close if status is accepted or rejected
+        if ($row->status == Model::STATUS_ORDER_ACCEPTED || $row->status == Model::STATUS_ORDER_REJECTED)
+            $row->is_open = Model::IS_OPEN_CLOSE;
+
         $row->save();
 
         return redirect()->back()->with('f-msg', 'Status order berhasil diubah.');
