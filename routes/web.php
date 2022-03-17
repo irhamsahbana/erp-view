@@ -19,6 +19,13 @@ use App\Http\Controllers\{
     VoucherController,
 };
 
+use App\Models\{
+    DebtMutation,
+    DebtBalance,
+    MaterialMutation,
+    MaterialBalance
+};
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -128,3 +135,34 @@ Route::group(['middleware' => ['auth']], function(){
 
 
 Route::get('/test', [TestController::class, 'test']);
+
+Route::get('/delete-debt', function() {
+//delete all
+    $debtBalance = DebtBalance::all();
+    foreach ($debtBalance as $db) {
+        $db->delete();
+    }
+
+    $debtMutation = DebtMutation::all();
+    foreach ($debtMutation as $dm) {
+        $dm->delete();
+    }
+
+    echo "success delete debt";
+});
+
+Route::get('delete-material', function() {
+    // delete balance
+    $materialBalance = MaterialBalance::all();
+    foreach ($materialBalance as $db) {
+        $db->delete();
+    }
+
+    // delete mutation
+    $materialMutation = MaterialMutation::all();
+    foreach ($materialMutation as $dm) {
+        $dm->delete();
+    }
+
+    echo "success delete material";
+});
