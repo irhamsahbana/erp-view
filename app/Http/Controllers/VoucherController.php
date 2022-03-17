@@ -4,19 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-use App\Models\Order as Model;
+use App\Models\Voucher as Model;
 use App\Models\Branch;
 
-class OrderController extends Controller
+class VoucherController extends Controller
 {
     private $fullAccess = ['owner', 'admin'];
 
     public function __construct()
     {
-        $this->middleware('has.access:owner,admin,branch_head,cashier', ['only' => ['index']]);
-        $this->middleware('has.access:owner,admin,cashier', ['only' => ['store']]);
-        $this->middleware('has.access:owner,branch_head', ['only' => ['changeStatus']]);
         $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
     }
 
@@ -43,6 +41,9 @@ class OrderController extends Controller
                 $query->where('is_open', Model::IS_OPEN_CLOSE);
         }
 
+        if ($request->type)
+            $query->where('type', $request->type);
+
         if ($request->user_id)
             $query->where('user_id', $request->user_id);
 
@@ -57,43 +58,51 @@ class OrderController extends Controller
         if (!in_array(Auth::user()->role, $this->fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 
-        if ($request->ajax()) {
-            $datas = $query->get();
-
-            return response()->json([
-                'datas' => $datas,
-            ]);
-        }
-
         $datas = $query->paginate(40)->withQueryString();
-
         $options = self::staticOptions();
 
-        return view('pages.OrderIndex', compact('datas', 'options'));
+        return view('pages.VoucherIndex', compact('datas', 'options'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'id' => ['nullable', 'exists:orders,id'],
+            'id' => ['nullable', 'exists:vouchers,id'],
             'branch_id' => ['required', 'exists:branches,id'],
             'user_id' => ['nullable', 'exists:users,id'],
+            'order_id' => [
+                Rule::requiredIf($request->type == Model::TYPE_VOUCHER_EXPENSE && $request->status == Model::STATUS_VOUCHER_BY_PLANNING),
+                'exists:orders,id'
+            ],
+
+            'type' => ['required', 'numeric', 'in:1,2'],
+            'status' => [
+                'nullable',
+                Rule::requiredIf($request->type == Model::TYPE_VOUCHER_EXPENSE),
+                'numeric',
+                 'in:1,2'
+            ],
             'amount' => ['required', 'numeric'],
-            'created' => ['required', 'date'],
+            'notes' => ['required', 'string'],
             'is_open' => ['nullable', 'boolean'],
-            'notes' => ['nullable', 'string'],
+            'created' => ['required', 'date'],
         ]);
 
         $row = Model::findOrNew($request->id);
         $row->branch_id = $request->branch_id;
         $row->user_id = Auth::id();
+
+        $row->type = $request->type;
         $row->amount = $request->amount;
-        $row->created = $request->created;
         $row->notes = $request->notes;
+        $row->created = $request->created;
+
+        if ($row->type == Model::TYPE_VOUCHER_EXPENSE) {
+            $row->order_id = $request->order_id;
+            $row->status = $request->status;
+        }
 
         if (!$row->id) {
-            $row->status = Model::STATUS_ORDER_WAITING;
-
             $prefix = sprintf('%s/', $row->getTable());
             $postfix = sprintf('/%s.%s', date('m'), date('y'));
             $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
@@ -104,28 +113,15 @@ class OrderController extends Controller
 
         $row->save();
 
-        return redirect()->back()->with('f-msg', 'Order berhasil disimpan.');
+        return redirect()->back()->with('f-msg', 'Voucher berhasil disimpan.');
     }
 
     public function show(Request $request, $id)
     {
-        $data = new Model();
-
-        $data = $data
-                    ->leftJoin('users', 'orders.user_id', '=', 'users.id')
-                    ->leftJoin('branches', 'orders.branch_id', '=', 'branches.id')
-                    ->select('orders.*', 'users.username', 'branches.name as branch_name')
-                    ->where('orders.id', $id)->first();
-
-        if (!$data)
-            abort(404);
-
-        if ($request->ajax())
-            return response()->json($data);
-
+        $data = Model::findOrFail($id);
         $options = self::staticOptions();
 
-        return view('pages.OrderDetail', compact('data', 'options'));
+        return view('pages.VoucherDetail', compact('data', 'options'));
     }
 
     public function destroy($id)
@@ -133,7 +129,7 @@ class OrderController extends Controller
         $row = Model::findOrFail($id);
         $row->delete();
 
-        return redirect()->back()->with('f-msg', 'Order berhasil dihapus.');
+        return redirect()->back()->with('f-msg', 'Voucher berhasil dihapus.');
     }
 
     public function changeIsOpen($id)
@@ -144,32 +140,6 @@ class OrderController extends Controller
         $row->save();
 
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
-    }
-
-    public function changeStatus(Request $request, $id)
-    {
-        $request->validate([
-            'id' => ['required', 'exists:orders,id'],
-            'status' => ['required', 'numeric', 'in:1,2,3,4'],
-        ]);
-
-        $row = Model::findOrFail($id);
-
-        if ($row->status == Model::STATUS_ORDER_ACCEPTED || $row->status == Model::STATUS_ORDER_REJECTED)
-            return redirect()->back()->withErrors(['messages' => 'Sudah ditutup.']);
-
-        if ($row->amount > 5_000_000 && Auth::user()->role != 'owner')
-            return redirect()->back()->withErrors(['messages' => 'Hanya owner yang bisa mengubah status dengan order lebih dari Rp. 5.000.000.']);
-
-        // if users' role not owner, check if branch_id is same with user branch_id
-        if (Auth::user()->role != 'owner' && $row->branch_id != Auth::user()->branch_id)
-            return redirect()->back()->withErrors(['messages' => 'Hanya owner yang bisa mengubah status order dari cabang lain.']);
-
-        $row->status = $request->status;
-
-        $row->save();
-
-        return redirect()->back()->with('f-msg', 'Status order berhasil diubah.');
     }
 
     public static function staticOptions()
@@ -194,17 +164,21 @@ class OrderController extends Controller
             ['text' => 'Close', 'value' => 'close'],
         ];
 
-        $statusOrder = [
-            ['text' => 'Waiting', 'value' => 1],
-            ['text' => 'Accepted', 'value' => 2],
-            ['text' => 'Rejected', 'value' => 3],
-            ['text' => 'Hold', 'value' => 4],
+        $statusVoucher = [
+            ['text' => 'Urgent', 'value' => Model::STATUS_VOUCHER_URGENT],
+            ['text' => 'By Planning', 'value' => Model::STATUS_VOUCHER_BY_PLANNING],
+        ];
+
+        $types = [
+            ['text' => 'Pemasukan', 'value' => Model::TYPE_VOUCHER_INCOME],
+            ['text' => 'Pengeluaran', 'value' => Model::TYPE_VOUCHER_EXPENSE],
         ];
 
         $options = [
             'branches' => $branches,
             'status' => $status,
-            'statusOrder' => $statusOrder,
+            'statusVoucher' => $statusVoucher,
+            'types' => $types,
         ];
 
         return $options;

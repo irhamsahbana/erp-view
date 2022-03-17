@@ -13,6 +13,7 @@
     'value' => null,
     'required' => false,
     'disabled' => false,
+    'readonly' => false,
     'step' => null,
 ])
 
@@ -32,6 +33,7 @@
             value="{{ old($name) ?? $value ?? '' }}"
             @if($step) step="{{ $step }}" @endif
             @if($required) required @endif
-            @if($disabled) disabled @endif>
+            @if($disabled) disabled @endif
+            @if($readonly) readonly @endif>
     </div>
   </div>

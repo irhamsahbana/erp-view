@@ -75,11 +75,12 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Cabang', 'Pembuat', 'Jumlah', 'Status Order', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Pembuat', 'Jumlah', 'Status Order', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
+                                    <td>{{ $data->ref_no }}</td>
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->user->username }}</td>
                                     <td>{{ 'Rp. ' . number_format($data->amount, 2) }}</td>
@@ -121,7 +122,7 @@
                                                     title="Hapus"><i class="fas fa-trash-alt"></i></button>
                                             </form>
                                         @endif
-                                        @if(Auth::user()->role == 'owner' && ($data->status == 1 || $data->status == 4))
+                                        @if(Auth::user()->role == 'owner')
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"
@@ -134,7 +135,7 @@
                                                     class="btn btn-secondary"
                                                     onclick="return confirm('Apakah anda yakin ingin mengubah status data ini?')"
                                                     title="Ubah"><i class="fas fa-sync-alt"></i></button>
-                                            </form>
+                                                </form>
                                         @endif
                                         @if (($data->status == 1 || $data->status == 4) && Auth::user()->role == 'owner')
                                             <a
@@ -186,19 +187,22 @@
                     :step="'0.01'"
                     :label="'Jumlah'"
                     :col="4"
+                    :ID="'in_amount'"
                     :name="'amount'"
                     :required="true"></x-in-text>
                 <x-in-text
                     :type="'date'"
                     :label="'Tanggal'"
                     :col="4"
+                    :id="'in_created'"
                     :name="'created'"
                     :required="true"></x-in-text>
                 <x-in-text
                     :label="'Keterangan'"
                     :col="12"
+                    :name="'in_notes'"
                     :name="'notes'"
-                    :required="false"></x-in-text>
+                    :required="true"></x-in-text>
 
                 <x-col class="text-right">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
@@ -290,9 +294,5 @@
                 }
             });
         }
-
-        $(function() {
-
-        });
     </script>
 @endpush

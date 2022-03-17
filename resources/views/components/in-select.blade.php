@@ -13,6 +13,7 @@
     'value' => null,
     'required' => false,
     'disabled' => false,
+    'readonly' => false,
 ])
 
 @php
@@ -37,6 +38,7 @@
             id="{{ $id }}"
             name="{{ $name }}"
             @if ($required) required @endif
+            @if ($readonly) readonly @endif
             @if ($disabled) disabled @endif>
 
                 @if(!empty($placeholder))

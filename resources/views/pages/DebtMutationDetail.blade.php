@@ -42,6 +42,7 @@
                                 :name="'branch_id'"
                                 :options="$options['branches']"
                                 :value="$data->branch_id"
+                                :disabled="true"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Proyek'"
@@ -49,12 +50,14 @@
                                 :col="4"
                                 :name="'project_id'"
                                 :value="$data->project_id"
+                                :disabled="true"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Vendor'"
                                 :placeholder="'Pilih Vendor'"
                                 :col="4"
                                 :name="'vendor_id'"
+                                :disabled="true"
                                 :required="false"></x-in-select>
                             <x-in-select
                                 :label="'Jenis'"
@@ -63,6 +66,7 @@
                                 :name="'type'"
                                 :options="$options['types']"
                                 :value="$data->type"
+                                :disabled="true"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Jenis Transaksi'"
@@ -71,6 +75,7 @@
                                 :name="'transaction_type'"
                                 :options="$options['transactionTypes']"
                                 :value="$data->transaction_type"
+                                :disabled="true"
                                 :required="true"></x-in-select>
                             <x-in-text
                                 :type="'number'"

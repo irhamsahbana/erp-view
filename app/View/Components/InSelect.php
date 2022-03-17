@@ -15,6 +15,7 @@ class InSelect extends Component
     public $placeholder;
     public $required;
     public $disabled;
+    public $readonly;
 
     /**
      * Create a new component instance.
@@ -30,7 +31,8 @@ class InSelect extends Component
         $id = null,
         $placeholder = null,
         $required = null,
-        $disabled = null
+        $disabled = null,
+        $readonly = null
     ) {
         $this->label = $label;
         $this->col = $col;
@@ -41,6 +43,7 @@ class InSelect extends Component
         $this->placeholder = $placeholder;
         $this->required = $required;
         $this->disabled = $disabled;
+        $this->readonly = $readonly;
     }
 
     /**

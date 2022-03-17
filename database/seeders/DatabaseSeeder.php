@@ -28,5 +28,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(DummyDebtMutationSeeder::class);
         $this->call(DummyFuelSeeder::class);
         $this->call(DummyOrderSeeder::class);
+        $this->call(DummyVoucherSeeder::class);
     }
 }

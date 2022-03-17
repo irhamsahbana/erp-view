@@ -44,7 +44,8 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-header">TRANSAKSI</li>
-            <x-nav-item :icon="'fas fa-receipt'" :text="'Order'" :href="route('order.index')"/>
+            <x-nav-item :icon="'fas fa-receipt'" :text="'Voucher'" :href="route('voucher.index')"/>
+            <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')"/>
             <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'"/>
             <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}"/>
             <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}"/>
