@@ -15,9 +15,11 @@ class CreateFuelsTable extends Migration
     {
         Schema::create('fuels', function (Blueprint $table) {
             $table->id();
+            $table->string('ref_no')->unique();
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('vehicle_id');
             $table->float('amount', 15, 2);
+            $table->string('notes')->nullable();
             $table->boolean('is_open')->default(false);
             $table->date('created');
             $table->timestamps();

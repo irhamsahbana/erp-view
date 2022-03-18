@@ -85,12 +85,21 @@ class FuelController extends Controller
             'amount' => ['required', 'numeric'],
             'created' => ['required', 'date'],
             'is_open' => ['nullable', 'boolean'],
+            'notes' => ['nullable', 'string', 'max:255'],
         ]);
 
         $row = Model::findOrNew($request->id);
+
+        if (!$row->id) {
+            $prefix = sprintf('%s/', $row->getTable());
+            $postfix = sprintf('/%s.%s', date('m'), date('y'));
+            $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
+        }
+
         $row->branch_id = $request->branch_id;
         $row->vehicle_id = $request->vehicle_id;
         $row->amount = $request->amount;
+        $row->notes = $request->notes;
         $row->created = $request->created;
 
         if ($row->id && !$row->is_open)
@@ -159,5 +168,15 @@ class FuelController extends Controller
         $row->save();
 
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
+    }
+
+    public function print($id)
+    {
+        $fullAccess = ['owner', 'admin'];
+
+        $data = Model::findOrFail($id);
+
+        $pdf = \PDF::loadView('pdf.invoice-fuel', compact('data'));
+        return $pdf->stream();
     }
 }

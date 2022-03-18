@@ -15,6 +15,7 @@ class CreateDebtMutationsTable extends Migration
     {
         Schema::create('debt_mutations', function (Blueprint $table) {
             $table->id();
+            $table->string('ref_no')->unique();
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('vendor_id');

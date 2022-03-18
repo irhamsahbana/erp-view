@@ -100,11 +100,12 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Cabang', 'proyek', 'Vendor', 'Jenis', 'Jenis Transaksi', 'Jumlah', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Vendor', 'Jenis', 'Jenis Transaksi', 'Jumlah', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
+                                    <td>{{ $data->ref_no }}</td>
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->project->name }}</td>
                                     <td>{{ $data->vendor->name }}</td>
@@ -165,6 +166,10 @@
                                                     title="Ubah"><i class="fas fa-sync-alt"></i></button>
                                             </form>
                                         @endif
+                                        <a
+                                            href="{{ route('debt-mutation.print', $data->id) }}"
+                                            class="btn btn-info"
+                                            title="Print"><i class="fas fa-file-alt"></i></a>
                                     </td>
                                 </tr>
                             @endforeach

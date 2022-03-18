@@ -89,6 +89,13 @@ class VoucherController extends Controller
         ]);
 
         $row = Model::findOrNew($request->id);
+
+        if (!$row->id) {
+            $prefix = sprintf('%s/', $row->getTable());
+            $postfix = sprintf('/%s.%s', date('m'), date('y'));
+            $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
+        }
+
         $row->branch_id = $request->branch_id;
         $row->user_id = Auth::id();
 
@@ -100,12 +107,6 @@ class VoucherController extends Controller
         if ($row->type == Model::TYPE_VOUCHER_EXPENSE) {
             $row->order_id = $request->order_id;
             $row->status = $request->status;
-        }
-
-        if (!$row->id) {
-            $prefix = sprintf('%s/', $row->getTable());
-            $postfix = sprintf('/%s.%s', date('m'), date('y'));
-            $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
         }
 
         if ($row->id && $row->is_open === Model::IS_OPEN_CLOSE)
@@ -140,6 +141,16 @@ class VoucherController extends Controller
         $row->save();
 
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
+    }
+
+    public function print($id)
+    {
+        $fullAccess = ['owner', 'admin'];
+
+        $data = Model::findOrFail($id);
+
+        $pdf = \PDF::loadView('pdf.invoice-voucher', compact('data'));
+        return $pdf->stream();
     }
 
     public static function staticOptions()
