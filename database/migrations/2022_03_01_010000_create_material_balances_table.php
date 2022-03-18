@@ -18,8 +18,8 @@ class CreateMaterialBalancesTable extends Migration
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('material_id');
-            $table->float('unit_price', 15, 2);
             $table->float('qty', 15, 2);
+            $table->float('unit_price', 15, 2);
             $table->float('total', 15, 2);
             $table->timestamps();
         });

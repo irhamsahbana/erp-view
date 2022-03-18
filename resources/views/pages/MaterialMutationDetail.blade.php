@@ -42,6 +42,7 @@
                                 :name="'branch_id'"
                                 :options="$options['branches']"
                                 :value="$data->branch_id"
+                                :disabled="true"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Proyek'"
@@ -49,6 +50,7 @@
                                 :col="12"
                                 :name="'project_id'"
                                 :value="$data->project_id"
+                                :disabled="true"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Material'"
@@ -56,13 +58,7 @@
                                 :col="12"
                                 :name="'material_id'"
                                 :value="$data->material_id"
-                                :required="true"></x-in-select>
-                            <x-in-select
-                                :label="'Pengendara'"
-                                :placeholder="'Pilih Pengendara'"
-                                :col="12"
-                                :name="'driver_id'"
-                                :value="$data->driver_id"
+                                :disabled="true"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Jenis'"
@@ -72,6 +68,15 @@
                                 :name="'type'"
                                 :options="$options['types']"
                                 :value="$data->type == 1 ? 'in' : 'out'"
+                                :disabled="true"
+                                :required="true"></x-in-select>
+                            <x-in-select
+                                :label="'Pengendara'"
+                                :placeholder="'Pilih Pengendara'"
+                                :col="12"
+                                :name="'driver_id'"
+                                :value="$data->driver_id"
+                                :disabled="$data->type == 1 ? true : false"
                                 :required="true"></x-in-select>
                             <x-in-text
                                 :type="'number'"
@@ -96,6 +101,7 @@
                                 :col="4"
                                 :name="'cost'"
                                 :value="$data->cost"
+                                :disabled="$data->type == 1 ? true : false"
                                 :required="true"></x-in-text>
                             <x-in-text
                                 :type="'date'"
@@ -126,6 +132,7 @@
     <meta name="data-project" content={{ $data->project_id ?? null }}>
     <meta name="data-material" content={{ $data->material_id ?? null }}>
     <meta name="data-driver" content={{ $data->driver_id ?? null }}>
+    <meta name="data-cost" content={{ $data->cost ?? null }}>
 
 
     <meta name="url-branch" content="{{ route('branch.index') }}">
@@ -212,34 +219,6 @@
                 });
             });
 
-            // Get material
-            function loadMaterial() {
-                selectMaterial.select2({
-                    theme: 'bootstrap4',
-                    placeholder: 'Pilih Material',
-                    allowClear: true,
-                    async: false,
-                    ajax: {
-                        url: $('meta[name="url-material"]').attr('content'),
-                        dataType: 'json',
-                        delay: 250,
-                        processResults: function (data) {
-                            let results = data.datas.map(function (item) {
-                                return {
-                                    id: item.id,
-                                    text: item.name,
-                                };
-                            });
-
-                            return {
-                                results: results
-                            };
-                        },
-                        cache: true
-                    }
-                });
-            }
-
             loadMaterial();
 
             let dataMaterial = $('meta[name="data-material"]').attr('content');
@@ -269,6 +248,34 @@
 
             if (selectBranch.val() != '')
                 selectBranch.trigger('change');
+
+             // Get material
+             function loadMaterial() {
+                selectMaterial.select2({
+                    theme: 'bootstrap4',
+                    placeholder: 'Pilih Material',
+                    allowClear: true,
+                    async: false,
+                    ajax: {
+                        url: $('meta[name="url-material"]').attr('content'),
+                        dataType: 'json',
+                        delay: 250,
+                        processResults: function (data) {
+                            let results = data.datas.map(function (item) {
+                                return {
+                                    id: item.id,
+                                    text: item.name,
+                                };
+                            });
+
+                            return {
+                                results: results
+                            };
+                        },
+                        cache: true
+                    }
+                });
+            }
         });
     </script>
 @endpush

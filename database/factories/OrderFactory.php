@@ -28,15 +28,13 @@ class OrderFactory extends Factory
         else
             $isOpen = 0;
 
-        $notes = [null, $this->faker->sentence(5)];
-
         return [
             'ref_no' => 'O/' . $this->faker->unique()->randomNumber(6),
             'branch_id' => $branchId,
             'user_id' => $user->id,
             'status' => $status,
             'amount' => $this->faker->randomFloat(2, 2_000_000, 10_000_000),
-            'notes' => $this->faker->randomElement($notes),
+            'notes' => $this->faker->text,
             'is_open' => $isOpen,
             'created' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];

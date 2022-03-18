@@ -75,15 +75,15 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Pembuat', 'Jumlah', 'Status Order', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Jumlah', 'Keterangan', 'Status Order', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
                                     <td>{{ $data->ref_no }}</td>
                                     <td>{{ $data->branch->name }}</td>
-                                    <td>{{ $data->user->username }}</td>
                                     <td>{{ 'Rp. ' . number_format($data->amount, 2) }}</td>
+                                    <td>{{ $data->notes }}</td>
                                     <td>
                                         @if($data->status == '1')
                                             Waiting
@@ -107,7 +107,7 @@
                                             <a
                                                 href="{{ route('order.show', $data->id) }}"
                                                 class="btn btn-warning"
-                                                title="Ubah"><i class="fas fa-pencil-alt"></i></a>
+                                                title="Ubah Detail"><i class="fas fa-pencil-alt"></i></a>
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"
@@ -134,13 +134,14 @@
                                                     type="submit"
                                                     class="btn btn-secondary"
                                                     onclick="return confirm('Apakah anda yakin ingin mengubah status data ini?')"
-                                                    title="Ubah"><i class="fas fa-sync-alt"></i></button>
+                                                    title="Ubah ke {{ $data->is_open ? 'Close' : 'Open' }}"><i class="fas fa-sync-alt"></i></button>
                                                 </form>
                                         @endif
                                         @if (($data->status == 1 || $data->status == 4) && Auth::user()->role == 'owner')
                                             <a
                                                 type="button"
                                                 class="btn btn-primary"
+                                                title="Ubah Status Order"
                                                 onclick="changeStatus({{ $data->id }})"
                                                 href="javascript:void(0)"><i class="fas fa-stream"></i></a>
                                         @elseif(

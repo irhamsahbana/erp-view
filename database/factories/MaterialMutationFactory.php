@@ -9,6 +9,7 @@ use App\Models\{
     Project,
     Material,
     Driver,
+    MaterialMutation
 };
 
 class MaterialMutationFactory extends Factory
@@ -34,7 +35,7 @@ class MaterialMutationFactory extends Factory
             'project_id' => $projectId,
             'material_id' => $this->faker->randomElement($materialIds),
             'driver_id' => $this->faker->randomElement($driverIds),
-            'type' => $this->faker->boolean,
+            'type' => $this->faker->randomElement([MaterialMutation::TYPE_IN, MaterialMutation::TYPE_OUT]),
             'material_price' => $this->faker->randomFloat(2, 2000000, 10000000),
             'volume' => $this->faker->randomFloat(2, 100, 300),
             'cost' => $this->faker->randomFloat(2, 2000000, 10000000),

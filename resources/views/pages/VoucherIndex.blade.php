@@ -431,39 +431,6 @@
                     }
                 });
             });
-
-            autofill.on('click', function() {
-                const type = $('#in_type').val();
-                const status = $('#in_add_status').val();
-                const order = $('#in_order_id').val();
-
-                let update = confirm('Apakah anda yakin ingin mengubah jumlah, tanggal dan keterangan data ini?');
-
-                if (!update)
-                    return;
-
-                if (type == 2 && status == 2 && order != '') {
-                    const order = $('#in_order_id').val();
-                    let url = $('meta[name="url-order-show"]').attr('content');
-                    url = url.replace('dummy-id', order);
-
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        success: function(data) {
-                            $('#in_amount').val(data.amount);
-                            $('#in_created').val(data.created);
-                            $('#in_notes').val(data.notes);
-                        }
-                    });
-                } else {
-                    $('#in_amount').val('');
-                    $('#in_created').val('');
-                    $('#in_notes').val('');
-
-                    alert('Hanya bisa autofill jika jenis voucher adalah pengeluaran dan status voucher adalah by planinng, serta order terisi');
-                }
-            });
         });
     </script>
 @endpush
