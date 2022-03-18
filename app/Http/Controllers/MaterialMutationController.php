@@ -53,7 +53,7 @@ class MaterialMutationController extends Controller
             if ($type == 'in')
                 $query->where('type', 1);
             else if ($type == 'out')
-                $query->where('type', 0);
+                $query->where('type', 2);
         }
 
         if ($request->date_start)
@@ -75,11 +75,13 @@ class MaterialMutationController extends Controller
 
     public function store(Request $request)
     {
+        $fullAccess = ['owner', 'admin'];
+
         $request->validate([
             'id' => ['nullable', 'exists:material_mutations,id'],
-            'branch_id' => ['required', 'exists:branches,id'],
-            'project_id' => ['required', 'exists:projects,id'],
-            'material_id' => ['required', 'exists:materials,id'],
+            'branch_id' => ['required_without:id', 'exists:branches,id'],
+            'project_id' => ['required_without:id', 'exists:projects,id'],
+            'material_id' => ['required_without:id', 'exists:materials,id'],
             'driver_id' => ['nullable', 'required_if:type,out', 'exists:drivers,id'],
 
             'type' => ['required', 'in:in,out'],
@@ -90,29 +92,30 @@ class MaterialMutationController extends Controller
             'created' => ['required', 'date'],
         ]);
 
-        $fullAccess = ['owner', 'admin'];
-
         $row = Model::findOrNew($request->id);
 
         if ($row->id && !$row->is_open)
             return redirect()->back()->withErrors(['messages' => 'Sudah ditutup.']);
 
-        if (in_array(Auth::user()->role, $fullAccess))
-            $row->branch_id = $request->branch_id;
-        else
-            $row->branch_id = Auth::user()->branch_id;
+        if (!$row->id) {
+            if (in_array(Auth::user()->role, $fullAccess))
+                $row->branch_id = $request->branch_id;
+            else
+                $row->branch_id = Auth::user()->branch_id;
 
-        $row->project_id = $request->project_id;
-        $row->material_id = $request->material_id;
+                $row->project_id = $request->project_id;
+                $row->material_id = $request->material_id;
+        }
+
 
         $row->volume = $request->volume;
         $row->created = $request->created;
 
         $balance = MaterialBalance::firstOrNew([
-                                'branch_id' => $row->branch_id,
-                                'project_id' => $request->project_id,
-                                'material_id' => $request->material_id
-                            ]);
+                                    'branch_id' => $row->branch_id,
+                                    'project_id' => $row->project_id,
+                                    'material_id' => $row->material_id
+                                ]);
 
         if ($request->type == 'in') {
             $row->type = 1;
@@ -131,7 +134,7 @@ class MaterialMutationController extends Controller
 
             $balance->save();
         } else if ($request->type == 'out') {
-            $row->type = 0;
+            $row->type = 2;
             $row->driver_id = $request->driver_id;
             $row->cost = $request->cost;
 

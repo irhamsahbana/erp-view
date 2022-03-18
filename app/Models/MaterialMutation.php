@@ -9,6 +9,9 @@ class MaterialMutation extends Model
 {
     use HasFactory;
 
+    const TYPE_IN = 1;
+    const TYPE_OUT = 2;
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);

@@ -93,10 +93,10 @@
                                 :value="$data->notes"
                                 :required="true"></x-in-text>
 
-                            <x-col class="text-left">
+                            {{-- <x-col class="text-left">
                                 <a class="btn btn-primary" id="autofill-amount-created" href="javascript:void(0)">
                                     Autofill Jumlah, Tanggal dan Keterangan</a>
-                            </x-col>
+                            </x-col> --}}
                             <x-col class="text-right">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </x-col>
@@ -123,6 +123,7 @@
             const selectBranch = $('#in_branch_id');
             const selectType = $('#in_type');
             const selectStatus = $('#in_add_status');
+            const selectOrder = $('#in_order_id');
 
             const autofill = $('#autofill-amount-created');
 
@@ -164,14 +165,25 @@
                 const type = $(this).val();
                 const status = $('#in_add_status');
                 const order = $('#in_order_id');
+                const amount = $('#in_amount');
+                const created = $('#in_created');
+                const notes = $('#in_notes');
 
-
-                if (type == 1) {
+                if (type == 1) { // pemasukan
                     status.prop('disabled', true);
                     order.prop('disabled', true);
 
                     status.val('');
                     order.val('').trigger('change');
+                    amount.val('');
+                    created.val('');
+                    notes.val('');
+
+                    //clear readonly prop
+                    amount.prop('readonly', false);
+                    created.prop('readonly', false);
+                    notes.prop('readonly', false);
+
                 } else if (type == 2) {
                     status.prop('disabled', false);
                     order.prop('disabled', false);
@@ -186,54 +198,72 @@
 
             selectStatus.on('change', function() {
                 const status = $(this).val();
-                const order = $('#in_order_id');
                 const type = $('#in_type').val();
+                const order = $('#in_order_id');
 
-                if (type == 2) {
-                    if (status == 1) {
-                        order.prop('disabled', false);
-                    } else if (status == 2) {
-                        order.prop('disabled', false);
-                    } else {
-                        order.prop('disabled', false);
-                    }
+                if (type == 2 && status == 1) { // pengeluaran dan urgent
+                    order.val('').trigger('change');
+                    order.prop('disabled', true);
+
+                    // disable read only created, amount, notes
+                    $('#in_created').prop('readonly', false);
+                    $('#in_amount').prop('readonly', false);
+                    $('#in_notes').prop('readonly', false);
+                } else if (type == 2 && status == 2) { // pengeluaran dan by planning
+                    order.prop('disabled', false);
+                } else { // tidak diisi
+                    order.prop('disabled', true);
                 }
+
+                $('#in_amount').val('');
+                $('#in_created').val('');
+                $('#in_notes').val('');
             });
 
-            autofill.on('click', function() {
-                const type = $('#in_type').val();
-                const status = $('#in_add_status').val();
-                const order = $('#in_order_id').val();
+            selectOrder.on('change', function() {
+                const orderId = $(this).val();
+                let urlOrder = $('meta[name="url-order-show"]').attr('content');
 
-                let update = confirm('Apakah anda yakin ingin mengubah jumlah, tanggal dan keterangan data ini?');
-
-                if (!update)
+                if (orderId == '')
                     return;
 
-                if (type == 2 && status == 2 && order != '') {
-                    const order = $('#in_order_id').val();
-                    let url = $('meta[name="url-order-show"]').attr('content');
-                    url = url.replace('dummy-id', order);
+                urlOrder = urlOrder.replace('dummy-id', orderId);
 
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        success: function(data) {
-                            $('#in_amount').val(data.amount);
-                            $('#in_created').val(data.created);
-                            $('#in_notes').val(data.notes);
-                        }
-                    });
-                } else {
-                    $('#in_amount').val('');
-                    $('#in_created').val('');
-                    $('#in_notes').val('');
 
-                    alert('Hanya bisa autofill jika jenis voucher adalah pengeluaran dan status voucher adalah by planinng, serta order terisi');
-                }
+                $.ajax({
+                    url: urlOrder,
+                    type: 'GET',
+                    data: {
+                        id: orderId,
+                    },
+                    success: function(data) {
+                        const amount = $('#in_amount');
+                        const created = $('#in_created');
+                        const notes = $('#in_notes');
+
+                        amount.val(data.amount);
+                        created.val(data.created);
+                        notes.val(data.notes);
+
+                        //make readonly for field above
+                        amount.prop('readonly', true);
+                        created.prop('readonly', true);
+                        notes.prop('readonly', true);
+                    },
+                    error: function(err) {
+                        amount.val('');
+                        created.val('');
+                        notes.val('');
+
+                        //show error in alert
+                        alert(err.responseJSON.message);
+
+                    }
+                });
             });
 
             selectBranch.trigger('change');
+            selectType.trigger('change');
         });
     </script>
 @endpush

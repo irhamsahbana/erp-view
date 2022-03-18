@@ -9,11 +9,6 @@ use App\Models\Branch;
 
 class DriverController extends Controller
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request)
     {
         $query = Model::select('*');

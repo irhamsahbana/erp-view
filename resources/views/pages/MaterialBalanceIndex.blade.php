@@ -24,7 +24,7 @@
             <x-card-collapsible>
                 <x-row>
                     <x-col>
-                        <x-table :thead="['Cabang', 'proyek', 'Material', 'Kuantitas (Volume)', 'Harga Satuan', 'Saldo']">
+                        <x-table :thead="['Cabang', 'proyek', 'Material', 'Kuantitas (Volume)', 'Saldo']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
@@ -32,7 +32,6 @@
                                     <td>{{ $data->project->name }}</td>
                                     <td>{{ $data->material->name }}</td>
                                     <td>{{ number_format($data->qty, 2) }}</td>
-                                    <td>{{ 'Rp. ' . number_format($data->unit_price, 2) }}</td>
                                     <td>{{ 'Rp. ' . number_format($data->total, 2) }}</td>
                                 </tr>
                             @endforeach

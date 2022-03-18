@@ -108,7 +108,7 @@
                                     <td>{{ $data->material->name }}</td>
                                     <td>{{ $data->driver->name ?? null }}</td>
                                     <td>
-                                        @if($data->type)
+                                        @if($data->type == 1)
                                             Masuk
                                         @else
                                             Keluar
@@ -222,7 +222,7 @@
                     :type="'number'"
                     :step="'0.01'"
                     :label="'Harga Material'"
-                    :col="4"
+                    :col="3"
                     :id="'in_material_price'"
                     :name="'material_price'"
                     :value="old('material_price')"
@@ -231,7 +231,7 @@
                     :type="'number'"
                     :step="'0.01'"
                     :label="'Volume'"
-                    :col="4"
+                    :col="3"
                     :id="'in_volume'"
                     :name="'volume'"
                     :value="old('volume')"
@@ -240,7 +240,7 @@
                     :type="'number'"
                     :step="'0.01'"
                     :label="'Biaya'"
-                    :col="4"
+                    :col="3"
                     :id="'in_cost'"
                     :name="'cost'"
                     :value="old('cost')"
@@ -248,9 +248,15 @@
                 <x-in-text
                     :type="'date'"
                     :label="'Tanggal'"
-                    :col="12"
+                    :col="3"
                     :id="'in_created'"
                     :name="'created'"
+                    :required="true"></x-in-text>
+                <x-in-text
+                    :label="'Catatan'"
+                    :col="12"
+                    :id="'in_notes'"
+                    :name="'notes'"
                     :required="true"></x-in-text>
 
                 <x-col class="text-right">
@@ -591,15 +597,18 @@
 
             selectType.on('change', function() {
                 if (this.value == 'in' || this.value == '') {
+                    $( "#in_material_price" ).prop( "disabled", false );
                     $( "#in_driver_id" ).prop( "disabled", true );
                     $( "#in_cost" ).prop( "disabled", true );
 
-                    $( "#in_material_price" ).prop( "disabled", false );
+                    $( "#in_driver_id" ).val('').trigger('change');
+                    $( "#in_cost" ).val('');
                 } else if (this.value == 'out'){
                     $( "#in_driver_id" ).prop( "disabled", false );
                     $( "#in_cost" ).prop( "disabled", false );
-
                     $( "#in_material_price" ).prop( "disabled", true );
+
+                    $( "#in_material_price" ).val('').trigger('change');
                 }
             });
         });
