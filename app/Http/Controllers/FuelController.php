@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 use App\Models\Fuel as Model;
 use App\Models\Branch;
@@ -176,7 +177,7 @@ class FuelController extends Controller
 
         $data = Model::findOrFail($id);
 
-        $pdf = \PDF::loadView('pdf.invoice-fuel', compact('data'));
+        $pdf = PDF::loadView('pdf.invoice-fuel', compact('data'));
         return $pdf->stream();
     }
 }

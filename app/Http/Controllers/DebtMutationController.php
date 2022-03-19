@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 use App\Http\Controllers\Repositories\DebtMutation;
 
@@ -234,7 +235,7 @@ class DebtMutationController extends Controller
 
         $data = Model::findOrFail($id);
 
-        $pdf = \PDF::loadView('pdf.invoice-debt-mutation', compact('data'));
+        $pdf = PDF::loadView('pdf.invoice-debt-mutation', compact('data'));
         return $pdf->stream();
     }
 

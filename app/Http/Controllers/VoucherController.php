@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 use App\Models\Voucher as Model;
 use App\Models\Branch;
@@ -149,7 +150,7 @@ class VoucherController extends Controller
 
         $data = Model::findOrFail($id);
 
-        $pdf = \PDF::loadView('pdf.invoice-voucher', compact('data'));
+        $pdf = PDF::loadView('pdf.invoice-voucher', compact('data'));
         return $pdf->stream();
     }
 
