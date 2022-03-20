@@ -64,6 +64,12 @@
                                 :name="'amount'"
                                 :value="$data->amount"
                                 :required="true"></x-in-text>
+                            <x-in-text
+                                :label="'Keterangan'"
+                                :col="12"
+                                :name="'notes'"
+                                :value="$data->notes"
+                                :required="true"></x-in-text>
 
                             <x-col class="text-right">
                                 <button type="submit" class="btn btn-primary">Simpan</button>

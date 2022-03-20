@@ -106,12 +106,14 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('voucher', [VoucherController::class, 'store'])->name('voucher.store');
         Route::delete('voucher/{id}', [VoucherController::class, 'destroy'])->name('voucher.destroy');
         Route::put('voucher/ubah-status/{id}', [VoucherController::class, 'changeIsOpen'])->name('voucher.change-status');
+        Route::get('voucher/cetak/{id}', [VoucherController::class, 'print'])->name('voucher.print');
 
         Route::get('solar', [FuelController::class, 'index'])->name('fuel.index');
         Route::post('solar', [FuelController::class, 'store'])->name('fuel.store');
         Route::get('solar/{id}', [FuelController::class, 'show'])->name('fuel.show');
         Route::delete('solar/{id}', [FuelController::class, 'destroy'])->name('fuel.destroy');
         Route::put('solar/ubah-status/{id}', [FuelController::class, 'changeIsOpen'])->name('fuel.change-status');
+        Route::get('solar/cetak/{id}', [FuelController::class, 'print'])->name('fuel.print');
 
         Route::get('mutasi-material/saldo', [MaterialMutationController::class, 'balance'])->name('material-mutation.balance');
         Route::get('mutasi-material', [MaterialMutationController::class, 'index'])->name('material-mutation.index');
@@ -127,10 +129,8 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('mutasi-hutang/{id}', [DebtMutationController::class, 'show'])->name('debt-mutation.show');
         Route::delete('mutasi-hutang/{id}', [DebtMutationController::class, 'destroy'])->name('debt-mutation.destroy');
         Route::put('mutasi-hutang/ubah-status/{id}', [DebtMutationController::class, 'changeIsOpen'])->name('debt-mutation.change-status');
-
-        // Route::view('mutasi-hutang', 'pages.DebtTransactionIndex');
+        Route::get('mutasi-hutang/cetak/{id}', [DebtMutationController::class, 'print'])->name('debt-mutation.print');
     });
-
 });
 
 

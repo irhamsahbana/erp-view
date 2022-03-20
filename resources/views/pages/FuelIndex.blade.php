@@ -78,14 +78,16 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Cabang', 'Nomor Kendaraan', 'Jumlah (Liter)', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Nomor Kendaraan', 'Jumlah (Liter)','keterangan', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
+                                    <td>{{ $data->ref_no }}</td>
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->vehicle->license_plate }}</td>
                                     <td>{{ $data->amount }}</td>
+                                    <td>{{ $data->notes }}</td>
                                     <td>
                                         @if($data->is_open)
                                             <span class="badge badge-success">Open</span>
@@ -128,6 +130,10 @@
                                                     title="Ubah"><i class="fas fa-sync-alt"></i></button>
                                             </form>
                                         @endif
+                                            <a
+                                                href="{{ route('fuel.print', $data->id) }}"
+                                                class="btn btn-info"
+                                                title="Print"><i class="fas fa-file-alt"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -175,6 +181,11 @@
                     :label="'Jumlah (Liter)'"
                     :col="12"
                     :name="'amount'"
+                    :required="true"></x-in-text>
+                <x-in-text
+                    :label="'Keterangan'"
+                    :col="12"
+                    :name="'notes'"
                     :required="true"></x-in-text>
 
                 <x-col class="text-right">

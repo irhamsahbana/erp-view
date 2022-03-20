@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\DB;
 
 class Controller extends LaravelController
 {
-        /*
+    protected static $fullAccess = ['owner', 'admin'];
+
+    /*
      * Default generator ref no PREFIX+XXXX
      *
      * @return String

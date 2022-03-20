@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 use App\Models\Voucher as Model;
 use App\Models\Branch;
 
 class VoucherController extends Controller
 {
-    private $fullAccess = ['owner', 'admin'];
-
     public function __construct()
     {
         $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
@@ -23,7 +22,7 @@ class VoucherController extends Controller
         $query = Model::select('*');
 
         if ($request->branch_id) {
-            if (!in_array(Auth::user()->role, $this->fullAccess))
+            if (!in_array(Auth::user()->role, self::$fullAccess))
                 $query->where('branch_id', Auth::user()->branch_id);
             else
                 $query->where('branch_id', $request->branch_id);
@@ -55,7 +54,7 @@ class VoucherController extends Controller
 
         $query->orderBy('created', 'desc');
 
-        if (!in_array(Auth::user()->role, $this->fullAccess))
+        if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 
         $datas = $query->paginate(40)->withQueryString();
@@ -89,6 +88,13 @@ class VoucherController extends Controller
         ]);
 
         $row = Model::findOrNew($request->id);
+
+        if (!$row->id) {
+            $prefix = sprintf('%s/', $row->getTable());
+            $postfix = sprintf('/%s.%s', date('m'), date('y'));
+            $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
+        }
+
         $row->branch_id = $request->branch_id;
         $row->user_id = Auth::id();
 
@@ -100,12 +106,6 @@ class VoucherController extends Controller
         if ($row->type == Model::TYPE_VOUCHER_EXPENSE) {
             $row->order_id = $request->order_id;
             $row->status = $request->status;
-        }
-
-        if (!$row->id) {
-            $prefix = sprintf('%s/', $row->getTable());
-            $postfix = sprintf('/%s.%s', date('m'), date('y'));
-            $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
         }
 
         if ($row->id && $row->is_open === Model::IS_OPEN_CLOSE)
@@ -142,12 +142,21 @@ class VoucherController extends Controller
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
     }
 
-    public static function staticOptions()
+    public function print($id)
     {
         $fullAccess = ['owner', 'admin'];
+
+        $data = Model::findOrFail($id);
+
+        $pdf = PDF::loadView('pdf.invoice-voucher', compact('data'));
+        return $pdf->stream();
+    }
+
+    public static function staticOptions()
+    {
         $branches = Branch::all();
 
-        if (!in_array(Auth::user()->role, $fullAccess))
+        if (!in_array(Auth::user()->role, self::$fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
 
         if ($branches->isNotEmpty()) {

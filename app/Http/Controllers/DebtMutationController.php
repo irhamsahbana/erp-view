@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 use App\Http\Controllers\Repositories\DebtMutation;
 
@@ -92,6 +93,12 @@ class DebtMutationController extends Controller
         ]);
 
         $row = Model::findOrNew($request->id);
+
+        if (!$row->id) {
+            $prefix = sprintf('%s/', $row->getTable());
+            $postfix = sprintf('/%s.%s', date('m'), date('y'));
+            $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
+        }
 
         $oldAmount = $row->amount;
 
@@ -220,6 +227,16 @@ class DebtMutationController extends Controller
         $datas = $query->paginate(40)->withQueryString();
 
         return view('pages.DebtBalanceIndex', compact('datas'));
+    }
+
+    public function print($id)
+    {
+        $fullAccess = ['owner', 'admin'];
+
+        $data = Model::findOrFail($id);
+
+        $pdf = PDF::loadView('pdf.invoice-debt-mutation', compact('data'));
+        return $pdf->stream();
     }
 
     public static function staticOptions()
