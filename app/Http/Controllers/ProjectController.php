@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Project as Model;
 use App\Models\Branch;
@@ -63,12 +64,11 @@ class ProjectController extends Controller
         return redirect()->back()->with('f-msg', 'Proyek berhasil dihapus.');
     }
 
-    public static function options()
+    public static function staticOptions()
     {
-        $fullAccess = ['owner', 'admin'];
         $branches = Branch::all();
 
-        if (!in_array(Auth::user()->role, $fullAccess))
+        if (!in_array(Auth::user()->role, self::$fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
 
         if ($branches->isNotEmpty()) {

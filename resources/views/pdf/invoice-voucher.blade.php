@@ -32,7 +32,7 @@
                 </td>
             </tr>
 
-            <tr class="heading">
+            <tr class="heading yellow">
                 <td>Detail</td>
 
                 <td></td>
@@ -65,7 +65,7 @@
         </table>
     </div>
 
-    <div class="invoice-box">
+    <div class="invoice-box yellow">
         <table cellpadding="0" cellspacing="0" style="margin-b">
             <tr class="top">
                 <td colspan="2">

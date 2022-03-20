@@ -12,8 +12,6 @@ use App\Models\Branch;
 
 class VoucherController extends Controller
 {
-    private $fullAccess = ['owner', 'admin'];
-
     public function __construct()
     {
         $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
@@ -24,7 +22,7 @@ class VoucherController extends Controller
         $query = Model::select('*');
 
         if ($request->branch_id) {
-            if (!in_array(Auth::user()->role, $this->fullAccess))
+            if (!in_array(Auth::user()->role, self::$fullAccess))
                 $query->where('branch_id', Auth::user()->branch_id);
             else
                 $query->where('branch_id', $request->branch_id);
@@ -56,7 +54,7 @@ class VoucherController extends Controller
 
         $query->orderBy('created', 'desc');
 
-        if (!in_array(Auth::user()->role, $this->fullAccess))
+        if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 
         $datas = $query->paginate(40)->withQueryString();
@@ -156,10 +154,9 @@ class VoucherController extends Controller
 
     public static function staticOptions()
     {
-        $fullAccess = ['owner', 'admin'];
         $branches = Branch::all();
 
-        if (!in_array(Auth::user()->role, $fullAccess))
+        if (!in_array(Auth::user()->role, self::$fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
 
         if ($branches->isNotEmpty()) {

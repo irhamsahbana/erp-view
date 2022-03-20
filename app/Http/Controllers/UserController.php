@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\User as Model;
 use App\Models\Branch;
@@ -13,30 +14,7 @@ class UserController extends Controller
     public function index()
     {
         $datas = Model::all();
-
-        $branches = Branch::all();
-        if ($branches->isNotEmpty()) {
-            $branches = $branches->map(function ($branch) {
-                return [
-                    'text' => $branch->name,
-                    'value' => $branch->id,
-                ];
-            });
-        }
-
-        $roles = [
-            ['text' => 'Owner', 'value' => 'owner' ],
-            ['text' => 'Admin', 'value' => 'admin'],
-            ['text' => 'Kepala Cabang', 'value' => 'branch_head'],
-            ['text' => 'Akutansi', 'value' => 'accountant'],
-            ['text' => 'Kasir', 'value' => 'cashier'],
-            ['text' => 'Material', 'value' => 'material'],
-        ];
-
-        $options = [
-            'branches' => $branches,
-            'roles' => $roles,
-        ];
+        $options = self::staticOptions();
 
         return view('pages.UserIndex', compact('datas', 'options'));
     }
@@ -103,5 +81,38 @@ class UserController extends Controller
         $row->delete();
 
         return redirect()->back()->with('f-msg', 'Pengguna berhasil dihapus.');
+    }
+
+    public static function staticOptions()
+    {
+        $branches = Branch::all();
+
+        if (!in_array(Auth::user()->role, self::$fullAccess))
+            $branches = $branches->where('id', Auth::user()->branch_id);
+
+        if ($branches->isNotEmpty()) {
+            $branches = $branches->map(function ($branch) {
+                return [
+                    'text' => $branch->name,
+                    'value' => $branch->id,
+                ];
+            });
+        }
+
+        $roles = [
+            ['text' => 'Owner', 'value' => 'owner' ],
+            ['text' => 'Admin', 'value' => 'admin'],
+            ['text' => 'Kepala Cabang', 'value' => 'branch_head'],
+            ['text' => 'Akutansi', 'value' => 'accountant'],
+            ['text' => 'Kasir', 'value' => 'cashier'],
+            ['text' => 'Material', 'value' => 'material'],
+        ];
+
+        $options = [
+            'branches' => $branches,
+            'roles' => $roles,
+        ];
+
+        return $options;
     }
 }

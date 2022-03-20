@@ -34,7 +34,7 @@
                 </td>
             </tr>
 
-            <tr class="heading">
+            <tr class="heading green">
                 <td>Detail</td>
 
                 <td></td>

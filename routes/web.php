@@ -130,11 +130,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('mutasi-hutang/{id}', [DebtMutationController::class, 'destroy'])->name('debt-mutation.destroy');
         Route::put('mutasi-hutang/ubah-status/{id}', [DebtMutationController::class, 'changeIsOpen'])->name('debt-mutation.change-status');
         Route::get('mutasi-hutang/cetak/{id}', [DebtMutationController::class, 'print'])->name('debt-mutation.print');
-
-
-        // Route::view('mutasi-hutang', 'pages.DebtTransactionIndex');
     });
-
 });
 
 

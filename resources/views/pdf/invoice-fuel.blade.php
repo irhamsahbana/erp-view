@@ -52,7 +52,7 @@
                 <td>1000</td>
             </tr> --}}
 
-            <tr class="heading">
+            <tr class="heading blue">
                 <td>Detail</td>
 
                 <td></td>

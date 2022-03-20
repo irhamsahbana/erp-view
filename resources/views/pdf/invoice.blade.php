@@ -54,6 +54,18 @@
 				font-weight: bold;
 			}
 
+			.invoice-box table tr.heading.blue td {
+				background: rgb(1, 196, 255);
+			}
+
+			.invoice-box table tr.heading.green td {
+				background: rgb(63, 255, 89);
+			}
+
+			.invoice-box table tr.heading.yellow td {
+				background: rgb(236, 226, 78);
+			}
+
 			.invoice-box table tr.details td {
 				padding-bottom: 20px;
 			}
