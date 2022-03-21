@@ -43,12 +43,16 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          {{-- <li class="nav-header">LAPORAN</li>
+          <x-nav-item :icon="'fas fa-gas-pump'" :text="'Frekuensi Penggunaan Solar'" :href="'/transaksi/solar'"/> --}}
           <li class="nav-header">TRANSAKSI</li>
             <x-nav-item :icon="'fas fa-receipt'" :text="'Voucher'" :href="route('voucher.index')"/>
             <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')"/>
             <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'"/>
             <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}"/>
             <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}"/>
+            <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'" href="{{ route('rit-mutation.index') }}"/>
+            <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'" href="{{ route('rit-mutation.balance') }}"/>
             <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}"/>
             <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}"/>
 
@@ -61,10 +65,10 @@
               <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" href="{{ route('driver.index') }}"/>
               <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}"/>
               <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}"/>
-            </li>
           @endif
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
     </div>
     <!-- /.sidebar -->
+    <i class="fas fa-truck-loading"></i>

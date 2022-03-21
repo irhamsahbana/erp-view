@@ -28,17 +28,21 @@ class MaterialMutationFactory extends Factory
         $projectId = $projects->first()->id;
 
         $materialIds = Material::all()->pluck('id')->toArray();
-        $driverIds = Driver::where('branch_id', $branchId)->pluck('id')->toArray();
+        $type = $this->faker->randomElement([MaterialMutation::TYPE_IN, MaterialMutation::TYPE_OUT]);
+
+        if ($type == MaterialMutation::TYPE_IN) {
+            $materialPrice = $this->faker->randomFloat(2, 2_000_000, 5_000_000);
+        } else {
+            $materialPrice = 0;
+        }
 
         return [
             'branch_id' => $branchId,
             'project_id' => $projectId,
             'material_id' => $this->faker->randomElement($materialIds),
-            'driver_id' => $this->faker->randomElement($driverIds),
-            'type' => $this->faker->randomElement([MaterialMutation::TYPE_IN, MaterialMutation::TYPE_OUT]),
-            'material_price' => $this->faker->randomFloat(2, 2000000, 10000000),
+            'type' => $type,
+            'material_price' => $materialPrice,
             'volume' => $this->faker->randomFloat(2, 100, 300),
-            'cost' => $this->faker->randomFloat(2, 2000000, 10000000),
             'is_open' => $this->faker->boolean,
             'created' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
