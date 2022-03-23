@@ -14,6 +14,7 @@ use App\Http\Controllers\{
     DriverController,
     MaterialMutationController,
     DebtMutationController,
+    RitMutationController,
     OrderController,
     VendorController,
     VoucherController,
@@ -130,6 +131,14 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('mutasi-hutang/{id}', [DebtMutationController::class, 'destroy'])->name('debt-mutation.destroy');
         Route::put('mutasi-hutang/ubah-status/{id}', [DebtMutationController::class, 'changeIsOpen'])->name('debt-mutation.change-status');
         Route::get('mutasi-hutang/cetak/{id}', [DebtMutationController::class, 'print'])->name('debt-mutation.print');
+
+        Route::get('mutasi-hutang-ritase/saldo', [RitMutationController::class, 'balance'])->name('rit-mutation.balance');
+        Route::get('mutasi-hutang-ritase', [RitMutationController::class, 'index'])->name('rit-mutation.index');
+        Route::post('mutasi-hutang-ritase', [RitMutationController::class, 'store'])->name('rit-mutation.store');
+        Route::get('mutasi-hutang-ritase/{id}', [RitMutationController::class, 'show'])->name('rit-mutation.show');
+        Route::delete('mutasi-hutang-ritase/{id}', [RitMutationController::class, 'destroy'])->name('rit-mutation.destroy');
+        Route::put('mutasi-hutang-ritase/ubah-status/{id}', [RitMutationController::class, 'changeIsOpen'])->name('rit-mutation.change-status');
+        // Route::get('mutasi-hutang-ritase/cetak/{id}', [RitMutationController::class, 'print'])->name('debt-mutation.print');
     });
 });
 
@@ -137,7 +146,6 @@ Route::group(['middleware' => ['auth']], function(){
 Route::get('/test', [TestController::class, 'test']);
 
 Route::get('/delete-debt', function() {
-//delete all
     $debtBalance = DebtBalance::all();
     foreach ($debtBalance as $db) {
         $db->delete();
@@ -152,13 +160,11 @@ Route::get('/delete-debt', function() {
 });
 
 Route::get('delete-material', function() {
-    // delete balance
     $materialBalance = MaterialBalance::all();
     foreach ($materialBalance as $db) {
         $db->delete();
     }
 
-    // delete mutation
     $materialMutation = MaterialMutation::all();
     foreach ($materialMutation as $dm) {
         $dm->delete();

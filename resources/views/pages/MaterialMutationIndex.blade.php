@@ -32,7 +32,7 @@
                         <x-in-select
                             :label="'Cabang'"
                             :placeholder="'Pilih Cabang'"
-                            :col="6"
+                            :col="4"
                             :name="'branch_id'"
                             :options="$options['branches']"
                             :value="app('request')->input('branch_id') ?? null"
@@ -40,20 +40,14 @@
                         <x-in-select
                             :label="'Proyek'"
                             :placeholder="'Pilih Proyek'"
-                            :col="6"
+                            :col="4"
                             :name="'project_id'"
                             :required="false"></x-in-select>
                         <x-in-select
                             :label="'Material'"
                             :placeholder="'Pilih Material'"
-                            :col="6"
+                            :col="4"
                             :name="'material_id'"
-                            :required="false"></x-in-select>
-                        <x-in-select
-                            :label="'Pengendara'"
-                            :placeholder="'Pilih Pengendara'"
-                            :col="6"
-                            :name="'driver_id'"
                             :required="false"></x-in-select>
                         <x-in-select
                             :label="'Status'"
@@ -98,15 +92,15 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Cabang', 'proyek', 'Material', 'Pengendara', 'Jenis', 'Harga Material', 'Volume', 'Biaya', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Material', 'Jenis', 'Harga Material', 'Volume', 'Catatan', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
+                                    <td>{{ $data->ref_no }}</td>
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->project->name }}</td>
                                     <td>{{ $data->material->name }}</td>
-                                    <td>{{ $data->driver->name ?? null }}</td>
                                     <td>
                                         @if($data->type == 1)
                                             Masuk
@@ -116,7 +110,7 @@
                                     </td>
                                     <td>{{ 'Rp. ' . number_format($data->material_price, 2) }}</td>
                                     <td>{{ $data->volume }}</td>
-                                    <td>{{ 'Rp. ' . number_format($data->cost, 2) }}</td>
+                                    <td>{{ $data->notes }}</td>
                                     <td>
                                         @if($data->is_open)
                                             <span class="badge badge-success">Open</span>
@@ -126,10 +120,10 @@
                                     </td>
                                     <td>
                                         @if ($data->is_open)
-                                            <a
+                                            {{-- <a
                                                 href="{{ route('material-mutation.show', $data->id) }}"
                                                 class="btn btn-warning"
-                                                title="Ubah"><i class="fas fa-pencil-alt"></i></a>
+                                                title="Ubah"><i class="fas fa-pencil-alt"></i></a> --}}
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"
@@ -182,7 +176,7 @@
                 <x-in-select
                     :label="'Cabang'"
                     :placeholder="'Pilih Cabang'"
-                    :col="6"
+                    :col="4"
                     :id="'in_branch_id'"
                     :name="'branch_id'"
                     :options="$options['branches']"
@@ -191,7 +185,7 @@
                 <x-in-select
                     :label="'Proyek'"
                     :placeholder="'Pilih Proyek'"
-                    :col="6"
+                    :col="4"
                     :id="'in_project_id'"
                     :name="'project_id'"
                     :required="true"></x-in-select>
@@ -203,16 +197,9 @@
                     :name="'material_id'"
                     :required="true"></x-in-select>
                 <x-in-select
-                    :label="'Pengendara'"
-                    :placeholder="'Pilih Pengendara'"
-                    :col="4"
-                    :id="'in_driver_id'"
-                    :name="'driver_id'"
-                    :required="true"></x-in-select>
-                <x-in-select
                     :label="'Jenis'"
                     :placeholder="'Pilih Jenis'"
-                    :col="4"
+                    :col="3"
                     :id="'in_type'"
                     :name="'type'"
                     :options="$options['types']"
@@ -235,15 +222,6 @@
                     :id="'in_volume'"
                     :name="'volume'"
                     :value="old('volume')"
-                    :required="true"></x-in-text>
-                <x-in-text
-                    :type="'number'"
-                    :step="'0.01'"
-                    :label="'Biaya'"
-                    :col="3"
-                    :id="'in_cost'"
-                    :name="'cost'"
-                    :value="old('cost')"
                     :required="true"></x-in-text>
                 <x-in-text
                     :type="'date'"
@@ -286,11 +264,9 @@
     <meta name="old-branch" content="{{ old('branch_id') ?? null }}">
     <meta name="old-project" content="{{ old('project_id') ?? null }}">
     <meta name="old-material" content="{{ old('material_id') ?? null }}">
-    <meta name="old-driver" content="{{ old('driver_id') ?? null }}">
     <meta name="old-create" content="{{ old('created') ?? null }}">
     <meta name="old-status" content="{{ old('is_open') ?? null }}">
     <meta name="old-material-price" content="{{ old('material_price') ?? null }}">
-    <meta name="old-cost" content="{{ old('cost') ?? null }}">
     <meta name="old-type" content="{{ old('type') ?? null }}">
 
     <meta name="url-branch" content="{{ route('branch.index') }}">
@@ -305,7 +281,6 @@
         $(function () {
             let selectBranch = $('#branch_id');
             let selectProject = $('#project_id');
-            let selectDriver = $('#driver_id');
             let selectMaterial = $('#material_id');
 
             let searchMaterial = $('meta[name="search-material"]').attr('content');
@@ -318,9 +293,6 @@
                 if (branchId == '') {
                     selectProject.empty();
                     selectProject.append('<option value="">Pilih Proyek</option>');
-
-                    selectDriver.empty();
-                    selectDriver.append('<option value="">Pilih Pengendara</option>');
 
                     return;
                 }
@@ -348,35 +320,6 @@
 
                         if (searchProject != '') {
                             selectProject.val(searchProject).trigger('change');
-                        }
-                    }
-                });
-
-                // Get driver
-                $.ajax({
-                    url: $('meta[name="url-driver"]').attr('content'),
-                    type: 'GET',
-                    data: {
-                        branch_id: branchId,
-                    },
-                    success: function (data) {
-                        selectDriver.empty();
-                        selectDriver.append(`<option value="">Pilih Pengendara</option>`);
-
-                        data.datas.forEach(function(item) {
-                            selectDriver.append(`<option value="${item.id}">${item.name}</option>`);
-                        });
-
-                        selectDriver.select2({
-                            theme: 'bootstrap4',
-                            placeholder: 'Pilih Pengendara',
-                            allowClear: true,
-                        });
-
-                        console.log(searchDriver, 'searchDriver');
-
-                        if (searchDriver != '') {
-                            selectDriver.val(searchDriver).trigger('change');
                         }
                     }
                 });
@@ -446,20 +389,15 @@
         $(function () {
             let selectBranchIn = $('#in_branch_id');
             let selectProjectIn = $('#in_project_id');
-            let selectDriverIn = $('#in_driver_id');
             let selectMaterialIn = $('#in_material_id');
 
             selectBranchIn.on('change', function () {
                 let branchId = $(this).val();
                 let searchProject = $('meta[name="search-project"]').attr('content');
-                let searchDriver = $('meta[name="search-driver"]').attr('content');
 
                 if (branchId == '') {
                     selectProjectIn.empty();
                     selectProjectIn.append('<option value="">Pilih Proyek</option>');
-
-                    selectDriverIn.empty();
-                    selectDriverIn.append('<option value="">Pilih Pengendara</option>');
 
                     return;
                 }
@@ -493,33 +431,6 @@
                     }
                 });
 
-                // Get driver
-                $.ajax({
-                    url: $('meta[name="url-driver"]').attr('content'),
-                    type: 'GET',
-                    data: {
-                        branch_id: branchId,
-                    },
-                    success: function (data) {
-                        let oldDriver = $('meta[name="old-driver"]').attr('content');
-                        selectDriverIn.empty();
-                        selectDriverIn.append(`<option value="">Pilih Pengendara</option>`);
-
-                        data.datas.forEach(function(item) {
-                            selectDriverIn.append(`<option value="${item.id}">${item.name}</option>`);
-                        });
-
-                        selectDriverIn.select2({
-                            theme: 'bootstrap4',
-                            placeholder: 'Pilih Pengendara',
-                            allowClear: true,
-                        });
-
-                        if (oldDriver != '') {
-                            selectDriverIn.val(oldDriver).trigger('change');
-                        }
-                    }
-                });
             });
 
             // Get material
@@ -589,8 +500,7 @@
             const oldType = $('meta[name="old-type"]').attr('content');
 
                 if (oldType == 'in') {
-                    $( "#in_driver_id" ).prop( "disabled", true );
-                    $( "#in_cost" ).prop( "disabled", true );
+
                 } else if (oldType == 'out') {
                     $( "#in_material_price" ).prop( "disabled", true );
                 }
@@ -598,14 +508,8 @@
             selectType.on('change', function() {
                 if (this.value == 'in' || this.value == '') {
                     $( "#in_material_price" ).prop( "disabled", false );
-                    $( "#in_driver_id" ).prop( "disabled", true );
-                    $( "#in_cost" ).prop( "disabled", true );
 
-                    $( "#in_driver_id" ).val('').trigger('change');
-                    $( "#in_cost" ).val('');
                 } else if (this.value == 'out'){
-                    $( "#in_driver_id" ).prop( "disabled", false );
-                    $( "#in_cost" ).prop( "disabled", false );
                     $( "#in_material_price" ).prop( "disabled", true );
 
                     $( "#in_material_price" ).val('').trigger('change');

@@ -18,12 +18,10 @@ class MaterialMutationController extends Controller
 
     public function index(Request $request)
     {
-        $fullAccess = ['owner', 'admin'];
-
         $query = Model::select('*');
 
         if ($request->branch_id) {
-            if (!in_array(Auth::user()->role, $fullAccess))
+            if (!in_array(Auth::user()->role, self::$fullAccess))
                 $query->where('branch_id', Auth::user()->branch_id);
             else
                 $query->where('branch_id', $request->branch_id);
@@ -34,9 +32,6 @@ class MaterialMutationController extends Controller
 
         if ($request->material_id)
             $query->where('material_id', $request->material_id);
-
-        if ($request->driver_id)
-            $query->where('driver_id', $request->driver_id);
 
         if ($request->is_open) {
             $isOpen = $request->is_open;
@@ -64,8 +59,16 @@ class MaterialMutationController extends Controller
 
         $query->orderBy('created', 'desc');
 
-        if (!in_array(Auth::user()->role, $fullAccess))
+        if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
+
+        if ($request->ajax()) {
+            $datas = $query->get();
+
+            return response()->json([
+                'datas' => $datas,
+            ]);
+        }
 
         $datas = $query->paginate(40)->withQueryString();
         $options = self::staticOptions();
@@ -75,19 +78,15 @@ class MaterialMutationController extends Controller
 
     public function store(Request $request)
     {
-        $fullAccess = ['owner', 'admin'];
-
         $request->validate([
             'id' => ['nullable', 'exists:material_mutations,id'],
             'branch_id' => ['required_without:id', 'exists:branches,id'],
             'project_id' => ['required_without:id', 'exists:projects,id'],
             'material_id' => ['required_without:id', 'exists:materials,id'],
-            'driver_id' => ['nullable', 'required_if:type,out', 'exists:drivers,id'],
+            'type' => ['required_without:id', 'in:in,out'],
 
-            'type' => ['required', 'in:in,out'],
-            'volume' => ['required', 'numeric'],
             'material_price' => ['nullable', 'required_if:type,in', 'numeric'],
-            'cost' => ['nullable', 'required_if:type,out', 'numeric'],
+            'volume' => ['required', 'numeric'],
             'notes' => ['nullable'],
             'created' => ['required', 'date'],
         ]);
@@ -98,18 +97,27 @@ class MaterialMutationController extends Controller
             return redirect()->back()->withErrors(['messages' => 'Sudah ditutup.']);
 
         if (!$row->id) {
-            if (in_array(Auth::user()->role, $fullAccess))
+            $prefix = sprintf('%s/', $row->getTable());
+            $postfix = sprintf('/%s.%s', date('m'), date('y'));
+            $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
+
+            if (in_array(Auth::user()->role, self::$fullAccess))
                 $row->branch_id = $request->branch_id;
             else
                 $row->branch_id = Auth::user()->branch_id;
 
-                $row->project_id = $request->project_id;
-                $row->material_id = $request->material_id;
-        }
+            $row->project_id = $request->project_id;
+            $row->material_id = $request->material_id;
 
+            if ($request->type == 'in')
+                $row->type = 1;
+            else if ($request->type == 'out')
+                $row->type = 2;
+        }
 
         $row->volume = $request->volume;
         $row->created = $request->created;
+        $row->notes = $request->notes;
 
         $balance = MaterialBalance::firstOrNew([
                                     'branch_id' => $row->branch_id,
@@ -117,67 +125,63 @@ class MaterialMutationController extends Controller
                                     'material_id' => $row->material_id
                                 ]);
 
-        if ($request->type == 'in') {
-            $row->type = 1;
+        $totalBalance = Model::where('branch_id', $row->branch_id)
+                                ->where('project_id', $row->project_id)
+                                ->where('material_id', $row->material_id)
+                                ->get();
+
+        $totalBalancePlusVolume = $totalBalance->where('type', Model::TYPE_IN)->sum('volume');
+        $totalBalanceMinusVolume = $totalBalance->where('type', Model::TYPE_OUT)->sum('volume');
+        $totalBalanceVolume = $totalBalancePlusVolume - $totalBalanceMinusVolume;
+
+        $totalBalancePlusMaterialPrice = $totalBalance->where('type', Model::TYPE_IN)->sum('material_price');
+        $totalBalanceMinusMaterialPrice = $totalBalance->where('type', Model::TYPE_OUT)->sum('material_price');
+        $totalBalanceMaterialPrice = $totalBalancePlusMaterialPrice - $totalBalanceMinusMaterialPrice;
+
+        if ($row->type == Model::TYPE_IN) {
             $row->material_price = $request->material_price;
 
-
-            if (!$balance->id) {
-                $balance->qty = $request->volume;
-                $balance->total = $request->material_price;
-                $balance->unit_price = (float) $request->material_price / (float) $request->volume;
-            } else {
-                $balance->qty += $request->volume;
-                $balance->total += $request->material_price;
-                $balance->unit_price = $balance->total / $balance->qty;
+            if (!$row->id) { // when create
+                $balance->qty = $totalBalanceVolume + $row->volume;
+                $balance->total = $totalBalanceMaterialPrice + $row->material_price;
+            } else if ($row->id && //when update
+                    ($row->volume != $row->getRawOriginal('volume') ||
+                    $row->material_price != $row->getRawOriginal('material_price'))
+                ) {
+                $balance->qty = $totalBalanceVolume + $row->volume - $row->getRawOriginal('volume');
+                $balance->total = $totalBalanceMaterialPrice + $row->material_price - $row->getRawOriginal('material_price');
             }
+        } else if ($row->type == Model::TYPE_OUT) {
+            if ($totalBalanceVolume < $row->volume)
+                return redirect()->back()->withErrors(['messages' => 'Jumlah volume yang dikurangi melebihi jumlah stok.']);
 
-            $balance->save();
-        } else if ($request->type == 'out') {
-            $row->type = 2;
-            $row->driver_id = $request->driver_id;
-            $row->cost = $request->cost;
-
-            if ($balance->id) {
-                if ($balance->qty >= $request->volume) {
-                    $outPrice = $balance->total / $balance->qty * $request->volume;
-
-                    if ($balance->qty == $request->volume)
-                        $outPrice = $balance->total;
-
-                    $row->material_price = $outPrice;
-
-                    $newTotal = $balance->total - $balance->unit_price * $request->volume;
-
-                    if ($balance->qty == $request->volume)
-                        $newTotal = 0;
-
-                    $balance->qty -= $request->volume;
-                    $balance->total = $newTotal;
-
-                    $balance->save();
-                } else {
-                    return redirect()->back()->withErrors(['messages' => 'Saldo material kurang dari yang tersedia.']);
-                }
-            } else {
-                return redirect()->back()->withErrors(['messages' => 'Saldo material tidak ada, lakukan penambahan terlebih dahulu.']);
+            if (!$row->id) { // when create
+                $balance->qty = $totalBalanceVolume - $row->volume;
+                $row->material_price = $totalBalanceMaterialPrice / $totalBalanceVolume * $row->volume;
+                $balance->total = $totalBalanceMaterialPrice - $row->material_price;
+            } else if ($row->id && $row->volume != $row->getRawOriginal('volume')) { //when update
+                $balance->qty = $totalBalanceVolume - $row->volume + $row->getRawOriginal('volume');
             }
         }
 
+        if ($balance->qty < 0)
+            return redirect()->back()->withErrors(['messages' => 'Jumlah volume kurang dari jumlah stok.']);
+
+        // dd($balance->toArray(), $row->toArray());
+
+        $balance->save();
         $row->save();
 
         return redirect()->back()->with('f-msg', 'Mutasi Material berhasil disimpan.');
     }
 
-    public function show($id)
-    {
-        $fullAccess = ['owner', 'admin'];
+    // public function show($id)
+    // {
+    //     $data = Model::findOrFail($id);
+    //     $options = self::staticOptions();
 
-        $data = Model::findOrFail($id);
-        $options = self::staticOptions();
-
-        return view('pages.MaterialMutationDetail', compact('data', 'options'));
-    }
+    //     return view('pages.MaterialMutationDetail', compact('data', 'options'));
+    // }
 
     public function destroy($id)
     {
@@ -189,18 +193,21 @@ class MaterialMutationController extends Controller
             'material_id' => $row->material_id
         ]);
 
-        if ($row->type == 1) { //masuk, lakukan pengurangan terhadap saldo
+        if ($row->type == Model::TYPE_IN) { //lakukan pengurangan terhadap saldo
             $balance->qty -= $row->volume;
             $balance->total -= $row->material_price;
-
-            $balance->save();
-        } else if ($row->type == 0) { //keluar, lakukan penambahan terhadap saldo
+        } else if ($row->type == Model::TYPE_OUT) { //lakukan penambahan terhadap saldo
             $balance->qty += $row->volume;
             $balance->total += $row->material_price;
-
-            $balance->save();
         }
 
+        if ($balance->total < 0)
+            return redirect()->back()->withErrors(['messages' => 'Saldo harga kurang dari yang tersedia.']);
+
+        if ($balance->qty < 0)
+            return redirect()->back()->withErrors(['messages' => 'Jumlah volume kurang dari stok.']);
+
+        $balance->save();
         $row->delete();
 
         return redirect()->back()->with('f-msg', 'Mutasi material berhasil dihapus.');
@@ -218,11 +225,9 @@ class MaterialMutationController extends Controller
 
     public function balance()
     {
-        $fullAccess = ['owner', 'admin'];
-
         $query = MaterialBalance::select('*');
 
-        if (!in_array(Auth::user()->role, $fullAccess))
+        if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 
         $datas = $query->paginate(40)->withQueryString();
@@ -232,11 +237,9 @@ class MaterialMutationController extends Controller
 
     public static function staticOptions()
     {
-        $fullAccess = ['owner', 'admin'];
-
         $branches = Branch::all();
 
-        if (!in_array(Auth::user()->role, $fullAccess))
+        if (!in_array(Auth::user()->role, self::$fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
 
         if ($branches->isNotEmpty())

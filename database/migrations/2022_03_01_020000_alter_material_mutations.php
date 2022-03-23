@@ -25,10 +25,6 @@ class AlterMaterialMutations extends Migration
             $table->index('material_id');
             $table->foreign('material_id')
             ->references('id')->on('materials');
-
-            $table->index('driver_id');
-            $table->foreign('driver_id')
-            ->references('id')->on('drivers');
         });
     }
 
@@ -48,9 +44,6 @@ class AlterMaterialMutations extends Migration
 
             $table->dropForeign(['material_id']);
             $table->dropIndex(['material_id']);
-
-            $table->dropForeign(['driver_id']);
-            $table->dropIndex(['driver_id']);
         });
     }
 }

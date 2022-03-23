@@ -3,17 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf as PDF;
-
-use App\Http\Controllers\Repositories\DebtMutation;
-
-use App\Models\DebtMutation as Model;
-use App\Models\Branch;
-use App\Models\DebtBalance;
-use App\View\Components\Modal;
 use Illuminate\Support\Facades\Auth;
 
-class DebtMutationController extends Controller
+use App\Models\RitMutation as Model;
+use App\Models\RitBalance;
+use App\Models\Branch;
+
+class RitMutationController extends Controller
 {
     public function __construct()
     {
@@ -34,11 +30,11 @@ class DebtMutationController extends Controller
                 $query->where('branch_id', $request->branch_id);
         }
 
-        if ($request->project_id)
-            $query->where('project_id', $request->project_id);
+        if ($request->driver_id)
+            $query->where('driver_id', $request->driver_id);
 
-        if ($request->vendor_id)
-            $query->where('vendor_id', $request->vendor_id);
+        if ($request->material_mutation_id)
+            $query->where('material_mutation_id', $request->material_mutation_id);
 
         if ($request->is_open) {
             $isOpen = $request->is_open;
@@ -70,7 +66,7 @@ class DebtMutationController extends Controller
 
         $options = self::staticOptions();
 
-        return view('pages.DebtMutationIndex', compact('datas', 'options'));
+        return view('pages.RitMutationIndex', compact('datas', 'options'));
     }
 
     public function store(Request $request)
@@ -80,10 +76,9 @@ class DebtMutationController extends Controller
         $request->validate([
             'id' => ['nullable', 'exists:debt_mutations,id'],
             'branch_id' => ['required_without:id', 'exists:branches,id'],
-            'project_id' => ['required_without:id', 'exists:projects,id'],
-            'vendor_id' => ['required_without:id', 'exists:vendors,id'],
+            'driver_id' => ['required_without:id', 'exists:projects,id'],
+            'material_mutation_id' => ['required_without:id', 'exists:vendors,id'],
 
-            'type' => ['required_without:id', 'numeric'],
             'transaction_type' => ['required_without:id', 'numeric'],
             'amount' => ['required', 'numeric'],
             'notes' => ['required', 'string', 'max:255'],
@@ -92,46 +87,41 @@ class DebtMutationController extends Controller
 
         $row = Model::findOrNew($request->id);
 
+        if (!$row->id) {
+            $prefix = sprintf('%s/', $row->getTable());
+            $postfix = sprintf('/%s.%s', date('m'), date('y'));
+            $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
+        }
+
         $oldAmount = $row->amount;
 
         if ($row->id && !$row->is_open)
             return redirect()->back()->withErrors(['messages' => 'Sudah ditutup.']);
 
         if (!$row->id) {
-            $prefix = sprintf('%s/', $row->getTable());
-            $postfix = sprintf('/%s.%s', date('m'), date('y'));
-            $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
-
             if (in_array(Auth::user()->role, $fullAccess))
                 $row->branch_id = $request->branch_id;
             else
                 $row->branch_id = Auth::user()->branch_id;
 
-            $row->project_id = $request->project_id;
-            $row->vendor_id = $request->vendor_id;
+            $row->driver_id = $request->driver_id;
+            $row->material_mutation_id = $request->material_mutation_id;
 
-            $row->type = $request->type;
             $row->transaction_type = $request->transaction_type;
         }
         $row->created = $request->created;
         $row->amount = $request->amount;
         $row->notes = $request->notes;
 
-        // $repo = new DebtMutation($row);
-        // $repo->setOldAmount($oldAmount);
-        // $repo->save();
-
-        $balance = DebtBalance::firstOrNew([
+        $balance = RitBalance::firstOrNew([
                                 'branch_id' => $row->branch_id,
-                                'project_id' => $row->project_id,
-                                'vendor_id' => $row->vendor_id,
-                                'type' => $row->type
+                                'driver_id' => $row->driver_id,
+                                'material_mutation_id' => $row->material_mutation_id,
                             ]);
 
         $totalBalance = Model::where('branch_id', $row->branch_id)
-                            ->where('project_id', $row->project_id)
-                            ->where('vendor_id', $row->vendor_id)
-                            ->where('type', $row->type)
+                            ->where('driver_id', $row->driver_id)
+                            ->where('material_mutation_id', $row->material_mutation_id)
                             ->get();
 
         $totalBalancePlus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_ADD)->sum('amount');
@@ -144,23 +134,26 @@ class DebtMutationController extends Controller
                 $balance->total = $totalBalance + $row->amount;
             else if ($row->id && $oldAmount != $row->amount)
                 $balance->total = $totalBalance + $row->amount - $oldAmount;
+
+            $row->save();
+            $balance->save();
         } else if ($row->transaction_type == Model::TRANSACTION_TYPE_SUBTRACT) {
             if ($totalBalance < $row->amount)
-                return redirect()->back()->withErrors(['messages' => 'Saldo hutang/piutang kurang dari yang tersedia.']);
+                return redirect()->back()->withErrors(['messages' => 'Saldo hutan ritase kurang dari yang tersedia.']);
 
             if (!$row->id)
                 $balance->total = $totalBalance - $row->amount;
             else if ($row->id && $oldAmount != $row->amount)
                 $balance->total = $balance->total - $row->amount + $oldAmount;
-            }
 
-        if ($balance->total < 0)
-            return redirect()->back()->withErrors(['messages' => 'Saldo hutang/piutang kurang dari yang tersedia.']);
+            if ($balance->total < 0)
+                return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
 
-        $row->save();
-        $balance->save();
+            $row->save();
+            $balance->save();
+        }
 
-        return redirect()->back()->with('f-msg', 'Mutasi hutang/piutang berhasil disimpan.');
+        return redirect()->back()->with('f-msg', 'Mutasi hutang ritase berhasil disimpan.');
     }
 
     public function show($id)
@@ -168,18 +161,17 @@ class DebtMutationController extends Controller
         $data = Model::findOrFail($id);
         $options = self::staticOptions();
 
-        return view('pages.DebtMutationDetail', compact('data', 'options'));
+        return view('pages.RitMutationDetail', compact('data', 'options'));
     }
 
     public function destroy($id)
     {
         $row = Model::findOrFail($id);
 
-        $balance = DebtBalance::firstOrNew([
+        $balance = RitBalance::firstOrNew([
             'branch_id' => $row->branch_id,
-            'project_id' => $row->project_id,
-            'vendor_id' => $row->vendor_id,
-            'type' => $row->type
+            'driver_id' => $row->driver_id,
+            'material_mutation_id' => $row->material_mutation_id,
         ]);
 
         if ($row->transaction_type == Model::TRANSACTION_TYPE_ADD) {
@@ -189,13 +181,13 @@ class DebtMutationController extends Controller
         }
 
         if ($balance->total < 0)
-            return redirect()->back()->withErrors(['messages' => 'Saldo hutang/piutang kurang dari yang tersedia.']);
+            return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
 
         $balance->save();
 
         $row->delete();
 
-        return redirect()->back()->with('f-msg', 'Mutasi hutang/piutang berhasil dihapus.');
+        return redirect()->back()->with('f-msg', 'Mutasi hutang ritase berhasil dihapus.');
     }
 
     public function changeIsOpen($id)
@@ -210,14 +202,14 @@ class DebtMutationController extends Controller
 
     public function balance()
     {
-        $query = DebtBalance::select('*');
+        $query = RitBalance::select('*');
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 
         $datas = $query->paginate(40)->withQueryString();
 
-        return view('pages.DebtBalanceIndex', compact('datas'));
+        return view('pages.RitBalanceIndex', compact('datas'));
     }
 
     public function print($id)
@@ -248,11 +240,6 @@ class DebtMutationController extends Controller
             ['text' => 'Close', 'value' => 'close'],
         ];
 
-        $types = [
-            ['text' => 'Hutang', 'value' => 1],
-            ['text' => 'Piutang', 'value' => 2],
-        ];
-
         $transactionTypes = [
             ['text' => 'Penambahan', 'value' => 1],
             ['text' => 'Pegurangan', 'value' => 2],
@@ -261,7 +248,6 @@ class DebtMutationController extends Controller
         $options = [
             'branches' => $branches,
             'status' => $status,
-            'types' => $types,
             'transactionTypes' => $transactionTypes
         ];
 

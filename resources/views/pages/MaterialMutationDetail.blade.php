@@ -38,7 +38,7 @@
                             <x-in-select
                                 :label="'Cabang'"
                                 :placeholder="'Pilih Cabang'"
-                                :col="12"
+                                :col="4"
                                 :name="'branch_id'"
                                 :options="$options['branches']"
                                 :value="$data->branch_id"
@@ -47,7 +47,7 @@
                             <x-in-select
                                 :label="'Proyek'"
                                 :placeholder="'Pilih Proyek'"
-                                :col="12"
+                                :col="4"
                                 :name="'project_id'"
                                 :value="$data->project_id"
                                 :disabled="true"
@@ -55,7 +55,7 @@
                             <x-in-select
                                 :label="'Material'"
                                 :placeholder="'Pilih Material'"
-                                :col="12"
+                                :col="4"
                                 :name="'material_id'"
                                 :value="$data->material_id"
                                 :disabled="true"
@@ -63,26 +63,19 @@
                             <x-in-select
                                 :label="'Jenis'"
                                 :placeholder="'Pilih Jenis'"
-                                :col="12"
+                                :col="3"
                                 :id="'in_type'"
                                 :name="'type'"
                                 :options="$options['types']"
                                 :value="$data->type == 1 ? 'in' : 'out'"
                                 :disabled="true"
                                 :required="true"></x-in-select>
-                            <x-in-select
-                                :label="'Pengendara'"
-                                :placeholder="'Pilih Pengendara'"
-                                :col="12"
-                                :name="'driver_id'"
-                                :value="$data->driver_id"
-                                :disabled="$data->type == 1 ? true : false"
-                                :required="true"></x-in-select>
                             <x-in-text
                                 :type="'number'"
                                 :step="'0.01'"
                                 :label="'Harga Material'"
-                                :col="4"
+                                :col="3"
+                                :id="'in_material_price'"
                                 :name="'material_price'"
                                 :value="$data->material_price"
                                 :required="true"></x-in-text>
@@ -90,25 +83,23 @@
                                 :type="'number'"
                                 :step="'0.01'"
                                 :label="'Volume'"
-                                :col="4"
+                                :col="3"
                                 :name="'volume'"
                                 :value="$data->volume"
                                 :required="true"></x-in-text>
                             <x-in-text
-                                :type="'number'"
-                                :step="'0.01'"
-                                :label="'Biaya'"
-                                :col="4"
-                                :name="'cost'"
-                                :value="$data->cost"
-                                :disabled="$data->type == 1 ? true : false"
-                                :required="true"></x-in-text>
-                            <x-in-text
                                 :type="'date'"
                                 :label="'Tanggal'"
-                                :col="12"
+                                :col="3"
                                 :name="'created'"
                                 :value="$data->created"
+                                :required="true"></x-in-text>
+                            <x-in-text
+                                :label="'Catatan'"
+                                :col="12"
+                                :id="'in_notes'"
+                                :name="'notes'"
+                                :value="$data->notes"
                                 :required="true"></x-in-text>
 
                             <x-col class="text-right">
@@ -126,19 +117,16 @@
     <!-- Select2 -->
     <script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-branch" content="{{ Auth::user()->branch_id ?? null }}">
 
     <meta name="data-project" content={{ $data->project_id ?? null }}>
     <meta name="data-material" content={{ $data->material_id ?? null }}>
-    <meta name="data-driver" content={{ $data->driver_id ?? null }}>
-    <meta name="data-cost" content={{ $data->cost ?? null }}>
+    <meta name="data-type" content={{ $data->type == 1 ? 'in' : 'out' }}>
 
 
     <meta name="url-branch" content="{{ route('branch.index') }}">
     <meta name="url-project" content="{{ route('project.index') }}">
     <meta name="url-material" content="{{ route('material.index') }}">
-    <meta name="url-driver" content="{{ route('driver.index') }}">
 
 
     {{-- Searching --}}
@@ -146,20 +134,15 @@
         $(function () {
             let selectBranch = $('#branch_id');
             let selectProject = $('#project_id');
-            let selectDriver = $('#driver_id');
             let selectMaterial = $('#material_id');
 
             selectBranch.on('change', function () {
                 let branchId = $(this).val();
                 let dataProject = $('meta[name=data-project]').attr('content');
-                let dataDriver = $('meta[name=data-driver]').attr('content');
 
                 if (branchId == '') {
                     selectProject.empty();
                     selectProject.append('<option value="">Pilih Proyek</option>');
-
-                    selectDriver.empty();
-                    selectDriver.append('<option value="">Pilih Pengendara</option>');
 
                     return;
                 }
@@ -187,33 +170,6 @@
 
                         if (dataProject != '') {
                             selectProject.val(dataProject).trigger('change');
-                        }
-                    }
-                });
-
-                // Get driver
-                $.ajax({
-                    url: $('meta[name="url-driver"]').attr('content'),
-                    type: 'GET',
-                    data: {
-                        branch_id: branchId,
-                    },
-                    success: function (data) {
-                        selectDriver.empty();
-                        selectDriver.append(`<option value="">Pilih Pengendara</option>`);
-
-                        data.datas.forEach(function(item) {
-                            selectDriver.append(`<option value="${item.id}">${item.name}</option>`);
-                        });
-
-                        selectDriver.select2({
-                            theme: 'bootstrap4',
-                            placeholder: 'Pilih Pengendara',
-                            allowClear: true,
-                        });
-
-                        if (dataDriver != '') {
-                            selectDriver.val(dataDriver).trigger('change');
                         }
                     }
                 });
@@ -276,6 +232,31 @@
                     }
                 });
             }
+        });
+    </script>
+
+    {{-- Functionality for disabled --}}
+    <script>
+        $(function () {
+            const selectType = $('#in_type');
+            const type = $('meta[name=data-type]').attr('content');
+
+            if (type == 'in') {
+
+            } else if (type == 'out') {
+                $("#in_material_price").prop("disabled", true);
+            }
+
+            selectType.on('change', function() {
+                if (this.value == 'in' || this.value == '') {
+                    $( "#in_material_price" ).prop("disabled", false );
+
+                } else if (this.value == 'out'){
+                    $( "#in_material_price" ).prop("disabled", true );
+
+                    $( "#in_material_price" ).val('').trigger('change');
+                }
+            });
         });
     </script>
 @endpush
