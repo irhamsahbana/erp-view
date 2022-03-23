@@ -92,7 +92,7 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Material', 'Jenis', 'Harga Material', 'Volume', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Material', 'Jenis', 'Harga Material', 'Volume', 'Catatan', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
@@ -110,6 +110,7 @@
                                     </td>
                                     <td>{{ 'Rp. ' . number_format($data->material_price, 2) }}</td>
                                     <td>{{ $data->volume }}</td>
+                                    <td>{{ $data->notes }}</td>
                                     <td>
                                         @if($data->is_open)
                                             <span class="badge badge-success">Open</span>
@@ -119,10 +120,10 @@
                                     </td>
                                     <td>
                                         @if ($data->is_open)
-                                            <a
+                                            {{-- <a
                                                 href="{{ route('material-mutation.show', $data->id) }}"
                                                 class="btn btn-warning"
-                                                title="Ubah"><i class="fas fa-pencil-alt"></i></a>
+                                                title="Ubah"><i class="fas fa-pencil-alt"></i></a> --}}
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"

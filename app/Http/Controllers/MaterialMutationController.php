@@ -33,9 +33,6 @@ class MaterialMutationController extends Controller
         if ($request->material_id)
             $query->where('material_id', $request->material_id);
 
-        if ($request->driver_id)
-            $query->where('driver_id', $request->driver_id);
-
         if ($request->is_open) {
             $isOpen = $request->is_open;
 
@@ -160,6 +157,8 @@ class MaterialMutationController extends Controller
 
             if (!$row->id) { // when create
                 $balance->qty = $totalBalanceVolume - $row->volume;
+                $row->material_price = $totalBalanceMaterialPrice / $totalBalanceVolume * $row->volume;
+                $balance->total = $totalBalanceMaterialPrice - $row->material_price;
             } else if ($row->id && $row->volume != $row->getRawOriginal('volume')) { //when update
                 $balance->qty = $totalBalanceVolume - $row->volume + $row->getRawOriginal('volume');
             }
@@ -176,13 +175,13 @@ class MaterialMutationController extends Controller
         return redirect()->back()->with('f-msg', 'Mutasi Material berhasil disimpan.');
     }
 
-    public function show($id)
-    {
-        $data = Model::findOrFail($id);
-        $options = self::staticOptions();
+    // public function show($id)
+    // {
+    //     $data = Model::findOrFail($id);
+    //     $options = self::staticOptions();
 
-        return view('pages.MaterialMutationDetail', compact('data', 'options'));
-    }
+    //     return view('pages.MaterialMutationDetail', compact('data', 'options'));
+    // }
 
     public function destroy($id)
     {
@@ -201,6 +200,9 @@ class MaterialMutationController extends Controller
             $balance->qty += $row->volume;
             $balance->total += $row->material_price;
         }
+
+        if ($balance->total < 0)
+            return redirect()->back()->withErrors(['messages' => 'Saldo harga kurang dari yang tersedia.']);
 
         if ($balance->qty < 0)
             return redirect()->back()->withErrors(['messages' => 'Jumlah volume kurang dari stok.']);
