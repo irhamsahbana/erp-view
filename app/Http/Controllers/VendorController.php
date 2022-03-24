@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 use App\Models\Vendor as Model;
 use App\Models\Branch;
@@ -18,12 +19,10 @@ class VendorController extends Controller
 
     public function index(Request $request)
     {
-        $fullAccess = ['owner', 'admin'];
-
         $query = Model::select('*');
 
         if ($request->branch_id) {
-            if (!in_array(Auth::user()->role, $fullAccess))
+            if (!in_array(Auth::user()->role, self::$fullAccess))
                 $query->where('branch_id', Auth::user()->branch_id);
             else
                 $query->where('branch_id', $request->branch_id);
@@ -58,18 +57,22 @@ class VendorController extends Controller
 
     public function store(Request $request)
     {
-        $fullAccess = ['owner', 'admin'];
-
         $request->validate([
             'id' => ['nullable', 'exists:vendors,id'],
             'branch_id' => ['required', 'exists:branches,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required',
+                        'string',
+                        'max:255',
+                        Rule::unique('vendors')->where(function ($query) use ($request) {
+                            $query->where('branch_id', $request->branch_id);
+                        }),
+            ]
         ]);
 
         $row = Model::findOrNew($request->id);
 
         if ($request->branch_id) {
-            if (!in_array(Auth::user()->role, $fullAccess))
+            if (!in_array(Auth::user()->role, self::$fullAccess))
             $row->branch_id = Auth::user()->branch_id;
             else
                 $row->branch_id = $request->branch_id;
