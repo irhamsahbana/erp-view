@@ -15,7 +15,7 @@ class VendorFactory extends Factory
     {
         return [
             'branch_id' => $this->faker->numberBetween(1, 2),
-            'name' => $this->faker->company,
+            'name' => $this->faker->unique()->company
         ];
     }
 }
