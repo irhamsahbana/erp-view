@@ -36,7 +36,13 @@ class ProjectController extends Controller
         $request->validate([
             'id' => ['nullable', 'exists:projects,id'],
             'branch_id' => ['required', 'exists:branches,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required',
+                        'string',
+                        'max:255',
+                        Rule::unique('projects')->where(function ($query) use ($request) {
+                            $query->where('branch_id', $request->branch_id);
+                        }),
+            ]
         ]);
 
         $row = Model::findOrNew($request->id);
