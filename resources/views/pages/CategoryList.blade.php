@@ -11,12 +11,12 @@
         ],
     ];
 
-    $datas = [
-        ['group_by' => 'jurnal_categories', 'label' => 'Jenis Jurnal']
+    $categories = [
+        ['group_by' => 'journal_categories', 'label' => 'Jenis Jurnal']
 ];
 @endphp
 
-@section('content-header', 'List Katgori')
+@section('content-header', 'List Kategori')
 
 @section('breadcrumb')
     <x-breadcrumb :list="$breadcrumbList"/>
@@ -29,11 +29,11 @@
                 <x-row>
                     <x-col>
                         <x-table :thead="['Kategori']">
-                            @foreach($datas as $data)
+                            @foreach($categories as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
-                                        <a href="{{ route('category.index', ['group_by' => $data['group_by']]) }}">
+                                        <a href="{{ route('category.index', ['category' => $data['group_by']]) }}">
                                             <i class="fas fa-newspaper"></i> Jenis Jurnal
                                         </a>
                                     </td>

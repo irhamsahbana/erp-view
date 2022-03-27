@@ -11,14 +11,14 @@ use App\Models\Category;
 class CategoryController extends Controller
 {
     //allowed category that can be store by user
-    private $allowed = ['journal_category'];
+    private static $allowed = ['journal_categories'];
 
     public function index(Request $request)
     {
         $query = Category::select('*');
 
-        if ($request->group_by)
-            $query->groupBy($request->group_by);
+        if ($request->category)
+            $query->where('group_by', $request->category);
 
         $datas = $query->paginate(40)->withQueryString();
 
@@ -43,7 +43,7 @@ class CategoryController extends Controller
             'slug' => [
                 'required',
                 'string',
-                Rule::unique('categories')->where(function ($query) use ($request) {
+                Rule::unique('categories')->ignore($request->id)->where(function ($query) use ($request) {
                     return $query->where('group_by', $request->group_by);
                 })
             ],
@@ -59,15 +59,26 @@ class CategoryController extends Controller
         $row->disabled = $request->disabled;
         $row->notes = $request->notes;
         $row->save();
+
+        return redirect()->back()->with('f-msg', 'Kategori berhasil disimpan.');
     }
 
     public function show(Request $request, $id)
     {
+       $data = Category::findOrFail($id);
 
+       if (!$data)
+            abort(404);
+
+        if ($request->ajax())
+            return response()->json($data);
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
+        $row = Category::findOrFail($id);
+        $row->delete();
 
+        return redirect()->back()->with('f-msg', 'Kategori berhasil dihapus.');
     }
 }

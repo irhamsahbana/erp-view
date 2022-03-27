@@ -89,7 +89,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('vendor/{id}', [VendorController::class, 'destroy'])->name('vendor.destroy');
 
         Route::get('kategori/list', [CategoryController::class, 'list'])->name('category.list');
+        Route::get('kategori/{id}', [CategoryController::class, 'show'])->name('category.show');
         Route::get('kategori', [CategoryController::class, 'index'])->name('category.index');
+        Route::post('kategori', [CategoryController::class, 'store'])->name('category.store');
+        Route::delete('kategori/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
     });
 
     Route::group(['prefix' => 'transaksi'], function() {
