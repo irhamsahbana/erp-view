@@ -8,7 +8,7 @@
                 <td colspan="2">
                     <table>
                         <tr>
-                            <td><b>Hutang</b></td>
+                            <td><b>Mutasi Hutang</b></td>
                         </tr>
                         <tr>
                             <td>
@@ -47,11 +47,11 @@
 
             <tr class="item">
                 <td>Jenis Mutasi Hutang</td>
-                <td>{{ $data->type == '1' ? 'Hutang' : 'Piutang' }}</td>
+                <td>{{ $data->debtType->label }}</td>
             </tr>
             <tr class="item">
                 <td>Jenis Transaksi</td>
-                <td>{{ $data->type == '1' ? 'Penambahan' : 'Pengurangan' }}</td>
+                <td>{{ $data->transaction_type == '1' ? 'Penambahan' : 'Pengurangan'  }}</td>
             </tr>
 
             <tr class="item">
@@ -73,10 +73,11 @@
                     <table>
                         <tr>
                             <td>
+                                Kasir
                             </td>
 
                             <td>
-                                Kasir
+                                Pemberi/Penerima
                             </td>
                         </tr>
                     </table>
