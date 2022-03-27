@@ -9,9 +9,6 @@ class DebtMutation extends Model
 {
     use HasFactory;
 
-    const TYPE_DEBT = 1;
-    const TYPE_RECEIVABLE = 2;
-
     const TRANSACTION_TYPE_ADD = 1;
     const TRANSACTION_TYPE_SUBTRACT = 2;
 
@@ -28,5 +25,10 @@ class DebtMutation extends Model
     public function vendor()
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    public function debtType()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

@@ -25,4 +25,9 @@ class DebtBalance extends Model
     {
         return $this->belongsTo(Vendor::class);
     }
+
+    public function debtType()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

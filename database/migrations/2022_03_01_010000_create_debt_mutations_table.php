@@ -19,7 +19,7 @@ class CreateDebtMutationsTable extends Migration
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('vendor_id');
-            $table->unsignedTinyInteger('type')->comment('1 = Hutang, 2 = Piutang');
+            $table->unsignedBigInteger('debt_type_id');
             $table->unsignedTinyInteger('transaction_type')->comment('1 = Penambahan, 2 = Pengurangan');
             $table->float('amount', 15, 2);
             $table->string('notes')->nullable();

@@ -12,8 +12,9 @@
     ];
 
     $categories = [
-        ['group_by' => 'journal_categories', 'label' => 'Jenis Jurnal']
-];
+        ['group_by' => 'journal_categories', 'label' => 'Jenis Jurnal', 'icon' => 'fas fa-newspaper'],
+        ['group_by' => 'debt_types', 'label' => 'Jenis Mutasi Hutang', 'icon' => 'fas fa-hand-holding-usd'],
+    ];
 @endphp
 
 @section('content-header', 'List Kategori')
@@ -34,7 +35,7 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
                                         <a href="{{ route('category.index', ['category' => $data['group_by']]) }}">
-                                            <i class="fas fa-newspaper"></i> Jenis Jurnal
+                                            <i class="{{ $data['icon'] }}"></i> {{ $data['label'] }}
                                         </a>
                                     </td>
                                 </tr>
