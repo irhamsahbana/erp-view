@@ -19,7 +19,7 @@ class BranchController extends Controller
     {
         $request->validate([
             'id' => ['nullable', 'exists:branches,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'unique:branches,name,' . $request->id],
         ]);
 
         $row = Model::findOrNew($request->id);

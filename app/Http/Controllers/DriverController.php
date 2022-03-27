@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 use App\Models\Driver as Model;
 use App\Models\Branch;
@@ -50,7 +51,14 @@ class DriverController extends Controller
         $request->validate([
             'id' => ['nullable', 'exists:drivers,id'],
             'branch_id' => ['required', 'exists:branches,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('drivers')->ignore($request->id, 'id')->where(function ($query) use ($request) {
+                    $query->where('branch_id', $request->branch_id);
+                }),
+            ],
         ]);
 
         $row = Model::findOrNew($request->id);

@@ -7,6 +7,29 @@
 		</title>
 
 		<style>
+			.sign-box {
+				max-width: 800px;
+				margin: auto;
+				padding: 30px;
+				border: 1px solid #eee;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+				font-size: 16px;
+				line-height: 24px;
+				font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+				color: #555;
+			}
+
+			.sign-box table {
+				width: 100%;
+				line-height: inherit;
+				text-align: center;
+				table-layout: fixed;
+			}
+
+			.sign-box table td {
+				vertical-align: top;
+			}
+
 			.invoice-box {
 				max-width: 800px;
 				margin: auto;

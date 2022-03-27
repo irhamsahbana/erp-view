@@ -48,12 +48,12 @@ class VehicleController extends Controller
         $request->validate([
             'id' => ['nullable', 'exists:vehicles,id'],
             'branch_id' => ['required', 'exists:branches,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'license_plate' => ['required', 'string', 'max:255', 'unique:vehicles,license_plate,' . $request->id],
         ]);
 
         $row = Model::findOrNew($request->id);
         $row->branch_id = $request->branch_id;
-        $row->name = $request->name;
+        $row->license_plate = $request->license_plate;
 
         $row->save();
 
@@ -63,7 +63,21 @@ class VehicleController extends Controller
     public function show($id)
     {
         $data = Model::findOrFail($id);
+        $options = self::staticOptions();
 
+        return view('pages.VehicleDetail', compact('data', 'options'));
+    }
+
+    public function destroy($id)
+    {
+        $row = Model::findOrFail($id);
+        $row->delete();
+
+        return redirect()->back()->with('f-msg', 'Kendaraan berhasil dihapus.');
+    }
+
+    public static function staticOptions()
+    {
         $branches = Branch::all();
         if ($branches->isNotEmpty()) {
             $branches = $branches->map(function ($branch) {
@@ -78,14 +92,6 @@ class VehicleController extends Controller
             'branches' => $branches,
         ];
 
-        return view('pages.ProjectDetail', compact('data', 'options'));
-    }
-
-    public function destroy($id)
-    {
-        $row = Model::findOrFail($id);
-        $row->delete();
-
-        return redirect()->back()->with('f-msg', 'Kendaraan berhasil dihapus.');
+        return $options;
     }
 }

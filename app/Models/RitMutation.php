@@ -17,6 +17,11 @@ class RitMutation extends Model
         return $this->belongsTo(Branch::class);
     }
 
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
     public function driver()
     {
         return $this->belongsTo(Driver::class);

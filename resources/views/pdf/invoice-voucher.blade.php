@@ -65,7 +65,7 @@
         </table>
     </div>
 
-    <div class="invoice-box yellow">
+    <div class="sign-box yellow">
         <table cellpadding="0" cellspacing="0" style="margin-b">
             <tr class="top">
                 <td colspan="2">
@@ -73,6 +73,10 @@
                         <tr>
                             <td>
                                 Kasir
+                            </td>
+
+                            <td>
+                                Pemberi/Penerima
                             </td>
 
                             <td>

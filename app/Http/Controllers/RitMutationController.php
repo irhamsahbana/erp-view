@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 use App\Models\RitMutation as Model;
 use App\Models\RitBalance;
@@ -30,6 +31,9 @@ class RitMutationController extends Controller
                 $query->where('branch_id', $request->branch_id);
         }
 
+        if ($request->project_id)
+            $query->where('project_id', $request->project_id);
+
         if ($request->driver_id)
             $query->where('driver_id', $request->driver_id);
 
@@ -44,9 +48,6 @@ class RitMutationController extends Controller
             else
                 $query->where('is_open', 0);
         }
-
-        if ($request->type)
-            $query->where('type', $request->type);
 
         if ($request->transaction_type)
             $query->where('transaction_type', $request->transaction_type);
@@ -71,13 +72,12 @@ class RitMutationController extends Controller
 
     public function store(Request $request)
     {
-        $fullAccess = ['owner', 'admin'];
-
         $request->validate([
-            'id' => ['nullable', 'exists:debt_mutations,id'],
+            'id' => ['nullable', 'exists:rit_mutations,id'],
             'branch_id' => ['required_without:id', 'exists:branches,id'],
-            'driver_id' => ['required_without:id', 'exists:projects,id'],
-            'material_mutation_id' => ['required_without:id', 'exists:vendors,id'],
+            'project_id' => ['required_without:id', 'exists:projects,id'],
+            'driver_id' => ['required_without:id', 'exists:drivers,id'],
+            'material_mutation_id' => ['required_without:id', 'exists:material_mutations,id'],
 
             'transaction_type' => ['required_without:id', 'numeric'],
             'amount' => ['required', 'numeric'],
@@ -99,10 +99,12 @@ class RitMutationController extends Controller
             return redirect()->back()->withErrors(['messages' => 'Sudah ditutup.']);
 
         if (!$row->id) {
-            if (in_array(Auth::user()->role, $fullAccess))
+            if (in_array(Auth::user()->role, self::$fullAccess))
                 $row->branch_id = $request->branch_id;
             else
                 $row->branch_id = Auth::user()->branch_id;
+
+            $row->project_id = $request->project_id;
 
             $row->driver_id = $request->driver_id;
             $row->material_mutation_id = $request->material_mutation_id;
@@ -115,11 +117,13 @@ class RitMutationController extends Controller
 
         $balance = RitBalance::firstOrNew([
                                 'branch_id' => $row->branch_id,
+                                'project_id' => $row->project_id,
                                 'driver_id' => $row->driver_id,
                                 'material_mutation_id' => $row->material_mutation_id,
                             ]);
 
         $totalBalance = Model::where('branch_id', $row->branch_id)
+                            ->where('project_id', $row->project_id)
                             ->where('driver_id', $row->driver_id)
                             ->where('material_mutation_id', $row->material_mutation_id)
                             ->get();
@@ -139,7 +143,7 @@ class RitMutationController extends Controller
             $balance->save();
         } else if ($row->transaction_type == Model::TRANSACTION_TYPE_SUBTRACT) {
             if ($totalBalance < $row->amount)
-                return redirect()->back()->withErrors(['messages' => 'Saldo hutan ritase kurang dari yang tersedia.']);
+                return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
 
             if (!$row->id)
                 $balance->total = $totalBalance - $row->amount;

@@ -38,6 +38,12 @@
                             :value="app('request')->input('branch_id') ?? null"
                             :required="false"></x-in-select>
                         <x-in-select
+                            :label="'Proyek'"
+                            :placeholder="'Pilih Proyek'"
+                            :col="4"
+                            :name="'project_id'"
+                            :required="false"></x-in-select>
+                        <x-in-select
                             :label="'Pengendara'"
                             :placeholder="'Pilih Pengendara'"
                             :col="4"
@@ -47,7 +53,7 @@
                             :label="'Mutasi Material'"
                             :placeholder="'Pilih Mutasi Material'"
                             :col="4"
-                            :name="'material_mutation'"
+                            :name="'material_mutation_id'"
                             :required="false"></x-in-select>
                         <x-in-select
                             :label="'Status'"
@@ -78,7 +84,7 @@
                             :value="app('request')->input('date_finish') ?? null"
                             :name="'date_finish'"></x-in-text>
                         <x-col class="text-right">
-                            <a type="button" class="btn btn-default" href="{{ route('debt-mutation.index') }}">reset</a>
+                            <a type="button" class="btn btn-default" href="{{ route('rit-mutation.index') }}">reset</a>
                             <button type="submit" class="btn btn-primary">Cari</button>
                         </x-col>
                     </x-row>
@@ -92,29 +98,16 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Mutasi Material', 'Jenis', 'Jenis Transaksi', 'Jumlah', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Ref Mutasi Material', 'Cabang', 'proyek', 'Jenis Transaksi', 'Jumlah (Biaya)', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
                                     <td>{{ $data->ref_no }}</td>
+                                    <td>{{ $data->materialMutation->ref_no }}</td>
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->project->name }}</td>
-                                    <td>{{ $data->vendor->name }}</td>
-                                    <td>
-                                        @if($data->type == 1)
-                                            Hutang
-                                        @elseif($data->type == 2)
-                                            Piutang
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($data->transaction_type == 1)
-                                            Tambah
-                                        @else
-                                            Kurang
-                                        @endif
-                                    </td>
+                                    <td>{{ $data->transaction_type == 1 ? 'Tambah' : 'Kurang' }}</td>
                                     <td>{{ 'Rp. ' . number_format($data->amount, 2) }}</td>
                                     <td>
                                         @if($data->is_open)
@@ -126,13 +119,13 @@
                                     <td>
                                         @if ($data->is_open)
                                             <a
-                                                href="{{ route('debt-mutation.show', $data->id) }}"
+                                                href="{{ route('rit-mutation.show', $data->id) }}"
                                                 class="btn btn-warning"
                                                 title="Ubah"><i class="fas fa-pencil-alt"></i></a>
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"
-                                                action="{{ route('debt-mutation.destroy', $data->id) }}">
+                                                action="{{ route('rit-mutation.destroy', $data->id) }}">
                                                     @csrf
                                                     @method('DELETE')
 
@@ -147,7 +140,7 @@
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"
-                                                action="{{ route('debt-mutation.change-status', $data->id) }}">
+                                                action="{{ route('rit-mutation.change-status', $data->id) }}">
                                                     @csrf
                                                     @method('PUT')
 
@@ -158,10 +151,10 @@
                                                     title="Ubah"><i class="fas fa-sync-alt"></i></button>
                                             </form>
                                         @endif
-                                        <a
-                                            href="{{ route('debt-mutation.print', $data->id) }}"
+                                        {{-- <a
+                                            href="{{ route('rit-mutation.print', $data->id) }}"
                                             class="btn btn-info"
-                                            title="Print"><i class="fas fa-file-alt"></i></a>
+                                            title="Print"><i class="fas fa-file-alt"></i></a> --}}
                                     </td>
                                 </tr>
                             @endforeach
@@ -177,7 +170,7 @@
     </x-content>
 
     <x-modal :title="'Tambah Data'" :id="'add-modal'">
-        <form style="width: 100%" action="{{ route('debt-mutation.store') }}" method="POST">
+        <form style="width: 100%" action="{{ route('rit-mutation.store') }}" method="POST">
             @csrf
             @method('POST')
 
@@ -192,6 +185,13 @@
                     :value="old('branch_id')"
                     :required="true"></x-in-select>
                 <x-in-select
+                    :label="'Proyek'"
+                    :placeholder="'Pilih Proyek'"
+                    :col="4"
+                    :id="'in_project_id'"
+                    :name="'project_id'"
+                    :required="true"></x-in-select>
+                <x-in-select
                     :label="'Pengendara'"
                     :placeholder="'Pilih Pengendara'"
                     :col="4"
@@ -201,9 +201,9 @@
                 <x-in-select
                     :label="'Mutasi Material'"
                     :placeholder="'Pilih Mutasi Material'"
-                    :col="4"
+                    :col="6"
                     :id="'in_material_mutation_id'"
-                    :name="'material_mutation'"
+                    :name="'material_mutation_id'"
                     :required="true"></x-in-select>
                 <x-in-select
                     :label="'Jenis Transaksi'"
@@ -262,6 +262,7 @@
     <meta name="old-created" content="{{ old('created') ?? null }}">
 
     <meta name="url-branch" content="{{ route('branch.index') }}">
+    <meta name="url-project" content="{{ route('project.index') }}">
     <meta name="url-driver" content="{{ route('driver.index') }}">
     <meta name="url-material-mutation" content="{{ route('material-mutation.index') }}">
 
@@ -271,20 +272,23 @@
     <script>
         $(function () {
             let selectBranch = $('#branch_id');
+            let selectProject = $('#project_id');
             let selectDriver = $('#driver_id');
             let selectMaterialMutation = $('#material_mutation_id');
 
             selectBranch.on('change', function () {
                 let branchId = $(this).val();
+                let projectId = selectProject.val();
                 let searchDriver = $('meta[name="search-material-mutation"]').attr('content');
-                let selectMaterialMutation = $('meta[name="search-material-mutation"]').attr('content');
+                let searchProject = $('meta[name="search-project"]').attr('content');
+                let searchMaterialMutation = $('meta[name="search-material-mutation"]').attr('content');
 
                 if (branchId == '') {
                     selectDriver.empty();
                     selectDriver.append('<option value="">Pilih Pengendara</option>');
 
-                    selectMutasi Material.empty();
-                    selectMutasi Material.append('<option value="">Pilih Mutasi Material</option>');
+                    selectMaterialMutation.empty();
+                    selectMaterialMutation.append('<option value="">Pilih Mutasi Material</option>');
 
                     return;
                 }
@@ -316,30 +320,57 @@
                     }
                 });
 
+                // Get project
+                $.ajax({
+                    url: $('meta[name="url-project"]').attr('content'),
+                    type: 'GET',
+                    data: {
+                        branch_id: branchId,
+                    },
+                    success: function (data) {
+                        selectProject.empty();
+                        selectProject.append(`<option value="">Pilih Proyek</option>`);
+
+                        data.datas.forEach(function(item) {
+                            selectProject.append(`<option value="${item.id}">${item.name}</option>`);
+                        });
+
+                        selectProject.select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Proyek',
+                            allowClear: true,
+                        });
+
+                        if (searchProject != '') {
+                            selectProject.val(searchProject).trigger('change');
+                        }
+                    }
+                });
+
                 // Get material mutation
                 $.ajax({
                     url: $('meta[name="url-material-mutation"]').attr('content'),
                     type: 'GET',
                     data: {
-                        branch_id: branchId,
-                        type: 2, // out
+                        project_id: projectId,
+                        type: 'out'
                     },
                     success: function (data) {
-                        selectMutasi Material.empty();
-                        selectMutasi Material.append(`<option value="">Pilih Mutasi Material</option>`);
+                        selectMaterialMutation.empty();
+                        selectMaterialMutation.append(`<option value="">Pilih Mutasi Material</option>`);
 
                         data.datas.forEach(function(item) {
-                            selectMutasi Material.append(`<option value="${item.id}">${item.ref_no}</option>`);
+                            selectMaterialMutation.append(`<option value="${item.id}">${item.ref_no}</option>`);
                         });
 
-                        selectMutasi Material.select2({
+                        selectMaterialMutation.select2({
                             theme: 'bootstrap4',
                             placeholder: 'Pilih Mutasi Material',
                             allowClear: true,
                         });
 
-                        if (serachMaterialMutation != '') {
-                            selectMutasi Material.val(serachMaterialMutation).trigger('change');
+                        if (searchMaterialMutation != '') {
+                            selectMaterialMutation.val(searchMaterialMutation).trigger('change');
                         }
                     }
                 });
@@ -354,13 +385,15 @@
     <script>
         $(function () {
             let selectBranchIn = $('#in_branch_id');
+            let selectProjectIn = $('#in_project_id');
             let selectDriverIn = $('#in_driver_id');
             let selectMaterialMutationIn = $('#in_material_mutation_id');
 
             selectBranchIn.on('change', function () {
                 let branchId = $(this).val();
+                let projectId = selectProjectIn.val();
                 let searchDriverIn = $('meta[name="search-material-mutation"]').attr('content');
-                let serachMaterialMutation = $('meta[name="search-material-mutation"]').attr('content');
+                let searchMaterialMutation = $('meta[name="search-material-mutation"]').attr('content');
 
                 if (branchId == '') {
                     selectDriverIn.empty();
@@ -401,6 +434,35 @@
                     }
                 });
 
+                //get project
+                $.ajax({
+                    url: $('meta[name="url-project"]').attr('content'),
+                    type: 'GET',
+                    data: {
+                        branch_id: branchId,
+                    },
+                    success: function (data) {
+                        let oldProject = $('meta[name="old-project"]').attr('content');
+
+                        selectProjectIn.empty();
+                        selectProjectIn.append(`<option value="">Pilih Proyek</option>`);
+
+                        data.datas.forEach(function(item) {
+                            selectProjectIn.append(`<option value="${item.id}">${item.name}</option>`);
+                        });
+
+                        selectProjectIn.select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Proyek',
+                            allowClear: true,
+                        });
+
+                        if (oldProject != '') {
+                            selectProjectIn.val(oldProject).trigger('change');
+                        }
+                    }
+                });
+
                 // Get material mutation
                 $.ajax({
                     url: $('meta[name="url-material-mutation"]').attr('content'),
@@ -412,21 +474,21 @@
                     success: function (data) {
                         let oldMaterialMutation = $('meta[name="old-material-mutation"]').attr('content');
 
-                        selectMaterialMutation.empty();
-                        selectMaterialMutation.append(`<option value="">Pilih Mutasi Material</option>`);
+                        selectMaterialMutationIn.empty();
+                        selectMaterialMutationIn.append(`<option value="">Pilih Mutasi Material</option>`);
 
                         data.datas.forEach(function(item) {
-                            selectMaterialMutation.append(`<option value="${item.id}">${item.ref_no}</option>`);
+                            selectMaterialMutationIn.append(`<option value="${item.id}">${item.ref_no}</option>`);
                         });
 
-                        selectMaterialMutation.select2({
+                        selectMaterialMutationIn.select2({
                             theme: 'bootstrap4',
                             placeholder: 'Pilih Mutasi Material',
                             allowClear: true,
                         });
 
                         if (oldMaterialMutation != '') {
-                            selectMaterialMutation.val(oldMaterialMutation).trigger('change');
+                            selectMaterialMutationIn.val(oldMaterialMutation).trigger('change');
                         }
                     }
                 });

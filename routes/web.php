@@ -4,6 +4,7 @@ use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\{
+    CategoryController,
     AuthController,
     BranchController,
     FuelController,
@@ -87,7 +88,8 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('vendor/{id}', [VendorController::class, 'show'])->name('vendor.show');
         Route::delete('vendor/{id}', [VendorController::class, 'destroy'])->name('vendor.destroy');
 
-        // Route::view('vendor', 'pages.VendorIndex');
+        Route::get('kategori/list', [CategoryController::class, 'list'])->name('category.list');
+        Route::get('kategori', [CategoryController::class, 'index'])->name('category.index');
     });
 
     Route::group(['prefix' => 'transaksi'], function() {
@@ -138,7 +140,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('mutasi-hutang-ritase/{id}', [RitMutationController::class, 'show'])->name('rit-mutation.show');
         Route::delete('mutasi-hutang-ritase/{id}', [RitMutationController::class, 'destroy'])->name('rit-mutation.destroy');
         Route::put('mutasi-hutang-ritase/ubah-status/{id}', [RitMutationController::class, 'changeIsOpen'])->name('rit-mutation.change-status');
-        // Route::get('mutasi-hutang-ritase/cetak/{id}', [RitMutationController::class, 'print'])->name('debt-mutation.print');
+        Route::get('mutasi-hutang-ritase/cetak/{id}', [RitMutationController::class, 'print'])->name('rit-mutation.print');
     });
 });
 

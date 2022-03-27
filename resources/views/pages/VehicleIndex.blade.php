@@ -85,20 +85,30 @@
     </x-content>
 
     <x-modal :title="'Tambah Data'" :id="'add-modal'">
-        <x-row>
-            <x-in-select
-                :label="'Cabang'"
-                :placeholder="'Pilih Cabang'"
-                :col="6"
-                :name="'branch_id'"
-                :options="$options['branches']"
-                :required="true"></x-in-select>
-            <x-in-text
-                :label="'Nama'"
-                :placeholder="'Masukkaan Nama Proyek'"
-                :col="6"
-                :name="'proyek_name'"
-                :required="true"></x-in-text>
-        </x-row>
+        <form style="width: 100%" action="{{ route('vehicle.store') }}" method="POST">
+            @csrf
+            @method('POST')
+
+            <x-row>
+                <x-in-select
+                    :label="'Cabang'"
+                    :placeholder="'Pilih Cabang'"
+                    :col="6"
+                    :name="'branch_id'"
+                    :options="$options['branches']"
+                    :required="true"></x-in-select>
+                <x-in-text
+                    :label="'Nomor Plat Kendaraan'"
+                    :placeholder="'Masukkan Nomor Plat Kendaraan'"
+                    :col="6"
+                    :name="'license_plate'"
+                    :required="true"></x-in-text>
+
+                <x-col class="text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </x-col>
+            </x-row>
+        </form>
     </x-modal>
 @endsection

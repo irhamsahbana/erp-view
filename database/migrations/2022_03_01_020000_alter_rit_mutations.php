@@ -18,6 +18,10 @@ class AlterRitMutations extends Migration
             $table->foreign('branch_id')
             ->references('id')->on('branches');
 
+            $table->index('project_id');
+            $table->foreign('project_id')
+            ->references('id')->on('projects');
+
             $table->index('material_mutation_id');
             $table->foreign('material_mutation_id')
             ->references('id')->on('material_mutations');
@@ -38,6 +42,9 @@ class AlterRitMutations extends Migration
         Schema::table('rit_mutations', function (Blueprint $table) {
             $table->dropForeign(['branch_id']);
             $table->dropIndex(['branch_id']);
+
+            $table->dropForeign(['project_id']);
+            $table->dropIndex(['project_id']);
 
             $table->dropForeign(['material_mutation_id']);
             $table->dropIndex(['material_mutation_id']);
