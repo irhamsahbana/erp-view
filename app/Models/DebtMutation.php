@@ -29,6 +29,6 @@ class DebtMutation extends Model
 
     public function debtType()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'debt_type_id');
     }
 }
