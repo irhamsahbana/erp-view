@@ -11,7 +11,7 @@ use App\Models\Category;
 class CategoryController extends Controller
 {
     //allowed category that can be store by user
-    private static $allowed = ['journal_categories'];
+    private static $allowed = ['journal_categories', 'debt_types'];
 
     public function index(Request $request)
     {
@@ -19,6 +19,8 @@ class CategoryController extends Controller
 
         if ($request->category)
             $query->where('group_by', $request->category);
+        else
+            return redirect()->route('category.list');
 
         $datas = $query->paginate(40)->withQueryString();
 

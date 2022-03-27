@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Illuminate\Validation\Rule;
 
 use App\Http\Controllers\Repositories\DebtMutation;
 
 use App\Models\DebtMutation as Model;
 use App\Models\Branch;
+use App\Models\Category;
 use App\Models\DebtBalance;
 use App\View\Components\Modal;
 use Illuminate\Support\Facades\Auth;
@@ -50,7 +52,7 @@ class DebtMutationController extends Controller
         }
 
         if ($request->type)
-            $query->where('type', $request->type);
+            $query->where('debt_type_id', $request->type);
 
         if ($request->transaction_type)
             $query->where('transaction_type', $request->transaction_type);
@@ -83,7 +85,10 @@ class DebtMutationController extends Controller
             'project_id' => ['required_without:id', 'exists:projects,id'],
             'vendor_id' => ['required_without:id', 'exists:vendors,id'],
 
-            'type' => ['required_without:id', 'numeric'],
+            'type' => ['required_without:id', 'numeric',
+                Rule::exists('categories', 'id')->where(function ($query) {
+                    $query->where('group_by', 'debt_types');
+                })],
             'transaction_type' => ['required_without:id', 'numeric'],
             'amount' => ['required', 'numeric'],
             'notes' => ['required', 'string', 'max:255'],
@@ -110,7 +115,7 @@ class DebtMutationController extends Controller
             $row->project_id = $request->project_id;
             $row->vendor_id = $request->vendor_id;
 
-            $row->type = $request->type;
+            $row->debt_type_id = $request->type;
             $row->transaction_type = $request->transaction_type;
         }
         $row->created = $request->created;
@@ -125,13 +130,13 @@ class DebtMutationController extends Controller
                                 'branch_id' => $row->branch_id,
                                 'project_id' => $row->project_id,
                                 'vendor_id' => $row->vendor_id,
-                                'type' => $row->type
+                                'debt_type_id' => $row->debt_type_id,
                             ]);
 
         $totalBalance = Model::where('branch_id', $row->branch_id)
                             ->where('project_id', $row->project_id)
                             ->where('vendor_id', $row->vendor_id)
-                            ->where('type', $row->type)
+                            ->where('debt_type_id', $row->type)
                             ->get();
 
         $totalBalancePlus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_ADD)->sum('amount');
@@ -248,15 +253,17 @@ class DebtMutationController extends Controller
             ['text' => 'Close', 'value' => 'close'],
         ];
 
-        $types = [
-            ['text' => 'Hutang', 'value' => 1],
-            ['text' => 'Piutang', 'value' => 2],
-        ];
-
         $transactionTypes = [
             ['text' => 'Penambahan', 'value' => 1],
             ['text' => 'Pegurangan', 'value' => 2],
         ];
+
+        $types = Category::where('group_by', 'debt_types')->get()->map(function ($type) {
+            return [
+                'text' => $type->label,
+                'value' => $type->id,
+            ];
+        });
 
         $options = [
             'branches' => $branches,

@@ -1,6 +1,20 @@
 @extends('App')
 
 @php
+    $categoryName = '';
+
+    $categories = [
+        ['group_by' => 'journal_categories', 'label' => 'Jenis Jurnal', 'icon' => 'fas fa-newspaper'],
+        ['group_by' => 'debt_types', 'label' => 'Jenis Mutasi Hutang', 'icon' => 'fas fa-hand-holding-usd'],
+    ];
+
+    foreach ($categories as $category) {
+        if ($category['group_by'] == app('request')->input('category')) {
+            $categoryName = $category['label'];
+            break;
+        }
+    }
+
     $breadcrumbList = [
         [
             'name' => 'Home',
@@ -11,12 +25,12 @@
             'href' => route('category.list')
         ],
         [
-            'name' => 'Jenis Jurnal'
+            'name' => $categoryName
         ],
     ];
 @endphp
 
-@section('content-header', 'Jenis Jurnal')
+@section('content-header', $categoryName)
 
 @section('breadcrumb')
     <x-breadcrumb :list="$breadcrumbList"/>

@@ -29,6 +29,9 @@ class CategorySeeder extends Seeder
             ['id' => 25, 'category_id' => null, 'disabled' => false, 'group_by' => 'journal_categories', 'slug' => 'purchasing', 'label' => 'Purchasing', 'notes' => null],
             ['id' => 26, 'category_id' => null, 'disabled' => false, 'group_by' => 'journal_categories', 'slug' => 'umum', 'label' => 'Umum', 'notes' => null],
 
+            ['id' => 27, 'category_id' => null, 'disabled' => false, 'group_by' => 'debt_types', 'slug' => 'hutang', 'label' => 'Hutang', 'notes' => null],
+            ['id' => 28, 'category_id' => null, 'disabled' => false, 'group_by' => 'debt_types', 'slug' => 'piutang', 'label' => 'Piutang', 'notes' => null],
+
             // ['id' => 31, 'category_id' => null, 'disabled' => false, 'group_by' => 'budget_item_group', 'slug' => 'aset', 'label' => 'Aset', 'notes' => null],
             // ['id' => 32, 'category_id' => null, 'disabled' => false, 'group_by' => 'budget_item_group', 'slug' => 'kewajiban', 'label' => 'Kewajiban', 'notes' => null],
             // ['id' => 33, 'category_id' => null, 'disabled' => false, 'group_by' => 'budget_item_group', 'slug' => 'ekuitas', 'label' => 'Ekuitas', 'notes' => null],

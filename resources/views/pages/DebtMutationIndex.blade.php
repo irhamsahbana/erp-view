@@ -109,13 +109,7 @@
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->project->name }}</td>
                                     <td>{{ $data->vendor->name }}</td>
-                                    <td>
-                                        @if($data->type == 1)
-                                            Hutang
-                                        @elseif($data->type == 2)
-                                            Piutang
-                                        @endif
-                                    </td>
+                                    <td>{{ $data->debtType->label }}</td>
                                     <td>
                                         @if($data->transaction_type == 1)
                                             Tambah

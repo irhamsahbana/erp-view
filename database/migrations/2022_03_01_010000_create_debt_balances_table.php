@@ -18,7 +18,7 @@ class CreateDebtBalancesTable extends Migration
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('vendor_id');
-            $table->unsignedTinyInteger('type')->comment('1 = Hutang, 2 = Piutang');
+            $table->unsignedBigInteger('debt_type_id');
             $table->float('total', 15, 2)->comment('Saldo');
             $table->timestamps();
         });
