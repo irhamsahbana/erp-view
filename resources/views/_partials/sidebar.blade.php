@@ -57,7 +57,8 @@
             <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}"/>
 
           @if (Auth::user()->role == 'owner' || Auth::user()->role == 'admin')
-            <li class="nav-header">MASTER DATA</li>
+          <li class="nav-header">MASTER DATA</li>
+          <x-nav-item :icon="'fas fa-list'" :text="'List Kategori'" href="{{ route('category.list') }}"/>
               <x-nav-item :icon="'fas fa-sitemap'" :text="'Cabang'" href="{{ route('branch.index') }}"/>
               <x-nav-item :icon="'fas fa-users'" :text="'Pengguna'" href="{{ route('user.index') }}"/>
               <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" href="{{ route('project.index') }}"/>
