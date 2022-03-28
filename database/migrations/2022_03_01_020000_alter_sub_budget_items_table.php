@@ -25,6 +25,10 @@ class AlterSubBudgetItemsTable extends Migration
             $table->index('budget_item_id');
             $table->foreign('budget_item_id')
             ->references('id')->on('budget_items');
+
+            $table->index('normal_balance_id');
+            $table->foreign('normal_balance_id')
+            ->references('id')->on('categories');
         });
     }
 
@@ -44,6 +48,9 @@ class AlterSubBudgetItemsTable extends Migration
 
             $table->dropForeign(['budget_item_id']);
             $table->dropIndex(['budget_item_id']);
+
+            $table->dropForeign(['normal_balance_id']);
+            $table->dropIndex(['normal_balance_id']);
         });
     }
 }

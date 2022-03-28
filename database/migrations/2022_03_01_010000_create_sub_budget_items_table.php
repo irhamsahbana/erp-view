@@ -18,6 +18,7 @@ class CreateSubBudgetItemsTable extends Migration
             $table->unsignedBigInteger('report_category_id');
             $table->unsignedBigInteger('budget_item_group_id');
             $table->unsignedBigInteger('budget_item_id');
+            $table->unsignedBigInteger('normal_balance_id');
             $table->string('name');
             $table->timestamps();
         });

@@ -56,6 +56,9 @@
             <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}"/>
             <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}"/>
 
+          <li class="nav-header">AKUNTANSI</li>
+            <x-nav-item :icon="'fas fa-book'" :text="'Entri Jurnal'" href="{{ route('debt-mutation.index') }}"/>
+
           @if (Auth::user()->role == 'owner' || Auth::user()->role == 'admin')
           <li class="nav-header">MASTER DATA</li>
           <x-nav-item :icon="'fas fa-list'" :text="'List Kategori'" href="{{ route('category.list') }}"/>
@@ -66,6 +69,10 @@
               <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" href="{{ route('driver.index') }}"/>
               <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}"/>
               <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}"/>
+
+              <x-nav-item :icon="'fas fa-list'" :text="'Kelompok Mata Anggaran'" href="{{ route('big.index') }}"/>
+              <x-nav-item :icon="'fas fa-list'" :text="'Mata Anggaran'" href="{{ route('bi.index') }}"/>
+              <x-nav-item :icon="'fas fa-list'" :text="'Sub-Mata Anggaran'" href="{{ route('sbi.index') }}"/>
           @endif
         </ul>
       </nav>

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
-use App\Models\Category;
+use App\Models\Category as Model;
 
 class CategoryController extends Controller
 {
@@ -15,7 +15,7 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        $query = Category::select('*');
+        $query = Model::select('*');
 
         if ($request->category)
             $query->where('group_by', $request->category);
@@ -53,7 +53,7 @@ class CategoryController extends Controller
             'notes' => ['nullable'],
         ]);
 
-        $row = Category::findOrNew($request->id);
+        $row = Model::findOrNew($request->id);
         $row->category_id = $request->category_id;
         $row->group_by = $request->group_by;
         $row->label = $request->label;
@@ -67,7 +67,7 @@ class CategoryController extends Controller
 
     public function show(Request $request, $id)
     {
-       $data = Category::findOrFail($id);
+       $data = Model::findOrFail($id);
 
        if (!$data)
             abort(404);
@@ -78,7 +78,7 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        $row = Category::findOrFail($id);
+        $row = Model::findOrFail($id);
         $row->delete();
 
         return redirect()->back()->with('f-msg', 'Kategori berhasil dihapus.');
