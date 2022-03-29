@@ -98,7 +98,7 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Ref Mutasi Material', 'Cabang', 'proyek', 'Jenis Transaksi', 'Jumlah (Biaya)', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Ref Mutasi Material', 'Cabang', 'proyek', 'Jenis Transaksi', 'Jumlah (Biaya)', 'Status', 'Status Bayar', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
@@ -115,6 +115,18 @@
                                         @else
                                             <span class="badge badge-danger">Close</span>
                                         @endif
+                                    </td>
+                                    {{-- <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#status-modal"><i class="fa-solid fa-circle-xmark"></i></button></td> --}}
+                                    <td>
+                                        <form action="{{ route('rit-mutation.change-status-paid', $data->id) }}" style="display:inline!important;" method="POST">
+                                            @method('PUT')
+                                            @csrf
+                                            <button 
+                                                type="submit"
+                                                class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}" 
+                                                onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
+                                                title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
+                                        </form>
                                     </td>
                                     <td>
                                         @if ($data->is_open)
@@ -205,14 +217,14 @@
                     :id="'in_material_mutation_id'"
                     :name="'material_mutation_id'"
                     :required="true"></x-in-select>
-                <x-in-select
+                {{-- <x-in-select
                     :label="'Jenis Transaksi'"
                     :placeholder="'Pilih Jenis Transaksi'"
                     :col="6"
                     :name="'transaction_type'"
                     :options="$options['transactionTypes']"
                     :value="old('transaction_type')"
-                    :required="true"></x-in-select>
+                    :required="true"></x-in-select> --}}
                 <x-in-text
                     :type="'number'"
                     :step="0.01"
@@ -221,13 +233,13 @@
                     :value="old('amount')"
                     :name="'amount'"
                     :required="true"></x-in-text>
-                <x-in-text
+                {{-- <x-in-text
                     :type="'date'"
                     :label="'Tanggal'"
                     :col="6"
                     :value="old('created')"
                     :name="'created'"
-                    :required="true"></x-in-text>
+                    :required="true"></x-in-text> --}}
                 <x-in-text
                     :label="'Catatan'"
                     :value="old('notes')"
@@ -240,6 +252,28 @@
             </x-row>
         </form>
     </x-modal>
+    {{-- <x-modal :title="'Tambah Data'" :id="'status-modal'">
+        <form style="width: 100%" action="{{ route('rit-mutation.store') }}" method="POST">
+            @csrf
+            @method('POST')
+
+            <x-row>
+                <x-in-select
+                    :label="'Cabang'"
+                    :placeholder="'Pilih Cabang'"
+                    :col="4"
+                    :id="'in_branch_id'"
+                    :name="'branch_id'"
+                    :options="$options['branches']"
+                    :value="old('branch_id')"
+                    :required="true"></x-in-select>
+                <x-col class="text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </x-col>
+            </x-row>
+        </form>
+    </x-modal> --}}
 @endsection
 
 @push('js')

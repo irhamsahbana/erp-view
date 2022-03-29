@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use App\Models\RitMutation as Model;
 use App\Models\RitBalance;
 use App\Models\Branch;
+use App\Models\MaterialMutation;
 
 class RitMutationController extends Controller
 {
@@ -79,10 +80,10 @@ class RitMutationController extends Controller
             'driver_id' => ['required_without:id', 'exists:drivers,id'],
             'material_mutation_id' => ['required_without:id', 'exists:material_mutations,id'],
 
-            'transaction_type' => ['required_without:id', 'numeric'],
+            // 'transaction_type' => ['required_without:id', 'numeric'],
             'amount' => ['required', 'numeric'],
             'notes' => ['required', 'string', 'max:255'],
-            'created' => ['required', 'date'],
+            // 'created' => ['required', 'date'],
         ]);
 
         $row = Model::findOrNew($request->id);
@@ -92,8 +93,6 @@ class RitMutationController extends Controller
             $postfix = sprintf('/%s.%s', date('m'), date('y'));
             $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
         }
-
-        $oldAmount = $row->amount;
 
         if ($row->id && !$row->is_open)
             return redirect()->back()->withErrors(['messages' => 'Sudah ditutup.']);
@@ -105,13 +104,13 @@ class RitMutationController extends Controller
                 $row->branch_id = Auth::user()->branch_id;
 
             $row->project_id = $request->project_id;
-
             $row->driver_id = $request->driver_id;
             $row->material_mutation_id = $request->material_mutation_id;
-
-            $row->transaction_type = $request->transaction_type;
         }
-        $row->created = $request->created;
+        $created = MaterialMutation::findOrFail($request->material_mutation_id);
+
+        // dd($created);
+        $row->created = $created->created;
         $row->amount = $request->amount;
         $row->notes = $request->notes;
 
@@ -122,40 +121,42 @@ class RitMutationController extends Controller
                                 'material_mutation_id' => $row->material_mutation_id,
                             ]);
 
-        $totalBalance = Model::where('branch_id', $row->branch_id)
-                            ->where('project_id', $row->project_id)
-                            ->where('driver_id', $row->driver_id)
-                            ->where('material_mutation_id', $row->material_mutation_id)
-                            ->get();
+        // $totalBalance = Model::where('branch_id', $row->branch_id)
+        //                     ->where('project_id', $row->project_id)
+        //                     ->where('driver_id', $row->driver_id)
+        //                     ->where('material_mutation_id', $row->material_mutation_id)
+        //                     ->get();
 
-        $totalBalancePlus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_ADD)->sum('amount');
-        $totalBalanceMinus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_SUBTRACT)->sum('amount');
-        $totalBalance = $totalBalancePlus - $totalBalanceMinus;
+        // $totalBalance = $totalBalance->where('is_paid', false)->sum('amount');
+        // dd($totalBalance);
+        // $totalBalancePlus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_ADD)->sum('amount');
+        // $totalBalanceMinus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_SUBTRACT)->sum('amount');
+        // $totalBalance = $totalBalancePlus - $totalBalanceMinus;
 
 
-        if ($row->transaction_type == Model::TRANSACTION_TYPE_ADD) {
-            if (!$row->id)
-                $balance->total = $totalBalance + $row->amount;
-            else if ($row->id && $oldAmount != $row->amount)
-                $balance->total = $totalBalance + $row->amount - $oldAmount;
+        // if ($row->transaction_type == Model::TRANSACTION_TYPE_ADD) {
+        if (!$row->id)
+            $balance->total += $row->amount;
+        else if ($row->id && $row->getRawOriginal('amount') != $row->amount)
+            $balance->total = $balance->total + $row->amount - $row->getRawOriginal('amount');
 
-            $row->save();
-            $balance->save();
-        } else if ($row->transaction_type == Model::TRANSACTION_TYPE_SUBTRACT) {
-            if ($totalBalance < $row->amount)
-                return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
+        $row->save();
+        $balance->save();
+        // } else if ($row->transaction_type == Model::TRANSACTION_TYPE_SUBTRACT) {
+        if ($balance->total < $row->amount)
+            return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
 
-            if (!$row->id)
-                $balance->total = $totalBalance - $row->amount;
-            else if ($row->id && $oldAmount != $row->amount)
-                $balance->total = $balance->total - $row->amount + $oldAmount;
+        if (!$row->id)
+            $balance->total = $balance->total - $row->amount;
+        else if ($row->id && $row->getRawOriginal('amount') != $row->amount)
+            $balance->total = $balance->total - $row->amount + $row->getRawOriginal('amount');
 
-            if ($balance->total < 0)
-                return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
+        if ($balance->total < 0)
+            return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
 
-            $row->save();
-            $balance->save();
-        }
+        $row->save();
+        $balance->save();
+        // }
 
         return redirect()->back()->with('f-msg', 'Mutasi hutang ritase berhasil disimpan.');
     }
@@ -256,5 +257,31 @@ class RitMutationController extends Controller
         ];
 
         return $options;
+    }
+
+    public function changeIsPaid($id)
+    {
+        $row = Model::findOrFail($id);
+        $row->is_paid = !$row->is_paid;
+
+
+        $row->save();
+
+        $balance = RitBalance::firstOrNew([
+            'branch_id' => $row->branch_id,
+            'project_id' => $row->project_id,
+            'driver_id' => $row->driver_id,
+            'material_mutation_id' => $row->material_mutation_id,
+        ]);
+
+        if($row->is_paid == true){
+            $balance->total -= $row->amount;
+        }else{
+            $balance->total += $row->amount;
+        }
+
+        $balance->save();
+
+        return redirect()->back()->with('f-msg', 'Status Pembayaran berhasil diubah.');
     }
 }
