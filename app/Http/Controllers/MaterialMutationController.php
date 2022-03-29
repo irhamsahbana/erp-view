@@ -223,16 +223,30 @@ class MaterialMutationController extends Controller
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
     }
 
-    public function balance()
+    public function balance(Request $request)
     {
         $query = MaterialBalance::select('*');
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 
-        $datas = $query->paginate(40)->withQueryString();
+        if ($request->branch_id) {
+            if (!in_array(Auth::user()->role, self::$fullAccess))
+                $query->where('branch_id', Auth::user()->branch_id);
+            else
+                $query->where('branch_id', $request->branch_id);
+        }
 
-        return view('pages.MaterialBalanceIndex', compact('datas'));
+        if ($request->project_id)
+            $query->where('project_id', $request->project_id);
+
+        if ($request->material_id)
+            $query->where('material_id', $request->material_id);
+
+        $datas = $query->paginate(40)->withQueryString();
+        $options = self::staticOptions();
+
+        return view('pages.MaterialBalanceIndex', compact('datas', 'options'));
     }
 
     public static function staticOptions()
