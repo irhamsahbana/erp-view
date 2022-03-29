@@ -25,12 +25,8 @@ class RitMutationController extends Controller
     {
         $query = Model::select('*');
 
-        if ($request->branch_id) {
-            if (!in_array(Auth::user()->role, self::$fullAccess))
-                $query->where('branch_id', Auth::user()->branch_id);
-            else
-                $query->where('branch_id', $request->branch_id);
-        }
+        if ($request->branch_id)
+            $query->where('branch_id', $request->branch_id);
 
         if ($request->project_id)
             $query->where('project_id', $request->project_id);
@@ -205,16 +201,29 @@ class RitMutationController extends Controller
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
     }
 
-    public function balance()
+    public function balance(Request $request)
     {
         $query = RitBalance::select('*');
+
+        if ($request->branch_id)
+            $query->where('branch_id', $request->branch_id);
+
+        if ($request->project_id)
+            $query->where('project_id', $request->project_id);
+
+        if ($request->driver_id)
+            $query->where('driver_id', $request->driver_id);
+
+        if ($request->material_mutation_id)
+            $query->where('material_mutation_id', $request->material_mutation_id);
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 
         $datas = $query->paginate(40)->withQueryString();
+        $options = self::staticOptions();
 
-        return view('pages.RitBalanceIndex', compact('datas'));
+        return view('pages.RitBalanceIndex', compact('datas', 'options'));
     }
 
     public function print($id)
