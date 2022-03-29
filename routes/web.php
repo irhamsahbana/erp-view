@@ -143,6 +143,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('mutasi-hutang-ritase/{id}', [RitMutationController::class, 'show'])->name('rit-mutation.show');
         Route::delete('mutasi-hutang-ritase/{id}', [RitMutationController::class, 'destroy'])->name('rit-mutation.destroy');
         Route::put('mutasi-hutang-ritase/ubah-status/{id}', [RitMutationController::class, 'changeIsOpen'])->name('rit-mutation.change-status');
+        Route::put('mutasi-hutang-ritase/ubah-status-bayar/{id}', [RitMutationController::class, 'changeIsPaid'])->name('rit-mutation.change-status-paid');
         Route::get('mutasi-hutang-ritase/cetak/{id}', [RitMutationController::class, 'print'])->name('rit-mutation.print');
     });
 });
