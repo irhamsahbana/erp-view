@@ -29,12 +29,8 @@ class DebtMutationController extends Controller
     {
         $query = Model::select('*');
 
-        if ($request->branch_id) {
-            if (!in_array(Auth::user()->role, self::$fullAccess))
-                $query->where('branch_id', Auth::user()->branch_id);
-            else
-                $query->where('branch_id', $request->branch_id);
-        }
+        if ($request->branch_id)
+            $query->where('branch_id', $request->branch_id);
 
         if ($request->project_id)
             $query->where('project_id', $request->project_id);
@@ -69,7 +65,6 @@ class DebtMutationController extends Controller
             $query->where('branch_id', Auth::user()->branch_id);
 
         $datas = $query->paginate(40)->withQueryString();
-
         $options = self::staticOptions();
 
         return view('pages.DebtMutationIndex', compact('datas', 'options'));
@@ -213,16 +208,26 @@ class DebtMutationController extends Controller
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
     }
 
-    public function balance()
+    public function balance(Request $request)
     {
         $query = DebtBalance::select('*');
+
+        if ($request->branch_id)
+            $query->where('branch_id', $request->branch_id);
+
+        if ($request->project_id)
+            $query->where('project_id', $request->project_id);
+
+        if ($request->vendor_id)
+            $query->where('vendor_id', $request->vendor_id);
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 
         $datas = $query->paginate(40)->withQueryString();
+        $options = self::staticOptions();
 
-        return view('pages.DebtBalanceIndex', compact('datas'));
+        return view('pages.DebtBalanceIndex', compact('datas', 'options'));
     }
 
     public function print($id)
