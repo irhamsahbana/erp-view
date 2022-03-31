@@ -36,7 +36,7 @@ class AlterSubJournalsTable extends Migration
 
             $table->index('normal_balance_id');
             $table->foreign('normal_balance_id')
-            ->references('id')->on('rit_balances');
+            ->references('id')->on('categories');
         });
     }
 
