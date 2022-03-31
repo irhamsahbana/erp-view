@@ -203,6 +203,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('pembelian-detail', [PurchaseDetailController::class, 'store'])->name('purchase-detail.store');
         Route::put('pembelian-detail/ubah-harga/{id}', [PurchaseDetailController::class, 'update'])->name('purchase-detail.update-price');
         Route::delete('pembelian-detail/{id}', [PurchaseDetailController::class, 'destroy'])->name('purchase-detail.destroy');
+        Route::get('pembelian-detail/cetak/{id}', [PurchaseDetailController::class, 'print'])->name('purchase-detail.print');
     });
 });
 

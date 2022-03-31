@@ -127,14 +127,14 @@
                 <x-in-text
                     :type="'text'"
                     :label="'Satuan'"
-                    :col="4"
+                    :col="6"
                     :id="'in_unit'"
                     :name="'unit'"
                     :required="true"></x-in-text>
                 <x-in-text
                     :type="'text'"
                     :label="'Notes'"
-                    :col="4"
+                    :col="6"
                     :id="'in_notes'"
                     :name="'notes'"
                     :required="true"></x-in-text>
@@ -174,14 +174,6 @@
 
     {{-- Searching --}}
     <script>
-        // $('.editHarga').click(function(){
-        //     let id = this.id
-        //     console.log(id)
-
-        //     let bebas = "{{ route('purchase-detail.update-price'," + id + ")}}"
-        //     console.log(bebas)
-        //     $('#formEditHarga').attr('action', bebas)
-        // })
 
         $(function(){
             $('.edit-price').on('click', function() {

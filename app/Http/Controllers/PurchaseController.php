@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchase as Model;
-use App\Models\Branch;
-use App\Models\PurchaseDetail;
-use App\Models\User;
-use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+use App\Models\User;
+use App\Models\Branch;
+use App\Models\Vendor;
+use App\Models\PurchaseDetail;
+use App\Models\Purchase as Model;
 
 class PurchaseController extends Controller
 {
@@ -187,4 +188,5 @@ class PurchaseController extends Controller
 
         return $options;
     }
+
 }

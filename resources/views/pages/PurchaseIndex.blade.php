@@ -138,6 +138,8 @@
                                                 class="btn btn-warning"
                                                 title="detail"><i class="fas fa-eye"></i></a>
                                         @endif
+                                        <a href="{{ route('purchase-detail.print', $data->id) }}" class="btn btn-info"
+                                            title="Print"><i class="fas fa-file-alt"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -161,7 +163,7 @@
                 <x-in-select
                     :label="'Cabang'"
                     :placeholder="'Pilih Cabang'"
-                    :col="4"
+                    :col="6"
                     :id="'in_branch_id'"
                     :name="'branch_id'"
                     :options="$options['branches']"
@@ -170,14 +172,14 @@
                 <x-in-text
                     :type="'text'"
                     :label="'User'"
-                    :col="4"
+                    :col="6"
                     :id="'in_user'"
                     :name="'user'"
                     :required="true"></x-in-text>
                 <x-in-select
                     :label="'Vendor'"
                     :placeholder="'Pilih Vendor'"
-                    :col="4"
+                    :col="6"
                     :id="'in_vendor_id'"
                     :name="'vendor_id'"
                     :options="$options['vendors']"
@@ -186,7 +188,7 @@
                 <x-in-text
                     :type="'date'"
                     :label="'Tanggal'"
-                    :col="3"
+                    :col="6"
                     :id="'in_created'"
                     :name="'created'"
                     :required="true"></x-in-text>

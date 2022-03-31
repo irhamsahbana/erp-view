@@ -68,6 +68,9 @@ $optionsAuth['roles'] = [
       <li class="nav-header">TRANSAKSI PEMBELIAN</li>
       <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchasing'" :href="route('purchasing.index')" />
 
+      {{-- <li class="nav-header">LAPORAN</li>
+      <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="route('purchasing.index')" /> --}}
+
       <li class="nav-header">MASTER DATA</li>
       <x-nav-item :icon="'fas fa-list'" :text="'List Kategori'" href="{{ route('category.list') }}" />
       <x-nav-item :icon="'fas fa-sitemap'" :text="'Cabang'" href="{{ route('branch.index') }}" />
