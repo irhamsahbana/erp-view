@@ -34,7 +34,7 @@ class OrderFactory extends Factory
             'user_id' => $user->id,
             'status' => $status,
             'amount' => $this->faker->randomFloat(2, 2_000_000, 10_000_000),
-            'notes' => $this->faker->text,
+            'notes' => "lorem Ipsum",
             'is_open' => $isOpen,
             'created' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];

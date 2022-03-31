@@ -21,6 +21,15 @@ use App\Http\Controllers\{
     PurchaseDetailController,
     VendorController,
     VoucherController,
+
+    //journal
+    BudgetItemGroupController,
+    BudgetItemController,
+    SubBudgetItemController,
+    JournalController,
+    NeracaController,
+    ProfitLossController,
+    ReportController
 };
 
 use App\Models\{
@@ -96,6 +105,37 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('kategori', [CategoryController::class, 'index'])->name('category.index');
         Route::post('kategori', [CategoryController::class, 'store'])->name('category.store');
         Route::delete('kategori/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+
+        Route::get('kelompok-mata-anggaran', [BudgetItemGroupController::class, 'index'])->name('big.index');
+        Route::post('kelompok-mata-anggaran', [BudgetItemGroupController::class, 'store'])->name('big.store');
+        Route::get('kelompok-mata-anggaran/{id}', [BudgetItemGroupController::class, 'show'])->name('big.show');
+        Route::delete('kelompok-mata-anggaran/{id}', [BudgetItemGroupController::class, 'destroy'])->name('big.destroy');
+
+        Route::get('mata-anggaran', [BudgetItemController::class, 'index'])->name('bi.index');
+        Route::post('mata-anggaran', [BudgetItemController::class, 'store'])->name('bi.store');
+        Route::get('mata-anggaran/{id}', [BudgetItemController::class, 'show'])->name('bi.show');
+        Route::delete('mata-anggaran/{id}', [BudgetItemController::class, 'destroy'])->name('bi.destroy');
+
+        Route::get('sub-mata-anggaran', [SubBudgetItemController::class, 'index'])->name('sbi.index');
+        Route::post('sub-mata-anggaran', [SubBudgetItemController::class, 'store'])->name('sbi.store');
+        Route::get('sub-mata-anggaran/{id}', [SubBudgetItemController::class, 'show'])->name('sbi.show');
+        Route::delete('sub-mata-anggaran/{id}', [SubBudgetItemController::class, 'destroy'])->name('sbi.destroy');
+    });
+
+    Route::group(['prefix' => 'journal'], function() {
+        Route::get('/', [JournalController::class, 'index'])->name('journal.index');
+        Route::get('/create-journal', [JournalController::class, 'create'])->name('add.journal');
+        Route::post('/save-journal', [JournalController::class, 'save'])->name('save.journal');
+        Route::get('/delete-journal/{id}', [JournalController::class, 'delete'])->name('delete.journal');
+        Route::get('/edit-journal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
+        Route::post('/udpate-journal/{journal:id}', [JournalController::class, 'update'])->name('update.journal');
+        Route::get('/detail-journal/{journal:id}', [JournalController::class, 'detail'])->name('detail.journal');
+    });
+    Route::group(['prefix' => 'neraca'], function() {
+        Route::get('/', [ReportController::class, 'balancesheet'])->name('balance.index');
+    });
+    Route::group(['prefix' => 'laba-rugi'], function() {
+        Route::get('/', [ReportController::class, 'incomeStatement'])->name('income.statement.index');
     });
 
     Route::group(['prefix' => 'transaksi'], function() {

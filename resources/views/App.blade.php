@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="{{ asset('assets') }}/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
 
   @stack('css')
+  @livewireStyles
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed text-sm">
@@ -99,6 +100,7 @@
 </script>
 
 @stack('js')
+@livewireScripts
 
 @include('_partials.toast')
 </body>

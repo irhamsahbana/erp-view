@@ -1,36 +1,18 @@
 @extends('App')
 
 @php
-    $categoryName = '';
-
-    $categories = [
-        ['group_by' => 'journal_categories', 'label' => 'Jenis Jurnal', 'icon' => 'fas fa-newspaper'],
-        ['group_by' => 'debt_types', 'label' => 'Jenis Mutasi Hutang', 'icon' => 'fas fa-hand-holding-usd'],
-    ];
-
-    foreach ($categories as $category) {
-        if ($category['group_by'] == app('request')->input('category')) {
-            $categoryName = $category['label'];
-            break;
-        }
-    }
-
     $breadcrumbList = [
         [
             'name' => 'Home',
             'href' => '/'
         ],
         [
-            'name' => 'List Kategori',
-            'href' => route('category.list')
-        ],
-        [
-            'name' => $categoryName
+            'name' => 'Kelompok Mata Anggaran'
         ],
     ];
 @endphp
 
-@section('content-header', $categoryName)
+@section('content-header', 'Kelompok Mata Anggaran')
 
 @section('breadcrumb')
     <x-breadcrumb :list="$breadcrumbList"/>
@@ -46,25 +28,25 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Nama', 'Aksi']">
+                        <x-table :thead="['Jenis Laporan', 'Nama', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $data->label }}</td>
+                                    <td>{{ $data->reportCategory->label }}</td>
+                                    <td>{{ $data->name }}</td>
                                     <td>
-                                        {{-- <a
-                                            href="{{ route('category.show', $data->id) }}"
-                                            class="btn btn-warning"
-                                            title="Ubah"><i class="fas fa-pencil-alt"></i></a> --}}
                                         <a
                                             type="button"
                                             class="btn btn-warning"
                                             title="Edit"
                                             onclick="edit({{ $data->id }})"
                                             href="javascript:void(0)"><i class="fas fa-pencil-alt"></i></a>
-                                        <form style=" display:inline!important;" method="POST" action="{{ route('category.destroy', $data->id) }}">
-                                            @csrf
-                                            @method('DELETE')
+                                        <form
+                                            style=" display:inline!important;"
+                                            method="POST"
+                                            action="{{ route('big.destroy', $data->id) }}">
+                                                @csrf
+                                                @method('DELETE')
 
                                             <button
                                                 type="submit"
@@ -77,35 +59,40 @@
                             @endforeach
                         </x-table>
                     </x-col>
+
+                    <x-col class="d-flex justify-content-end">
+                        {{ $datas->links() }}
+                    </x-col>
                 </x-row>
             </x-card-collapsible>
         </x-row>
     </x-content>
 
-    <x-modal :title="'Tambah Data'" :id="'add-modal'" :size="'lg'">
-        <form style="width: 100%" action="{{ route('category.store') }}" method="POST">
+    <x-modal :title="'Tambah Data'" :id="'add-modal'">
+        <form style="width: 100%" action="{{ route('big.store') }}" method="POST">
             @csrf
             @method('POST')
-            <input type="hidden" name="group_by" value="{{ app('request')->input('category') }}">
+
             <x-row>
+                <x-in-select
+                    :label="'Jenis Laporan'"
+                    :placeholder="'Pilih Jenis Laporan'"
+                    :col="12"
+                    :name="'report_category_id'"
+                    :options="$options['reportCategories']"
+                    :required="true"></x-in-select>
                 <x-in-text
                     :label="'Nama'"
-                    :placeholder="'Masukkan Nama'"
+                    :placeholder="'Masukkaan Nama'"
                     :col="12"
-                    :name="'label'"
+                    :name="'name'"
                     :required="true"></x-in-text>
-                <x-in-text
-                    :label="'Catatan'"
-                    :placeholder="'Masukkan Catatan'"
-                    :col="12"
-                    :name="'notes'"
-                    :required="true"></x-in-text>
-            </x-row>
 
-            <x-col class="text-right">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </x-col>
+                <x-col class="text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </x-col>
+            </x-row>
         </form>
     </x-modal>
 
@@ -114,17 +101,23 @@
             @csrf
 
             <x-row>
-                <input type="hidden" name="id" id="category_id" value="">
-                <input type="hidden" name="group_by" value="{{ app('request')->input('category') }}">
+                <input type="hidden" name="id" id="id" value="">
+                <x-in-select
+                    :label="'Jenis Laporan'"
+                    :placeholder="'Pilih Jenis Laporan'"
+                    :col="12"
+                    :id="'report_category_id_edit'"
+                    :name="'report_category_id'"
+                    :options="$options['reportCategories']"
+                    value=""
+                    :required="true"></x-in-select>
                 <x-in-text
                     :label="'Nama'"
-                    :id="'label_edit'"
-                    :name="'label'"
-                    :required="true"></x-in-text>
-                <x-in-text
-                    :label="'Catatan'"
-                    :id="'notes_edit'"
-                    :name="'notes'"
+                    :placeholder="'Masukkaan Nama'"
+                    :col="12"
+                    :id="'name_edit'"
+                    :name="'name'"
+                    value=""
                     :required="true"></x-in-text>
                 <x-col class="text-right">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
@@ -136,16 +129,15 @@
 @endsection
 
 @push('js')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="url-category-show" content="{{ route('category.show', 'dummy-id') }}">
-    <meta name="url-category-store" content="{{ route('category.store', ['id' => 'dummy-id']) }}">
+    <meta name="url-big-show" content="{{ route('big.show', 'dummy-id') }}">
+    <meta name="url-big-store" content="{{ route('big.store', ['id' => 'dummy-id']) }}">
 
     <script>
         function edit(id) {
             $('#edit-modal').modal('show');
             $('#edit-form').trigger('reset');
 
-            let url = $('meta[name="url-category-show"]').attr('content');
+            let url = $('meta[name="url-big-show"]').attr('content');
             url = url.replace('dummy-id', id);
 
             $.ajax({
@@ -154,12 +146,12 @@
                 dataType: 'json',
                 cache: false,
                 success: function(data) {
-                    $('#category_id').val(data.id);
-                    $('#label_edit').val(data.label);
-                    $('#notes_edit').val(data.notes);
+                    $('#id').val(data.id);
+                    $('#report_category_id_edit').val(data.report_category_id);
+                    $('#name_edit').val(data.name);
 
                     //change form action
-                    let url = $('meta[name="url-category-store"]').attr('content');
+                    let url = $('meta[name="url-big-store"]').attr('content');
                     url = url.replace('dummy-id', data.id);
                     $('#edit-form').attr('action', url);
 
@@ -171,13 +163,12 @@
         }
 
         $(document).ready(function() {
-
-            $('#edit-modal').on('hidden.bs.modal', function () {
+            $('#edit-modal').on('hidden.bs.modal', function() {
                 $('#edit-form').trigger('reset');
                 $('#edit-form').attr('action', '');
-                $('#category_id').val('');
+                $('#id').val('');
             });
         });
-
     </script>
+
 @endpush
