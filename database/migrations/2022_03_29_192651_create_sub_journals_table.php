@@ -22,7 +22,7 @@ class CreateSubJournalsTable extends Migration
             $table->unsignedBigInteger('project_id')->nullable();
             $table->unsignedBigInteger('normal_balance_id');
             $table->unsignedBigInteger('user_id');
-            $table->float('amount');
+            $table->float('amount', 15, 2);
             $table->longText('notes')->nullable();
             $table->boolean('is_open')->default(false);
             $table->timestamps();

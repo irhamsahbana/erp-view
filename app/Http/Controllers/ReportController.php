@@ -25,7 +25,7 @@ class ReportController extends Controller
                                 'journals.branch_id',
                                 'journals.date'
                                 )
-                            ->rightJoin('journals', 'journals.id', 'sub_journals.journal_id');
+                            ->leftJoin('journals', 'journals.id', 'sub_journals.journal_id');
 
         if ($request->branch_id)
             $query->where('journals.branch_id', $request->branch_id);
@@ -47,7 +47,7 @@ class ReportController extends Controller
         $bi = [];
         $big = [];
 
-        $subJournals = $query->get();
+        $subJournals1 = $query->get();
 
         foreach ($subBudgetItems as $subBudgetItem) {
             $tmp = [];
@@ -57,7 +57,7 @@ class ReportController extends Controller
             $tmp['budget_item_id'] = $subBudgetItem->budget_item_id;
             $tmp['name'] = $subBudgetItem->name;
 
-           $subJournals =  $subJournals->where('sub_budget_item_id', $subBudgetItem->id);
+           $subJournals =  $subJournals1->where('sub_budget_item_id', $subBudgetItem->id);
 
             foreach ($subJournals as $subJournal) {
                 if ($subJournal->normal_balance_id == $subBudgetItem->normal_balance_id) {
@@ -133,19 +133,19 @@ class ReportController extends Controller
                                 'journals.branch_id',
                                 'journals.date'
                                 )
-                            ->rightJoin('journals', 'journals.id', 'sub_journals.journal_id');
+                            ->leftJoin('journals', 'journals.id', 'sub_journals.journal_id');
 
         if ($request->branch_id)
-        $query->where('journals.branch_id', $request->branch_id);
+            $query->where('journals.branch_id', $request->branch_id);
 
         if ($request->project_id)
-        $query->where('sub_journals.project_id', $request->project_id);
+            $query->where('sub_journals.project_id', $request->project_id);
 
         if ($request->date_start)
-        $query->whereDate('journals.date', '>=', new \DateTime($request->date_start));
+            $query->whereDate('journals.date', '>=', new \DateTime($request->date_start));
 
         if ($request->date_finish)
-        $query->whereDate('journals.date', '<=', new \DateTime($request->date_finish));
+            $query->whereDate('journals.date', '<=', new \DateTime($request->date_finish));
 
         $reportIncomeStatementSheet = Category::where('slug', 'laba-rugi')->first();
         $subBudgetItems = SubBudgetItem::where('report_category_id', $reportIncomeStatementSheet->id)->get();
@@ -156,7 +156,7 @@ class ReportController extends Controller
         $bi = [];
         $big = [];
 
-        $subJournals = $query->get();
+        $subJournals1 = $query->get();
 
         foreach ($subBudgetItems as $subBudgetItem) {
         $tmp = [];
@@ -166,7 +166,7 @@ class ReportController extends Controller
         $tmp['budget_item_id'] = $subBudgetItem->budget_item_id;
         $tmp['name'] = $subBudgetItem->name;
 
-        $subJournals =  $subJournals->where('sub_budget_item_id', $subBudgetItem->id);
+        $subJournals =  $subJournals1->where('sub_budget_item_id', $subBudgetItem->id);
 
         foreach ($subJournals as $subJournal) {
         if ($subJournal->normal_balance_id == $subBudgetItem->normal_balance_id) {
