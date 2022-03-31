@@ -33,7 +33,7 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Ref', 'Cabang', 'Nama Barang', 'Total Harga', 'Volume', 'Unit', 'Aksi']">
+                        <x-table :thead="['Ref', 'Cabang', 'Nama Barang', 'Total Harga', 'Volume', 'Satuan', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
@@ -126,7 +126,7 @@
                     :required="true"></x-in-text>
                 <x-in-text
                     :type="'text'"
-                    :label="'Unit'"
+                    :label="'Satuan'"
                     :col="4"
                     :id="'in_unit'"
                     :name="'unit'"
