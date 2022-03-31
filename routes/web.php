@@ -4,6 +4,7 @@ use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\{
+    AjaxController,
     CategoryController,
     AuthController,
     BranchController,
@@ -35,6 +36,7 @@ use App\Http\Controllers\{
 use App\Models\{
     DebtMutation,
     DebtBalance,
+    Journals,
     MaterialMutation,
     MaterialBalance,
     PurchaseDetail
@@ -126,12 +128,21 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['prefix' => 'journal'], function() {
         Route::get('/', [JournalController::class, 'index'])->name('journal.index');
-        Route::get('/create-journal', [JournalController::class, 'create'])->name('add.journal');
-        Route::post('/save-journal', [JournalController::class, 'save'])->name('save.journal');
-        Route::get('/delete-journal/{id}', [JournalController::class, 'delete'])->name('delete.journal');
-        Route::get('/edit-journal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
-        Route::post('/udpate-journal/{journal:id}', [JournalController::class, 'update'])->name('update.journal');
-        Route::get('/detail-journal/{journal:id}', [JournalController::class, 'detail'])->name('detail.journal');
+        Route::get('/buat-jurnal', [JournalController::class, 'create'])->name('add.journal');
+        Route::post('/simpan-jurnal', [JournalController::class, 'save'])->name('save.journal');
+        Route::get('/hapus-jurnal/{id}', [JournalController::class, 'delete'])->name('delete.journal');
+        Route::get('/ubah-jurnal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
+        Route::post('/ganti-jurnal/{journal:id}', [JournalController::class, 'update'])->name('update.journal');
+        Route::post('/tambah-sub-jrunal-temp', [JournalController::class, 'postSubJournalTemporary'])->name('post-sub-journal-temporay');
+        Route::get('/rincian-jurnal/{journal:id}', [JournalController::class, 'detail'])->name('detail.journal');
+        Route::post('/simpan-sub-jurnal-sementara', [JournalController::class, 'saveSubJournalTemporaryToSubJournal'])->name('save-sub-journal-temporary');
+        Route::get('/hapus-sub-jurnal', [JournalController::class, 'deleteSubJournal'])->name('delete-sub-journal');
+        Route::get('/hapus-sub-jurnal-sementara', [JournalController::class, 'deleteSubJournalTemp'])->name('delete-sub-journal-temp');
+
+        Route::get('/get-budget-item', [AjaxController::class, 'getBudgetItem'])->name('get-budget-item');
+        Route::get('/get-sub-budget-item', [AjaxController::class, 'getSubBudgetItem'])->name('get-sub-budget-item');
+        Route::get('/get-budget-item-group', [AjaxController::class, 'getBudgetItemGroup'])->name('get-budget-item-group');
+        Route::get('/get-normal-balances', [AjaxController::class, 'getNormalBalance'])->name('get-normal-balance');
     });
     Route::group(['prefix' => 'neraca'], function() {
         Route::get('/', [ReportController::class, 'balancesheet'])->name('balance.index');
@@ -240,3 +251,4 @@ Route::get('delete-material', function() {
 
     echo "success delete material";
 });
+

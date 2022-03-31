@@ -66,7 +66,7 @@ $option = [
                         <select class="form-control" name="branch_id" required>
                             <option value="">Pilih Cabang</option>
                             @foreach ($branches as $branch)
-                            <option value="{{ $branch->id }}" @if($branch->id == $journal->branch_id) selected @endif>{{
+                            <option value="{{ $branch['name'] }}" @if($branch->id == $journal['branch_id']) selected @endif>{{
                                 $branch->name }}</option>
                             @endforeach
                         </select>

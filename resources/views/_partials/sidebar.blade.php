@@ -80,6 +80,10 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" href="{{ route('driver.index') }}" />
       <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}" />
       <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}" />
+
+      <x-nav-item :icon="'fas fa-list'" :text="'Kelompok Mata Anggaran'" href="{{ route('big.index') }}" />
+      <x-nav-item :icon="'fas fa-list'" :text="'Mata Anggaran'" href="{{ route('bi.index') }}" />
+      <x-nav-item :icon="'fas fa-list'" :text="'Sub-Mata Anggaran'" href="{{ route('sbi.index') }}" />
       @endif
 
       @if (Auth::user()->role == 'purchaser')
