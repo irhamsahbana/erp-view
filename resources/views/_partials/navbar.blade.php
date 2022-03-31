@@ -17,6 +17,14 @@
       </li>
 
       <li class="nav-item">
+        <a href="{{ route('user.edit-password') }}">
+          <button class="nav-link btn" id="toggle-dark-mode">
+            <i class="fas fa-user-alt"></i>
+          </button>
+        </a>
+      </li>
+
+      <li class="nav-item">
         <a href="{{ route('logout') }}">
           <button class="nav-link btn" id="toggle-dark-mode">
             <i class="fas fa-sign-out-alt"></i>

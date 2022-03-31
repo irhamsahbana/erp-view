@@ -133,6 +133,16 @@ class PurchaseController extends Controller
         return redirect()->back()->with('f-msg', 'Status Bayar berhasil diubah.');
     }
 
+    public function changeIsAccepted($id)
+    {
+        $row = Model::findOrFail($id);
+        $row->is_accepted = !$row->is_accepted;
+
+        $row->save();
+
+        return redirect()->back()->with('f-msg', 'Status diterima berhasil diubah');
+    }
+
     public static function staticOptions()
     {
         $branches = Branch::all();
