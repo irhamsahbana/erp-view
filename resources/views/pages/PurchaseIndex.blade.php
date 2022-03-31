@@ -72,12 +72,12 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Vendor', 'Nama Pemesan', 'Total Harga', 'Status Bayar', 'Status Close', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Vendor', 'Nama Pemesan', 'Total Harga', 'Status Bayar','Status Diterima', 'Status Close', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
-                                    <td>{{ $data->ref_no }}</td>
+                                    <td>{{ $data->ref_no }}</td>, 'Status Close'
                                     <td>{{ $data->vendor->name }}</td>
                                     <td>{{ $data->user }}</td>
                                     <td>{{ 'Rp. ' . number_format($data->total, 2) }}</td>
@@ -90,6 +90,17 @@
                                                 class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
                                                 onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
                                                 title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('purchase.change-status-accept', $data->id) }}" style="display:inline!important;" method="POST">
+                                            @method('PUT')
+                                            @csrf
+                                            <button
+                                                type="submit"
+                                                class="btn btn-{{ $data->is_accepted == false ? 'danger' : 'success' }}"
+                                                onclick="return confirm('Apakah anda ingin mengubah status diterima ini?')"
+                                                title="ubah status"><i class="{{ $data->is_accepted == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
                                         </form>
                                     </td>
                                     <td>

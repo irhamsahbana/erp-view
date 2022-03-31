@@ -70,10 +70,12 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('cabang/{id}', [BranchController::class, 'show'])->name('branch.show');
         Route::delete('cabang/{id}', [BranchController::class, 'destroy'])->name('branch.destroy');
 
-        Route::get('pengguna', [UserController::class, 'index'])->name('user.index');
-        Route::post('pengguna', [UserController::class, 'store'])->name('user.store');
+        Route::get('pengguna/edit-password', [UserController::class, 'edit'])->name('user.edit-password');
+        Route::put('pengguna/update-password', [UserController::class, 'update'])->name('user.update');
         Route::get('pengguna/{id}', [UserController::class, 'show'])->name('user.show');
         Route::delete('pengguna/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+        Route::get('pengguna', [UserController::class, 'index'])->name('user.index');
+        Route::post('pengguna', [UserController::class, 'store'])->name('user.store');
 
         Route::get('proyek', [ProjectController::class, 'index'])->name('project.index');
         Route::post('proyek', [ProjectController::class, 'store'])->name('project.store');
@@ -198,6 +200,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('pembelian', [PurchaseController::class, 'store'])->name('purchase.store');
         Route::put('pembelian/ubah-status/{id}', [PurchaseController::class, 'changeIsOpen'])->name('purchase.change-status');
         Route::put('pembelian/ubah-status-bayar/{id}', [PurchaseController::class, 'changeIsPaid'])->name('purchase.change-status-paid');
+        Route::put('pembelian/ubah-status-accepted/{id}', [PurchaseController::class, 'changeIsAccepted'])->name('purchase.change-status-accept');
         Route::delete('pembelian/{id}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
         Route::get('pembelian/{id}', [PurchaseController::class, 'show'])->name('purchase.show');
         Route::post('pembelian-detail', [PurchaseDetailController::class, 'store'])->name('purchase-detail.store');
