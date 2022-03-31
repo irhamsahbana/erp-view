@@ -24,7 +24,7 @@ class UserController extends Controller
         $request->validate([
             'id' => ['nullable', 'exists:users,id'],
             'branch_id' => ['required', 'exists:branches,id'],
-            'role' => ['required', 'string', 'max:255', 'in:owner,admin,branch_head,accountant,chasier,material'],
+            'role' => ['required', 'string', 'max:255', 'in:owner,admin,branch_head,accountant,chasier,material,purchaser'],
             'username' => ['required', 'string', 'max:255', 'unique:users,username,' . $request->id],
             'password' => ['required_without:id', 'nullable', 'string', 'max:255'],
             'password_confirmation' => ['required_with:password', 'nullable', 'string', 'max:255', 'same:password'],
@@ -58,19 +58,7 @@ class UserController extends Controller
             });
         }
 
-        $roles = [
-            ['text' => 'Owner', 'value' => 'owner' ],
-            ['text' => 'Admin', 'value' => 'admin'],
-            ['text' => 'Kepala Cabang', 'value' => 'branch_head'],
-            ['text' => 'Akutansi', 'value' => 'accountant'],
-            ['text' => 'Kasir', 'value' => 'cashier'],
-            ['text' => 'Material', 'value' => 'material'],
-        ];
-
-        $options = [
-            'branches' => $branches,
-            'roles' => $roles,
-        ];
+        $options = self::staticOptions();
 
         return view('pages.UserDetail', compact('data', 'options'));
     }
@@ -106,6 +94,7 @@ class UserController extends Controller
             ['text' => 'Akutansi', 'value' => 'accountant'],
             ['text' => 'Kasir', 'value' => 'cashier'],
             ['text' => 'Material', 'value' => 'material'],
+            ['text' => 'Purchaser', 'value' => 'purchaser']
         ];
 
         $options = [

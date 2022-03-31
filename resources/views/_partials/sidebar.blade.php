@@ -6,6 +6,7 @@
     ['text' => 'Akutansi', 'value' => 'accountant'],
     ['text' => 'Kasir', 'value' => 'cashier'],
     ['text' => 'Material', 'value' => 'material'],
+    ['text' => 'Purchaser' , 'value' => 'purchaser']
   ];
 @endphp
 
@@ -69,6 +70,11 @@
               <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" href="{{ route('driver.index') }}"/>
               <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}"/>
               <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}"/>
+          @endif
+
+          @if (Auth::user()->role == 'purchaser')
+              <li class="nav-header">TRANSAKSI PEMBELIAN</li>
+                <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchasing'" :href="route('purchasing.index')"/>
           @endif
 
           @if (Auth::user()->role == 'branch_head')
