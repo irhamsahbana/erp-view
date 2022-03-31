@@ -1,23 +1,54 @@
 @extends('App')
 
 @php
+$dummyData = ['owner', 'kacab', 'kasir', 'material'];
+
+$dummyData2 = [
+[
+'text' => 'Cabang A',
+'value' => 'A'
+],
+[
+'text' => 'Cabang B',
+'value' => 'B'
+],
+[
+'text' => 'Cabang C',
+'value' => 'C'
+],
+[
+'text' => 'Cabang D',
+'value' => 'D'
+],
+];
+
+$dummyData3 = [
+[
+'text' => 'Open',
+'value' => 'open'
+],
+[
+'text' => 'Close',
+'value' => 'close'
+],
+];
+
 $breadcrumbList = [
 [
 'name' => 'Home',
 'href' => '/'
 ],
 [
-'name' => 'Mutasi Hutang'
+'name' => 'Jurnal'
 ],
 ];
+
+$option = [
+'value' => "test",
+]
 @endphp
 
-@push('css')
-<link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
-<link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-@endpush
-
-@section('content-header', 'Mutasi Hutang')
+@section('content-header', 'Jurnal')
 
 @section('breadcrumb')
 <x-breadcrumb :list="$breadcrumbList" />
@@ -26,33 +57,20 @@ $breadcrumbList = [
 @section('content')
 <x-content>
     <x-row>
-        <x-card-collapsible :title="'Pencarian'" :collapse="true">
+        <x-card-collapsible :title="'Pencarian'" :collapse="false">
             <form style="width: 100%">
                 <x-row>
-                    <x-in-select :label="'Cabang'" :placeholder="'Pilih Cabang'" :col="4" :name="'branch_id'"
+                    <x-in-select :label="'Cabang'" :placeholder="'Pilih Cabang'" :col="6" :name="'branch_id'"
                         :options="$options['branches']" :value="app('request')->input('branch_id') ?? null"
                         :required="false"></x-in-select>
-                    <x-in-select :label="'Proyek'" :placeholder="'Pilih Proyek'" :col="4" :name="'project_id'"
-                        :required="false"></x-in-select>
-                    <x-in-select :label="'Vendor'" :placeholder="'Pilih Vendor'" :col="4" :name="'vendor_id'"
-                        :required="false"></x-in-select>
-                    <x-in-select :label="'Status'" :placeholder="'Pilih Status'" :col="4" :name="'is_open'"
-                        :options="$options['status']" :value="app('request')->input('is_open') ?? null"
-                        :required="false"></x-in-select>
-                    <x-in-select :label="'Jenis Mutasi'" :placeholder="'Pilih Jenis Mutasi'" :col="4" :name="'type'"
-                        :options="$options['types']"
-                        :value="app('request')->input('type') ? app('request')->input('type') : ''" :required="false">
-                    </x-in-select>
-                    <x-in-select :label="'Jenis Transaksi'" :placeholder="'Pilih Jenis Transaksi'" :col="4"
-                        :name="'transaction_type'" :options="$options['transactionTypes']"
-                        :value="app('request')->input('transaction_type') ? app('request')->input('transaction_type') : ''"
-                        :required="false"></x-in-select>
                     <x-in-text :type="'date'" :label="'Tanggal Mulai'" :col="6"
-                        :value="app('request')->input('date_start') ?? null" :name="'date_start'"></x-in-text>
+                    :value="app('request')->input('date_start') ?? null" :name="'date_start'"></x-in-text>
+                    <x-in-select :label="'Kategori'" :placeholder="'Pilih Kategori'" :col="6" :name="'category_id'"
+                        :required="false" :options="$options['categories']"></x-in-select>
                     <x-in-text :type="'date'" :label="'Tanggal Selesai'" :col="6"
                         :value="app('request')->input('date_finish') ?? null" :name="'date_finish'"></x-in-text>
                     <x-col class="text-right">
-                        <a type="button" class="btn btn-default" href="{{ route('debt-mutation.index') }}">reset</a>
+                        <a type="button" class="btn btn-default" href="{{ route('journal.index') }}">reset</a>
                         <button type="submit" class="btn btn-primary">Cari</button>
                     </x-col>
                 </x-row>
@@ -62,73 +80,56 @@ $breadcrumbList = [
         <x-card-collapsible>
             <x-row>
                 <x-col class="mb-3">
-                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                        data-target="#add-modal">Tambah</button>
+                    <a href="{{ route('add.journal') }}" class="btn btn-primary">Tambah</a>
                 </x-col>
-
+               
+                <x-col class="mb-3">
+                    @if (session('success'))
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    @endif
+                </x-col>
                 <x-col>
-                    <x-table
-                        :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Vendor', 'Jenis', 'Jenis Transaksi', 'Jumlah', 'Status', 'Aksi']">
-                        @foreach($datas as $data)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $data->created }}</td>
-                            <td>{{ $data->ref_no }}</td>
-                            <td>{{ $data->branch->name }}</td>
-                            <td>{{ $data->project->name }}</td>
-                            <td>{{ $data->vendor->name }}</td>
-                            <td>{{ $data->debtType->label }}</td>
-                            <td>
-                                @if($data->transaction_type == 1)
-                                Tambah
-                                @else
-                                Kurang
-                                @endif
-                            </td>
-                            <td>{{ 'Rp. ' . number_format($data->amount, 2) }}</td>
-                            <td>
-                                @if($data->is_open)
-                                <span class="badge badge-success">Open</span>
-                                @else
-                                <span class="badge badge-danger">Close</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if ($data->is_open)
-                                <a href="{{ route('debt-mutation.show', $data->id) }}" class="btn btn-warning"
-                                    title="Ubah"><i class="fas fa-pencil-alt"></i></a>
-                                <form style=" display:inline!important;" method="POST"
-                                    action="{{ route('debt-mutation.destroy', $data->id) }}">
-                                    @csrf
-                                    @method('DELETE')
+                    <x-table :thead="['Tanggal', 'Cabang', 'Kategori', 'Referensi', 'Catatan', 'Status', 'Aksi']">
 
-                                    <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
-                                        title="Hapus"><i class="fas fa-trash-alt"></i></button>
-                                </form>
-                                @endif
-                                @if(Auth::user()->role == 'owner')
-                                <form style=" display:inline!important;" method="POST"
-                                    action="{{ route('debt-mutation.change-status', $data->id) }}">
-                                    @csrf
-                                    @method('PUT')
-
-                                    <button type="submit" class="btn btn-secondary"
-                                        onclick="return confirm('Apakah anda yakin ingin mengubah staus data ini?')"
-                                        title="Ubah"><i class="fas fa-sync-alt"></i></button>
-                                </form>
-                                @endif
-                                <a href="{{ route('debt-mutation.print', $data->id) }}" class="btn btn-info"
-                                    title="Print"><i class="fas fa-file-alt"></i></a>
-                            </td>
-                        </tr>
-                        @endforeach
+                            @foreach ($datas as $journal)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $journal->date }}</td>
+                                <td>{{ $journal->branch->name }}</td>
+                                <td>{{ $journal->category->label }}</td>
+                                <td>{{ $journal->ref_no }}</td>
+                                <td>{{ $journal->notes }}</td>
+                                <td>
+                                    @if ( $journal->is_open == 0)
+                                    <button class="badge bg-danger border-0">Nonaktif</button>
+                                    @else
+                                    <button class="badge bg-success border-0">Aktif</button>
+                                    @endif
+                                </td>
+                                <td nowrap="nowrap">
+                                    <a href="{{ route('edit.journal', ['journal' => $journal->id]) }}"
+                                        class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ route('delete.journal', $journal->id) }}"
+                                        onclick="return confirm('Apakah anda yakin ?')" class="btn btn-danger"><i
+                                            class="fas fa-trash"></i></a>
+                                    <a href="{{ route('detail.journal', ['journal' => $journal->id]) }}"
+                                        class="btn btn-primary"><i class="fas fa-stream"></i></a>
+                                    {{-- <a class="btn btn-success"><i class="fas fa-edit"></i></a> --}}
+                                </td>
+                            </tr>
+                            @endforeach
+                        
                     </x-table>
                 </x-col>
+                    <x-col class="d-flex justify-content-end">
+                        {{ $datas->links() }}
+                    </x-col>
 
-                <x-col class="d-flex justify-content-end">
-                    {{ $datas->links() }}
-                </x-col>
             </x-row>
         </x-card-collapsible>
     </x-row>
@@ -138,25 +139,9 @@ $breadcrumbList = [
     <form style="width: 100%" action="{{ route('debt-mutation.store') }}" method="POST">
         @csrf
         @method('POST')
-
         <x-row>
             <x-in-select :label="'Cabang'" :placeholder="'Pilih Cabang'" :col="4" :id="'in_branch_id'"
-                :name="'branch_id'" :options="$options['branches']" :value="old('branch_id')" :required="true">
-            </x-in-select>
-            <x-in-select :label="'Proyek'" :placeholder="'Pilih Proyek'" :col="4" :id="'in_project_id'"
-                :name="'project_id'" :required="true"></x-in-select>
-            <x-in-select :label="'Vendor'" :placeholder="'Pilih Vendor'" :col="4" :id="'in_vendor_id'"
-                :name="'vendor_id'" :required="true"></x-in-select>
-            <x-in-select :label="'Jenis Mutasi'" :placeholder="'Pilih Jenis Mutasi'" :col="6" :name="'type'"
-                :options="$options['types']" :value="old('type')" :required="true"></x-in-select>
-            <x-in-select :label="'Jenis Transaksi'" :placeholder="'Pilih Jenis Transaksi'" :col="6"
-                :name="'transaction_type'" :options="$options['transactionTypes']" :value="old('transaction_type')"
-                :required="true"></x-in-select>
-            <x-in-text :type="'number'" :step="0.01" :label="'Jumlah'" :col="6" :value="old('amount')" :name="'amount'"
-                :required="true"></x-in-text>
-            <x-in-text :type="'date'" :label="'Tanggal'" :col="6" :value="old('created')" :name="'created'"
-                :required="true"></x-in-text>
-            <x-in-text :label="'Catatan'" :value="old('notes')" :required="true" :name="'notes'"></x-in-text>
+                :name="'cabang_id'" :options="$option" :value="old('cabang_id')" :required="true"></x-in-select>
             <x-col class="text-right">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                 <button type="submit" class="btn btn-primary">Simpan</button>
@@ -165,7 +150,6 @@ $breadcrumbList = [
     </form>
 </x-modal>
 @endsection
-
 @push('js')
 <!-- Select2 -->
 <script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>

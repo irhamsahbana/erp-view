@@ -5,26 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SubBudgetItem extends Model
+class TemporarySubJurnal extends Model
 {
     use HasFactory;
+    protected $guarded = [];
 
-    public function reportCategory()
+    public function project()
     {
-        return $this->belongsTo(Category::class, 'report_category_id');
+        return $this->belongsTo(Project::class, 'project_id');
     }
-
     public function budgetItemGroup()
     {
         return $this->belongsTo(BudgetItemGroup::class, 'budget_item_group_id');
     }
-
     public function budgetItem()
     {
         return $this->belongsTo(BudgetItem::class, 'budget_item_id');
     }
-    
-    public function normalBalance()
+    public function subBudgetItem()
+    {
+        return $this->belongsTo(SubBudgetItem::class, 'sub_budget_item_id');
+    }
+    public function category()
     {
         return $this->belongsTo(Category::class, 'normal_balance_id');
     }

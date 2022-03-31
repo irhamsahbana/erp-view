@@ -24,6 +24,10 @@ use App\Http\Controllers\{
     BudgetItemGroupController,
     BudgetItemController,
     SubBudgetItemController,
+    JournalController,
+    NeracaController,
+    ProfitLossController,
+    ReportController
 };
 
 use App\Models\{
@@ -115,12 +119,20 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('sub-mata-anggaran/{id}', [SubBudgetItemController::class, 'destroy'])->name('sbi.destroy');
     });
 
-    Route::group(['prefix' => 'jurnal'], function() {
-        Route::get('/', function() {
-            return redirect('/');
-        });
-
-
+    Route::group(['prefix' => 'journal'], function() {
+        Route::get('/', [JournalController::class, 'index'])->name('journal.index');
+        Route::get('/create-journal', [JournalController::class, 'create'])->name('add.journal');
+        Route::post('/save-journal', [JournalController::class, 'save'])->name('save.journal');
+        Route::get('/delete-journal/{id}', [JournalController::class, 'delete'])->name('delete.journal');
+        Route::get('/edit-journal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
+        Route::post('/udpate-journal/{journal:id}', [JournalController::class, 'update'])->name('update.journal');
+        Route::get('/detail-journal/{journal:id}', [JournalController::class, 'detail'])->name('detail.journal');
+    });
+    Route::group(['prefix' => 'neraca'], function() {
+        Route::get('/', [ReportController::class, 'balancesheet'])->name('balance.index');
+    });
+    Route::group(['prefix' => 'laba-rugi'], function() {
+        Route::get('/', [ReportController::class, 'incomeStatement'])->name('income.statement.index');
     });
 
     Route::group(['prefix' => 'transaksi'], function() {
