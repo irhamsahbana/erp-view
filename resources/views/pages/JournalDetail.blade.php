@@ -59,24 +59,25 @@ $option = [
             <div class="mt-3"></div>
 
             <x-row>
-               <x-col>
-                <div class="mb-3">
-                    <div class="my-2">
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                            data-target="#add-modal">Tambah</button>
+                <x-col>
+                    <div class="mb-3">
+                        <div class="my-2">
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#add-modal">Tambah</button>
+                        </div>
                     </div>
-                </div>
-               </x-col>
-               <x-col>
-                @if (session('success'))
+                </x-col>
+                <x-col>
+                    @if (session('success'))
                     <div class="alert alert-primary alert-dismissible fade show" role="alert">
                         {{session('success') }}
-                        <button wire:click='resetData' type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <button wire:click='resetData' type="button" class="close" data-dismiss="alert"
+                            aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                @endif
-               </x-col>
+                    @endif
+                </x-col>
                 <div class="table-responsive">
                     <table class="table table-bordered table-sm" id="table-sub-journal">
                         <thead>
@@ -93,14 +94,6 @@ $option = [
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="9"></td>
-                            </tr>
-                            <tr>
-                                <td colspan="10">
-                                    <h4>Data Asli</h4>
-                                </td>
-                            </tr>
                             @foreach ($subJournal as $sub)
 
                             <tr>
@@ -121,56 +114,19 @@ $option = [
                                 </td>
                                 <td>
                                     {{-- <a href="" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></a> --}}
-                                    <a href="{{ route('delete-sub-journal', ['sub_id' => $sub->id, 'journal_id' => $journal->id]) }}" class="btn btn-danger"  onclick="return confirm('apakah anda yakin ?')"><i class="fas fa-trash"></i></a>
+                                    <a href="{{ route('delete-sub-journal', ['sub_id' => $sub->id, 'journal_id' => $journal->id]) }}"
+                                        class="btn btn-danger" onclick="return confirm('apakah anda yakin ?')"><i
+                                            class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                             @endforeach
-                            @if (count($tempSubJournal) > 0)
-                                <tr>
-                                    <td colspan="10">
-                                        <h4>Data Sementara</h4>
-                                    </td>
-                                </tr>
-                                @foreach ($tempSubJournal as $sub)
-
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $sub->project->name }}</td>
-                                    <td>{{ $sub->budgetItemGroup->name }}</td>
-                                    <td>{{ $sub->budgetItem->name }}</td>
-                                    <td>{{ $sub->subBudgetItem->name }}</td>
-                                    <td>{{ $journal->notes }}</td>
-                                    <td>{{ $sub->category->label }}</td>
-                                    <td>
-                                        @if ($sub->category->label == 'Kredit')
-                                        {{ $sub->amount*-1 }}
-                                        @else
-                                        {{ $sub->amount }}
-                                        @endif
-
-                                    </td>
-                                    <td>
-                                        {{-- <a href="" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></a> --}}
-                                        <a href="{{ route('delete-sub-journal-temp', ['sub_temp_id' => $sub->id, 'journal_id' => $journal->id]) }}" class="btn btn-danger" onclick="return confirm('apakah anda yakin ?')"><i class="fas fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            @endif
                             <tr>
                                 <td colspan="7">
                                     <h4>Total</h4>
                                 </td>
-                                <td>{{ $totalTemp + $totalSub }}</td>
-
+                                <td>{{ $totalSub }}</td>
                                 <td>
-                                    <form action="{{ route('save-sub-journal-temporary') }}" method="POST">
-                                        @csrf
-                                        @method('post')
-                                        <input type="hidden" name="journal_id" value={{ $journal->id }}>
-                                        <input type="hidden" name="sub_temporary_total" value={{ $totalTemp }}>
-                                        <input type="hidden" name="sub_total" value={{ $totalSub }}>
-                                        <button class="btn btn-primary" type="submit">Simpan</button>
-                                    </form>
+
                                 </td>
                             </tr>
                         </tbody>
@@ -189,8 +145,8 @@ $option = [
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('post-sub-journal-temporay') }}" style="width: 100%"
-                            id="add-form-sub-journal" method="post">
+                        <form action="{{ route('post-sub-journal') }}" style="width: 100%" id="add-form-sub-journal"
+                            method="post">
                             @csrf
                             @method('post')
                             <input type="hidden" name="journal_id" value="{{ $journal->id }}">

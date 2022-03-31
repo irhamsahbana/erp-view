@@ -155,14 +155,6 @@ class JournalController extends Controller
             dd($e);
         }
     }
-    // public function detail(Journals $journal)
-    // {
-    //     $data = [
-    //         'journal' => $journal,
-    //         'subjournals' => SubJournal::with('budgetItemGroup', 'project', 'budgetItem', 'subBudgetItem')->where('journal_id', $journal->id)->get(),
-    //     ];
-    //     return view('pages.JournalDetail', $data);
-    // }
     public function detail(Journals $journal)
     {
         if(Auth::user()->branch_id == null){
@@ -172,20 +164,11 @@ class JournalController extends Controller
         }
         $budgetItemGroups = BudgetItemGroup::all();
 
-        $tempSubJournal = TemporarySubJurnal::with('project', 'budgetItemGroup', 'budgetItem', 'subBudgetItem', 'category')->where('user_id', Auth::user()->id)->where('journal_id', $journal->id)->get();
 
         $subJournal = SubJournal::with('project', 'budgetItemGroup', 'budgetItem', 'subBudgetItem', 'category')->where('user_id', Auth::user()->id)->where('journal_id', $journal->id)->get();
 
-        $totalSubTemp = 0;
         $totalSub = 0;
 
-        foreach ($tempSubJournal as $temp) {
-            if($temp->category->label == 'Kredit'){
-                $totalSubTemp -= $temp->amount;
-            }else{
-                $totalSubTemp += $temp->amount;
-            }
-        }
         foreach ($subJournal as $sub) {
             if($sub->category->label == 'Kredit'){
                 $totalSub -= $sub->amount;
@@ -197,15 +180,13 @@ class JournalController extends Controller
         $data = [
             'budgetItemGroups' => $budgetItemGroups,
             'journal' => $journal,
-            'tempSubJournal' => $tempSubJournal,
             'subJournal' => $subJournal,
             'balances' => Category::where('group_by', 'normal_balances')->get(),
-            'totalTemp' => $totalSubTemp,
             'totalSub' => $totalSub,
         ];
         return view('pages.JournalDetail', $data);
     }
-    public function postSubJournalTemporary(Request $request)
+    public function postSubJournal(Request $request)
     {
         $data = [
             'budget_item_group_id' => $request->budget_item_group_id,
@@ -219,47 +200,12 @@ class JournalController extends Controller
         ];
         DB::beginTransaction();
         try {
-            TemporarySubJurnal::create($data);
+            SubJournal::create($data);
             DB::commit();
             return redirect()->route('detail.journal', ['journal' => $data['journal_id']])->with('success', 'Data berhasil tambah');
         } catch (Error $e) {
             DB::rollBack();
             dd($e);
-        }
-    }
-    public function saveSubJournalTemporaryToSubJournal(Request $request)
-    {
-        $subTempTotal = $request->sub_temporary_total;
-        $subTotal = $request->sub_total;
-        $journal_id = $request->journal_id;
-        if($subTempTotal + $subTotal != 0)
-        {
-            return redirect()->route('detail.journal', ['journal' => $journal_id])->with('success', 'Data gagal di simpan, debit dan kredit tidak seimbang');;
-        }else{
-            DB::beginTransaction();
-            try {
-                $tempSubJournal = TemporarySubJurnal::with('project', 'budgetItemGroup', 'budgetItem', 'subBudgetItem', 'category')->where('user_id', Auth::user()->id)->where('journal_id', $journal_id)->get();
-
-                foreach ($tempSubJournal as $tempSubJournal) {
-                    $data = [
-                        'budget_item_group_id' => $tempSubJournal->budget_item_group_id,
-                        'journal_id' => $tempSubJournal->journal_id, 
-                        'budget_item_id' => $tempSubJournal->budget_item_id,
-                        'sub_budget_item_id' => $tempSubJournal->sub_budget_item_id,
-                        'project_id' => $tempSubJournal->project_id,
-                        'normal_balance_id' => $tempSubJournal->normal_balance_id,
-                        'user_id' => $tempSubJournal->user_id,
-                        'amount' => $tempSubJournal->amount,
-                    ];
-                    SubJournal::create($data);
-                    TemporarySubJurnal::where('id', $tempSubJournal->id)->delete();
-                }
-                DB::commit();
-                return redirect()->route('detail.journal', ['journal' => $journal_id])->with('success', 'Data berhasil di simpan');
-            } catch (Error $e) {
-                DB::rollBack();
-                dd($e);
-            }
         }
     }
     public function deleteSubJournal(Request $request)

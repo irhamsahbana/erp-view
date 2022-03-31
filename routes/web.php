@@ -133,7 +133,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/hapus-jurnal/{id}', [JournalController::class, 'delete'])->name('delete.journal');
         Route::get('/ubah-jurnal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
         Route::post('/ganti-jurnal/{journal:id}', [JournalController::class, 'update'])->name('update.journal');
-        Route::post('/tambah-sub-jrunal-temp', [JournalController::class, 'postSubJournalTemporary'])->name('post-sub-journal-temporay');
+        Route::post('/tambah-sub-jurnal', [JournalController::class, 'postSubJournal'])->name('post-sub-journal');
         Route::get('/rincian-jurnal/{journal:id}', [JournalController::class, 'detail'])->name('detail.journal');
         Route::post('/simpan-sub-jurnal-sementara', [JournalController::class, 'saveSubJournalTemporaryToSubJournal'])->name('save-sub-journal-temporary');
         Route::get('/hapus-sub-jurnal', [JournalController::class, 'deleteSubJournal'])->name('delete-sub-journal');
