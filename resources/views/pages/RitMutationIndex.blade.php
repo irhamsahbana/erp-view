@@ -294,7 +294,6 @@
     <meta name="old-material-mutation" content="{{ old('material_mutation') ?? null }}">
     <meta name="old-amount" content="{{ old('amount') ?? null }}">
     <meta name="old-created" content="{{ old('created') ?? null }}">
-
     <meta name="url-branch" content="{{ route('branch.index') }}">
     <meta name="url-project" content="{{ route('project.index') }}">
     <meta name="url-driver" content="{{ route('driver.index') }}">
