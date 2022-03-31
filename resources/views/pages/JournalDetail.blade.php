@@ -88,7 +88,7 @@ $option = [
                                 <th>MA</th>
                                 <th>Sub MA</th>
                                 <th>Catatan</th>
-                                <th>Normal</th>
+                                <th>Posisi</th>
                                 <th>Jumlah</th>
                                 <th>Aksi</th>
                             </tr>
