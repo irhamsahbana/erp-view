@@ -124,10 +124,11 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['prefix' => 'journal'], function() {
         Route::get('/', [JournalController::class, 'index'])->name('journal.index');
-        Route::get('/create-journal', [JournalController::class, 'create'])->name('add.journal');
-        Route::post('/save-journal', [JournalController::class, 'save'])->name('save.journal');
-        Route::get('/delete-journal/{id}', [JournalController::class, 'delete'])->name('delete.journal');
-        Route::get('/edit-journal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
+        Route::get('/buat-jurnal', [JournalController::class, 'create'])->name('add.journal');
+        Route::post('/simpan-jurnal', [JournalController::class, 'save'])->name('save.journal');
+        Route::get('/hapus-jurnal/{id}', [JournalController::class, 'delete'])->name('delete.journal');
+        // Route::get('/edit-journal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
+        Route::get('/ubah-journal/{journal:id}', [JournalController::class, 'change'])->name('edit.journal');
         Route::post('/udpate-journal/{journal:id}', [JournalController::class, 'update'])->name('update.journal');
         Route::get('/detail-journal/{journal:id}', [JournalController::class, 'detail'])->name('detail.journal');
     });

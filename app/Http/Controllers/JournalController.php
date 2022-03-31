@@ -59,8 +59,9 @@ class JournalController extends Controller
     }
     public function create()
     {
+        $options = self::staticOptions();
         $data = [
-            "branches" => Branch::all(),
+            "branches" => $options['branches'],
             "categories" => Category::where('group_by', 'journal_categories')->get(),
         ];
         return view('pages.JournalCreate', $data);
@@ -106,6 +107,16 @@ class JournalController extends Controller
         }
     }
     public function edit(Journals $journal)
+    {
+        $options = self::staticOptions();
+        $data = [
+            "journal" => $journal,
+            "branches" => $options['branches'],
+            "categories" => Category::where('group_by', 'journal_categories')->get(),
+        ];
+        return view('pages.JournalEdit', $data);
+    }
+    public function change(Journals $journal)
     {
         $data = [
             "journal" => $journal,
