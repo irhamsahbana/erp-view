@@ -57,6 +57,10 @@
 				text-align: right;
 			}
 
+			.invoice-box table tr #detail-name{
+				text-align: left;
+			}
+
 			.invoice-box table tr.top table td {
 				padding-bottom: 20px;
 			}

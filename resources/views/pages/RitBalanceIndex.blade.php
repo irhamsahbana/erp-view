@@ -66,14 +66,13 @@
             <x-card-collapsible>
                 <x-row>
                     <x-col>
-                        <x-table :thead="['Cabang', 'proyek', 'Pengendara', 'Ref Mutasi Material', 'Total']">
+                        <x-table :thead="['Cabang', 'Proyek', 'Pengendara', 'Total']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->project->name }}</td>
                                     <td>{{ $data->driver->name }}</td>
-                                    <td>{{ $data->materialMutation->ref_no }}</td>
                                     <td>{{ 'Rp. ' . number_format($data->total, 2) }}</td>
                                 </tr>
                             @endforeach

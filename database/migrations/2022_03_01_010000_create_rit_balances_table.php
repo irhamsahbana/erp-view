@@ -18,7 +18,6 @@ class CreateRitBalancesTable extends Migration
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('driver_id');
-            $table->unsignedBigInteger('material_mutation_id');
             $table->float('total', 15, 2);
             $table->timestamps();
         });

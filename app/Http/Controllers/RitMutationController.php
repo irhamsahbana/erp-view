@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\PDF;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
 use App\Models\Branch;
 use App\Models\Driver;
-use Barryvdh\DomPDF\PDF;
 use App\Models\RitBalance;
-
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Models\MaterialMutation;
 use App\Models\Project;
 use App\Models\RitMutation as Model;
-use Illuminate\Support\Facades\Auth;
 
 class RitMutationController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('has.access:owner,admin,branch_head,cashier', ['only' => ['index']]);
-        $this->middleware('has.access:owner,admin,cashier', ['only' => ['store']]);
+        $this->middleware('has.access:owner,admin,branch_head,material', ['only' => ['index']]);
+        $this->middleware('has.access:owner,admin,cashier', ['only'=> ['changeIsPaid']]);
+        $this->middleware('has.access:owner,admin,material', ['only' => ['store']]);
         $this->middleware('has.access:owner,admin', ['only' => ['destroy']]);
         $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
     }
@@ -72,24 +73,18 @@ class RitMutationController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request);
         $request->validate([
             'id' => ['nullable', 'exists:rit_mutations,id'],
             'branch_id' => ['required_without:id', 'exists:branches,id'],
             'project_id' => ['required_without:id', 'exists:projects,id'],
             'driver_id' => ['required_without:id', 'exists:drivers,id'],
             'material_mutation_id' => ['required_without:id', 'exists:material_mutations,id'],
-
-            // 'transaction_type' => ['required_without:id', 'numeric'],
             'amount' => ['required', 'numeric'],
             'notes' => ['required', 'string', 'max:255'],
-            // 'created' => ['required', 'date'],
         ]);
 
 
         $row = Model::findOrNew($request->id);
-
-        // dd($row);
 
         if (!$row->id) {
             $prefix = sprintf('%s/', $row->getTable());
@@ -112,7 +107,6 @@ class RitMutationController extends Controller
         }
         $created = MaterialMutation::findOrFail($request->material_mutation_id);
 
-        // dd($created);
         $row->created = $created->created;
         $row->amount = $request->amount;
         $row->notes = $request->notes;
@@ -121,23 +115,15 @@ class RitMutationController extends Controller
                                 'branch_id' => $row->branch_id,
                                 'project_id' => $row->project_id,
                                 'driver_id' => $row->driver_id,
-                                'material_mutation_id' => $row->material_mutation_id,
                             ]);
 
         $totalBalance = Model::where('branch_id', $row->branch_id)
                             ->where('project_id', $row->project_id)
                             ->where('driver_id', $row->driver_id)
-                            ->where('material_mutation_id', $row->material_mutation_id)
                             ->get();
 
         $totalBalance = $totalBalance->where('is_paid', false)->sum('amount');
-        // dd($totalBalance);
-        // $totalBalancePlus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_ADD)->sum('amount');
-        // $totalBalanceMinus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_SUBTRACT)->sum('amount');
-        // $totalBalance = $totalBalancePlus - $totalBalanceMinus;
 
-
-        // if ($row->transaction_type == Model::TRANSACTION_TYPE_ADD) {
         if (!$row->id)
             $balance->total += $row->amount;
         else if ($row->id && $row->getRawOriginal('amount') != $row->amount)
@@ -145,7 +131,7 @@ class RitMutationController extends Controller
 
         $row->save();
         $balance->save();
-        // } else if ($row->transaction_type == Model::TRANSACTION_TYPE_SUBTRACT) {
+
         if ($balance->total < $row->amount)
             return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
 
@@ -159,7 +145,6 @@ class RitMutationController extends Controller
 
         $row->save();
         $balance->save();
-        // }
 
         return redirect()->route('rit-mutation.index')->with('f-msg', 'Mutasi hutang ritase berhasil disimpan.');
     }
@@ -176,23 +161,19 @@ class RitMutationController extends Controller
     {
         $row = Model::findOrFail($id);
 
-        $balance = RitBalance::firstOrNew([
-            'branch_id' => $row->branch_id,
-            'driver_id' => $row->driver_id,
-            'material_mutation_id' => $row->material_mutation_id,
-        ]);
+        $balance = RitBalance::where('branch_id', $row->branch_id)
+                                ->where('driver_id', $row->driver_id)
+                                ->where('project_id', $row->project_id)
+                                ->first();
 
-        if ($row->transaction_type == Model::TRANSACTION_TYPE_ADD) {
+        if (!$row->is_paid) {
             $balance->total -= $row->amount;
-        } else if ($row->transaction_type == Model::TRANSACTION_TYPE_SUBTRACT) {
-            $balance->total += $row->amount;
         }
 
         if ($balance->total < 0)
-            return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
+        return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
 
         $balance->save();
-
         $row->delete();
 
         return redirect()->back()->with('f-msg', 'Mutasi hutang ritase berhasil dihapus.');
@@ -220,9 +201,6 @@ class RitMutationController extends Controller
 
         if ($request->driver_id)
             $query->where('driver_id', $request->driver_id);
-
-        if ($request->material_mutation_id)
-            $query->where('material_mutation_id', $request->material_mutation_id);
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
@@ -293,7 +271,7 @@ class RitMutationController extends Controller
                 ];
             });
 
-        
+
 
         $options = [
             'branches' => $branches,
