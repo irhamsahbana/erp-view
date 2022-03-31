@@ -112,3 +112,8 @@
         </form>
     </x-modal>
 @endsection
+
+@push('js')
+
+
+@endpush
