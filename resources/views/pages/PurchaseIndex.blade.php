@@ -26,7 +26,7 @@
 @section('content')
     <x-content>
         <x-row>
-            <x-card-collapsible :title="'Pencarian'" :collapse="true">
+            <x-card-collapsible :title="'Pencarian'" :collapse="false">
                 <form style="width: 100%">
                     <x-row>
                         <x-in-select
@@ -85,9 +85,9 @@
                                         <form action="{{ route('purchase.change-status-paid', $data->id) }}" style="display:inline!important;" method="POST">
                                             @method('PUT')
                                             @csrf
-                                            <button 
+                                            <button
                                                 type="submit"
-                                                class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}" 
+                                                class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
                                                 onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
                                                 title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
                                         </form>
@@ -119,7 +119,7 @@
                                                     title="Hapus"><i class="fas fa-trash-alt"></i></button>
                                             </form>
                                         @endif
-                                        @if(Auth::user()->role == 'owner')
+                                        @if(Auth::user()->role == 'owner' || Auth::user()->role == 'admin' || Auth::user()->role == 'purchaser')
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"
@@ -203,35 +203,16 @@
     <!-- Select2 -->
     <script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="user-branch" content="{{ Auth::user()->branch_id ?? null }}">
-
     <meta name="search-branch" content="{{ app('request')->input('branch_id') ?? null }}">
-    <meta name="search-project" content="{{ app('request')->input('project_id') ?? null }}">
-    {{-- <meta name="search-user" content="{{ app('request')->input('user_id') ?? null }}"> --}}
     <meta name="search-vendor" content="{{ app('request')->input('vendor_id') ?? null }}">
-    <meta name="search-project" content="{{ app('request')->input('project_id') ?? null }}">
-    <meta name="search-material" content="{{ app('request')->input('material_id') ?? null }}">
-    <meta name="search-driver" content="{{ app('request')->input('driver_id') ?? null }}">
     <meta name="search-date-start" content="{{ app('request')->input('date_start') ?? null }}">
     <meta name="search-date-finish" content="{{ app('request')->input('date_finish') ?? null }}">
-    <meta name="search-status" content="{{ app('request')->input('status') ?? null }}">
 
     <meta name="old-branch" content="{{ old('branch_id') ?? null }}">
     <meta name="old-project" content="{{ old('project_id') ?? null }}">
-    {{-- <meta name="old-user" content="{{ old('user_id') ?? null }}"> --}}
     <meta name="old-vendor" content="{{ old('vendor_id') ?? null }}">
-    <meta name="old-project" content="{{ old('project_id') ?? null }}">
-    <meta name="old-material" content="{{ old('material_id') ?? null }}">
-    <meta name="old-create" content="{{ old('created') ?? null }}">
-    <meta name="old-status" content="{{ old('is_open') ?? null }}">
-    <meta name="old-material-price" content="{{ old('material_price') ?? null }}">
-    <meta name="old-type" content="{{ old('type') ?? null }}">
 
     <meta name="url-branch" content="{{ route('branch.index') }}">
-    <meta name="url-project" content="{{ route('project.index') }}">
-    <meta name="url-material" content="{{ route('material.index') }}">
-    <meta name="url-driver" content="{{ route('driver.index') }}">
     <meta name="url-vendor" content="{{ route('vendor.index') }}">
 
     <meta name="">
@@ -240,15 +221,12 @@
     <script>
         $(function () {
             let selectBranch = $('#branch_id');
-            let selectProject = $('#project_id');
             let selectVendor = $('#vendor_id');
 
             let searchVendor = $('meta[name="search-vendor"]').attr('content');
 
             selectBranch.on('change', function () {
                 let branchId = $(this).val();
-                // let searchUser = $('meta[name="search-project"]').attr('content');
-                // let searchDriver = $('meta[name="search-driver"]').attr('content');
 
                 let searchVendor = $('meta[name="search-vendor"]').attr('content');
 
@@ -259,7 +237,7 @@
                     return;
                 }
 
-                // Get project
+                // Get Vendor
                 $.ajax({
                     url: $('meta[name="url-vendor"]').attr('content'),
                     type: 'GET',
@@ -280,9 +258,7 @@
                             allowClear: true,
                         });
 
-                        if (searchUser != '') {
-                            selectVendor.val(searchUser).trigger('change');
-                        }
+                        selectVendor.val(searchVendor).trigger('change');
                     }
                 });
             });
@@ -292,82 +268,4 @@
         });
     </script>
 
-    {{-- Form --}}
-    <script>
-        $(function () {
-            let selectBranchIn = $('#in_branch_id');
-            // let selectVendorIn = $('#in_user_id');
-            let selectVendorIn = $('#in_vendor_id');
-
-            selectBranchIn.on('change', function () {
-                let branchId = $(this).val();
-                let searchVendor = $('meta[name="search-vendor"]').attr('content');
-
-                if (branchId == '') {
-                    selectVendorIn.empty();
-                    selectVendorIn.append('<option value="">Pilih Vendor</option>');
-
-                    return;
-                }
-
-                // Get project
-                $.ajax({
-                    url: $('meta[name="url-vendor"]').attr('content'),
-                    type: 'GET',
-                    data: {
-                        branch_id: branchId,
-                    },
-                    success: function (data) {
-                        let oldVendor = $('meta[name="old-vendor"]').attr('content');
-
-                        selectVendorIn.empty();
-                        selectVendorIn.append(`<option value="">Pilih Vendor</option>`);
-
-                        data.datas.forEach(function(item) {
-                            selectVendorIn.append(`<option value="${item.id}">${item.name}</option>`);
-                        });
-
-                        selectVendorIn.select2({
-                            theme: 'bootstrap4',
-                            placeholder: 'Pilih Vendor',
-                            allowClear: true,
-                        });
-
-                        if (oldVendor != '') {
-                            selectVendorIn.val(oldVendor).trigger('change');
-                        }
-                    }
-                });
-
-            });
-
-            if (selectBranchIn.val() != '')
-                selectBranchIn.trigger('change');
-        });
-    </script>
-
-    {{-- Functionality for disabled --}}
-    <script>
-        $(function () {
-            const selectType = $('#in_type');
-            const oldType = $('meta[name="old-type"]').attr('content');
-
-                if (oldType == 'in') {
-
-                } else if (oldType == 'out') {
-                    $( "#in_material_price" ).prop( "disabled", true );
-                }
-
-            selectType.on('change', function() {
-                if (this.value == 'in' || this.value == '') {
-                    $( "#in_material_price" ).prop( "disabled", false );
-
-                } else if (this.value == 'out'){
-                    $( "#in_material_price" ).prop( "disabled", true );
-
-                    $( "#in_material_price" ).val('').trigger('change');
-                }
-            });
-        });
-    </script>
 @endpush

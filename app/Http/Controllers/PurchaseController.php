@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchase;
+use App\Models\Purchase as Model;
 use App\Models\Branch;
 use App\Models\PurchaseDetail;
 use App\Models\User;
@@ -16,14 +16,11 @@ class PurchaseController extends Controller
     {
         $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request)
     {
-        $query = Purchase::select('*');
+        $query = Model::select('*');
+
         if ($request->branch_id) {
             if (!in_array(Auth::user()->role, self::$fullAccess))
                 $query->where('branch_id', Auth::user()->branch_id);
@@ -33,7 +30,6 @@ class PurchaseController extends Controller
 
         if ($request->vendor_id)
             $query->where('vendor_id', $request->vendor_id);
-
 
         if ($request->date_start)
             $query->whereDate('created', '>=', new \DateTime($request->date_start));
@@ -60,22 +56,6 @@ class PurchaseController extends Controller
         return view('pages.PurchaseIndex', compact('datas', 'options'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -86,7 +66,7 @@ class PurchaseController extends Controller
             'created' => ['required', 'date'],
         ]);
 
-        $row = Purchase::findOrNew($request->id);
+        $row = Model::findOrNew($request->id);
 
         if (!$row->id) {
             $prefix = sprintf('%s/', $row->getTable());
@@ -114,16 +94,10 @@ class PurchaseController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Purchase  $purchase
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $row = PurchaseDetail::select('*')->where('purchase_id', $id);
-        $purchase = Purchase::find($id);
+        $purchase = Model::find($id);
 
         $datas = $row->paginate(40)->withQueryString();
         $options = self::staticOptions();
@@ -131,45 +105,16 @@ class PurchaseController extends Controller
         return view('pages.PurchaseDetail' , compact('datas', 'options', 'purchase'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Purchase  $purchase
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Purchase $purchase)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Purchase  $purchase
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Purchase $purchase)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Purchase  $purchase
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        $row = Purchase::findOrFail($id);
+        $row = Model::findOrFail($id);
         $row->delete();
         return redirect()->back()->with('f-msg', 'Pembelian berhasil dihapus.');
     }
 
     public function changeIsOpen($id)
     {
-        $row = Purchase::findOrFail($id);
+        $row = Model::findOrFail($id);
         $row->is_open = !$row->is_open;
 
         $row->save();
@@ -179,7 +124,7 @@ class PurchaseController extends Controller
 
     public function changeIsPaid($id)
     {
-        $row = Purchase::findOrFail($id);
+        $row = Model::findOrFail($id);
         $row->is_paid = !$row->is_paid;
 
         $row->save();

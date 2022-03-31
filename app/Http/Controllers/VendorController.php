@@ -13,7 +13,7 @@ class VendorController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('has.access:owner,admin,branch_head,accountant,cashier', ['only' => ['index', 'store']]);
+        $this->middleware('has.access:owner,admin,branch_head,accountant,cashier,purchaser', ['only' => ['index', 'store']]);
         $this->middleware('has.access:owner,admin', ['only' => ['destroy']]);
     }
 
