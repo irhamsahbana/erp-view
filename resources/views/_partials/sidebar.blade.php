@@ -56,6 +56,10 @@
             <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}"/>
             <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}"/>
 
+          <li class="nav-header">TRANSAKSI PEMBELIAN</li>
+            <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchasing'" :href="route('purchasing.index')"/>
+            {{-- <x-nav-item :icon="'fas fa-credit-card'" :text="'Saldo Purchasing'" :href="route('purchase.show')"/> --}}
+
           @if (Auth::user()->role == 'owner' || Auth::user()->role == 'admin')
           <li class="nav-header">MASTER DATA</li>
           <x-nav-item :icon="'fas fa-list'" :text="'List Kategori'" href="{{ route('category.list') }}"/>

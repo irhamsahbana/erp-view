@@ -17,6 +17,8 @@ use App\Http\Controllers\{
     DebtMutationController,
     RitMutationController,
     OrderController,
+    PurchaseController,
+    PurchaseDetailController,
     VendorController,
     VoucherController,
 };
@@ -25,7 +27,8 @@ use App\Models\{
     DebtMutation,
     DebtBalance,
     MaterialMutation,
-    MaterialBalance
+    MaterialBalance,
+    PurchaseDetail
 };
 
 /*
@@ -145,6 +148,21 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('mutasi-hutang-ritase/ubah-status/{id}', [RitMutationController::class, 'changeIsOpen'])->name('rit-mutation.change-status');
         Route::put('mutasi-hutang-ritase/ubah-status-bayar/{id}', [RitMutationController::class, 'changeIsPaid'])->name('rit-mutation.change-status-paid');
         Route::get('mutasi-hutang-ritase/cetak/{id}', [RitMutationController::class, 'print'])->name('rit-mutation.print');
+    });
+    Route::group(['prefix' => 'transaksi-pembelian'], function () {
+        Route::get('/', function () {
+            return redirect('/');
+        });
+
+        Route::get('pembelian', [PurchaseController::class, 'index'])->name('purchasing.index');
+        Route::post('pembelian', [PurchaseController::class, 'store'])->name('purchase.store');
+        Route::put('pembelian/ubah-status/{id}', [PurchaseController::class, 'changeIsOpen'])->name('purchase.change-status');
+        Route::put('pembelian/ubah-status-bayar/{id}', [PurchaseController::class, 'changeIsPaid'])->name('purchase.change-status-paid');
+        Route::delete('pembelian/{id}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
+        Route::get('pembelian/{id}', [PurchaseController::class, 'show'])->name('purchase.show');
+        Route::post('pembelian-detail', [PurchaseDetailController::class, 'store'])->name('purchase-detail.store');
+        Route::put('pembelian-detail/ubah-harga/{id}', [PurchaseDetailController::class, 'update'])->name('purchase-detail.update-price');
+        Route::delete('pembelian-detail/{id}', [PurchaseDetailController::class, 'destroy'])->name('purchase-detail.destroy');
     });
 });
 

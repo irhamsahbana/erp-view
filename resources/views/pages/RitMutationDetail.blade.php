@@ -29,7 +29,6 @@
             <x-card-collapsible>
                 <x-row>
                     <form style="width: 100%" action="{{ route('rit-mutation.store') }}" method="POST">
-
                         @csrf
                         @method('POST')
                         <input type="hidden" name="id" value="{{ $data->id }}">
@@ -49,6 +48,7 @@
                                 :placeholder="'Pilih Proyek'"
                                 :col="4"
                                 :name="'project_id'"
+                                :options="$options['projects']"
                                 :value="$data->project_id"
                                 :disabled="true"
                                 :required="true"></x-in-select>
@@ -57,17 +57,19 @@
                                 :placeholder="'Pilih Pengendara'"
                                 :col="4"
                                 :name="'driver_id'"
+                                :options="$options['drivers']"
+                                :value="$data->driver_id"
                                 :disabled="true"
                                 :required="false"></x-in-select>
                             <x-in-select
-                                :label="'Jenis Transaksi'"
-                                :placeholder="'Pilih Jenis Transaksi'"
+                                :label="'Mutasi Material'"
+                                :placeholder="'Pilih Mutasi Material'"
                                 :col="4"
-                                :name="'transaction_type'"
-                                :options="$options['transactionTypes']"
-                                :value="$data->transaction_type"
+                                :name="'material_mutation_id'"
+                                :options="$options['material_mutations']"
+                                :value="$data->material_mutation_id"
                                 :disabled="true"
-                                :required="true"></x-in-select>
+                                :required="false"></x-in-select>
                             <x-in-text
                                 :type="'number'"
                                 :step="'0.01'"
@@ -75,13 +77,6 @@
                                 :col="4"
                                 :name="'amount'"
                                 :value="$data->amount"
-                                :required="true"></x-in-text>
-                            <x-in-text
-                                :type="'date'"
-                                :label="'Tanggal'"
-                                :col="4"
-                                :name="'created'"
-                                :value="$data->created"
                                 :required="true"></x-in-text>
                             <x-in-text
                                 :label="'Catatan'"
@@ -106,14 +101,23 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-branch" content="{{ Auth::user()->branch_id ?? null }}">
 
-    <meta name="data-project" content={{ $data->project_id ?? null }}>
-    <meta name="data-project" content={{ $data->project_id ?? null }}>
-    <meta name="data-driver" content={{ $data->driver_id ?? null }}>
+    <meta name="search-branch" content="{{ $data->branch_id}}">
+    <meta name="search-project" content="{{ $data->project_id}}">
+    <meta name="search-driver" content="{{ $data->driver_id }}">
+    <meta name="search-material-mutation" content="{{ $data->material_mutation_id }}">
+    <meta name="search-date-start" content="{{ app('request')->input('date_start') ?? null }}">
+    <meta name="search-date-finish" content="{{ app('request')->input('date_finish') ?? null }}">
 
-
+    <meta name="old-branch" content="{{ old('branch_id') ?? null }}">
+    <meta name="old-project" content="{{ old('project_id') ?? null }}">
+    <meta name="old-driver" content="{{ old('driver_id') ?? null }}">
+    <meta name="old-material-mutation" content="{{ old('material_mutation') ?? null }}">
+    <meta name="old-amount" content="{{ old('amount') ?? null }}">
+    <meta name="old-created" content="{{ old('created') ?? null }}">
     <meta name="url-branch" content="{{ route('branch.index') }}">
     <meta name="url-project" content="{{ route('project.index') }}">
     <meta name="url-driver" content="{{ route('driver.index') }}">
+    <meta name="url-material-mutation" content="{{ route('material-mutation.index') }}">
 
 
     {{-- Searching --}}
@@ -195,6 +199,124 @@
 
             if (selectBranch.val() != '')
                 selectBranch.trigger('change');
+        });
+    </script>
+
+    {{-- Form --}}
+    <script>
+        $(function () {
+            let selectBranchIn = $('#in_branch_id');
+            let selectProjectIn = $('#in_project_id');
+            let selectDriverIn = $('#in_driver_id');
+            let selectMaterialMutationIn = $('#in_material_mutation_id');
+
+            selectBranchIn.on('change', function () {
+                let branchId = $(this).val();
+                let projectId = selectProjectIn.val();
+                let searchDriverIn = $('meta[name="search-material-mutation"]').attr('content');
+                let searchMaterialMutation = $('meta[name="search-material-mutation"]').attr('content');
+
+                if (branchId == '') {
+                    selectDriverIn.empty();
+                    selectDriverIn.append('<option value="">Pilih Pengendara</option>');
+
+                    selectMaterialMutationIn.empty();
+                    selectMaterialMutationIn.append('<option value="">Pilih Mutasi Material</option>');
+
+                    return;
+                }
+
+                // Get driver
+                $.ajax({
+                    url: $('meta[name="url-driver"]').attr('content'),
+                    type: 'GET',
+                    data: {
+                        branch_id: branchId,
+                    },
+                    success: function (data) {
+                        let oldDriver = $('meta[name="old-driver"]').attr('content');
+
+                        selectDriverIn.empty();
+                        selectDriverIn.append(`<option value="">Pilih Pengendara</option>`);
+
+                        data.datas.forEach(function(item) {
+                            selectDriverIn.append(`<option value="${item.id}">${item.name}</option>`);
+                        });
+
+                        selectDriverIn.select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Pengendara',
+                            allowClear: true,
+                        });
+
+                        if (oldDriver != '') {
+                            selectDriverIn.val(oldDriver).trigger('change');
+                        }
+                    }
+                });
+
+                //get project
+                $.ajax({
+                    url: $('meta[name="url-project"]').attr('content'),
+                    type: 'GET',
+                    data: {
+                        branch_id: branchId,
+                    },
+                    success: function (data) {
+                        let oldProject = $('meta[name="old-project"]').attr('content');
+
+                        selectProjectIn.empty();
+                        selectProjectIn.append(`<option value="">Pilih Proyek</option>`);
+
+                        data.datas.forEach(function(item) {
+                            selectProjectIn.append(`<option value="${item.id}">${item.name}</option>`);
+                        });
+
+                        selectProjectIn.select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Proyek',
+                            allowClear: true,
+                        });
+
+                        if (oldProject != '') {
+                            selectProjectIn.val(oldProject).trigger('change');
+                        }
+                    }
+                });
+
+                // Get material mutation
+                $.ajax({
+                    url: $('meta[name="url-material-mutation"]').attr('content'),
+                    type: 'GET',
+                    data: {
+                        branch_id: branchId,
+                        type: 'out',
+                    },
+                    success: function (data) {
+                        let oldMaterialMutation = $('meta[name="old-material-mutation"]').attr('content');
+
+                        selectMaterialMutationIn.empty();
+                        selectMaterialMutationIn.append(`<option value="">Pilih Mutasi Material</option>`);
+
+                        data.datas.forEach(function(item) {
+                            selectMaterialMutationIn.append(`<option value="${item.id}">${item.ref_no}</option>`);
+                        });
+
+                        selectMaterialMutationIn.select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Mutasi Material',
+                            allowClear: true,
+                        });
+
+                        if (oldMaterialMutation != '') {
+                            selectMaterialMutationIn.val(oldMaterialMutation).trigger('change');
+                        }
+                    }
+                });
+            });
+
+            if (selectBranchIn.val() != '')
+                selectBranchIn.trigger('change');
         });
     </script>
 @endpush

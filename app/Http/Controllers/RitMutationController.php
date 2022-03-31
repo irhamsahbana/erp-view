@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-
-use App\Models\RitMutation as Model;
-use App\Models\RitBalance;
 use App\Models\Branch;
+use App\Models\Driver;
+use Barryvdh\DomPDF\PDF;
+use App\Models\RitBalance;
+
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\MaterialMutation;
+use App\Models\Project;
+use App\Models\RitMutation as Model;
+use Illuminate\Support\Facades\Auth;
 
 class RitMutationController extends Controller
 {
@@ -73,6 +76,7 @@ class RitMutationController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request);
         $request->validate([
             'id' => ['nullable', 'exists:rit_mutations,id'],
             'branch_id' => ['required_without:id', 'exists:branches,id'],
@@ -86,7 +90,10 @@ class RitMutationController extends Controller
             // 'created' => ['required', 'date'],
         ]);
 
+
         $row = Model::findOrNew($request->id);
+
+        // dd($row);
 
         if (!$row->id) {
             $prefix = sprintf('%s/', $row->getTable());
@@ -121,13 +128,13 @@ class RitMutationController extends Controller
                                 'material_mutation_id' => $row->material_mutation_id,
                             ]);
 
-        // $totalBalance = Model::where('branch_id', $row->branch_id)
-        //                     ->where('project_id', $row->project_id)
-        //                     ->where('driver_id', $row->driver_id)
-        //                     ->where('material_mutation_id', $row->material_mutation_id)
-        //                     ->get();
+        $totalBalance = Model::where('branch_id', $row->branch_id)
+                            ->where('project_id', $row->project_id)
+                            ->where('driver_id', $row->driver_id)
+                            ->where('material_mutation_id', $row->material_mutation_id)
+                            ->get();
 
-        // $totalBalance = $totalBalance->where('is_paid', false)->sum('amount');
+        $totalBalance = $totalBalance->where('is_paid', false)->sum('amount');
         // dd($totalBalance);
         // $totalBalancePlus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_ADD)->sum('amount');
         // $totalBalanceMinus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_SUBTRACT)->sum('amount');
@@ -158,7 +165,7 @@ class RitMutationController extends Controller
         $balance->save();
         // }
 
-        return redirect()->back()->with('f-msg', 'Mutasi hutang ritase berhasil disimpan.');
+        return redirect()->route('rit-mutation.index')->with('f-msg', 'Mutasi hutang ritase berhasil disimpan.');
     }
 
     public function show($id)
@@ -228,6 +235,9 @@ class RitMutationController extends Controller
     public static function staticOptions()
     {
         $branches = Branch::all();
+        $projects = Project::all();
+        $drivers = Driver::all();
+        $material_mutations = MaterialMutation::all();
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
@@ -242,16 +252,45 @@ class RitMutationController extends Controller
 
         $status = [
             ['text' => 'Open', 'value' => 'open'],
-            ['text' => 'Close', 'value' => 'close'],
+            ['text' => 'Close', 'value' => 'close']
         ];
 
         $transactionTypes = [
-            ['text' => 'Penambahan', 'value' => 1],
-            ['text' => 'Pegurangan', 'value' => 2],
+            ['text' => 'Penamabahan', 'value' => 1],
+            ['text' => 'Pengurangan', 'value' => 2]
         ];
+
+        if ($projects->isNotEmpty())
+            $projects = $projects->map(function ($project) {
+                return [
+                    'text' => $project->name,
+                    'value' => $project->id,
+                ];
+            });
+
+        if ($drivers->isNotEmpty())
+            $drivers = $drivers->map(function ($driver) {
+                return [
+                    'text' => $driver->name,
+                    'value' => $driver->id,
+                ];
+            });
+
+        if ($material_mutations->isNotEmpty())
+            $material_mutations = $material_mutations->map(function ($material_mutation) {
+                return [
+                    'text' => $material_mutation->ref_no,
+                    'value' => $material_mutation->id,
+                ];
+            });
+
+        
 
         $options = [
             'branches' => $branches,
+            'projects' => $projects,
+            'drivers' => $drivers,
+            'material_mutations' => $material_mutations,
             'status' => $status,
             'transactionTypes' => $transactionTypes
         ];
