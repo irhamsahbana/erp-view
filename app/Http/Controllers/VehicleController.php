@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Vehicle as Model;
 use App\Models\Branch;
@@ -26,19 +27,7 @@ class VehicleController extends Controller
 
         $datas = $query->paginate(40)->withQueryString();
 
-        $branches = Branch::all();
-        if ($branches->isNotEmpty()) {
-            $branches = $branches->map(function ($branch) {
-                return [
-                    'text' => $branch->name,
-                    'value' => $branch->id,
-                ];
-            });
-        }
-
-        $options = [
-            'branches' => $branches,
-        ];
+        $options = self::staticOptions();
 
         return view('pages.VehicleIndex', compact('datas', 'options'));
     }
@@ -79,6 +68,10 @@ class VehicleController extends Controller
     public static function staticOptions()
     {
         $branches = Branch::all();
+
+        if (!in_array(Auth::user()->role, self::$fullAccess))
+            $branches = $branches->where('id', Auth::user()->branch_id);
+
         if ($branches->isNotEmpty()) {
             $branches = $branches->map(function ($branch) {
                 return [

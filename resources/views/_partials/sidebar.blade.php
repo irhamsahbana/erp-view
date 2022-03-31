@@ -45,24 +45,23 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           {{-- <li class="nav-header">LAPORAN</li>
           <x-nav-item :icon="'fas fa-gas-pump'" :text="'Frekuensi Penggunaan Solar'" :href="'/transaksi/solar'"/> --}}
-          <li class="nav-header">TRANSAKSI</li>
-            <x-nav-item :icon="'fas fa-receipt'" :text="'Voucher'" :href="route('voucher.index')"/>
-            <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')"/>
-            <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'"/>
-            <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}"/>
-            <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}"/>
-            <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'" href="{{ route('rit-mutation.index') }}"/>
-            <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'" href="{{ route('rit-mutation.balance') }}"/>
-            <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}"/>
-            <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}"/>
+          @if (Auth::user()->role == 'admin' || Auth::user()->role == 'owner')
+            <li class="nav-header">TRANSAKSI</li>
+              <x-nav-item :icon="'fas fa-receipt'" :text="'Voucher'" :href="route('voucher.index')"/>
+              <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')"/>
+              <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'"/>
+              <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}"/>
+              <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'" href="{{ route('rit-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'" href="{{ route('rit-mutation.balance') }}"/>
+              <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}"/>
 
-          <li class="nav-header">TRANSAKSI PEMBELIAN</li>
-            <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchasing'" :href="route('purchasing.index')"/>
-            {{-- <x-nav-item :icon="'fas fa-credit-card'" :text="'Saldo Purchasing'" :href="route('purchase.show')"/> --}}
+            <li class="nav-header">TRANSAKSI PEMBELIAN</li>
+              <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchasing'" :href="route('purchasing.index')"/>
 
-          @if (Auth::user()->role == 'owner' || Auth::user()->role == 'admin')
-          <li class="nav-header">MASTER DATA</li>
-          <x-nav-item :icon="'fas fa-list'" :text="'List Kategori'" href="{{ route('category.list') }}"/>
+            <li class="nav-header">MASTER DATA</li>
+              <x-nav-item :icon="'fas fa-list'" :text="'List Kategori'" href="{{ route('category.list') }}"/>
               <x-nav-item :icon="'fas fa-sitemap'" :text="'Cabang'" href="{{ route('branch.index') }}"/>
               <x-nav-item :icon="'fas fa-users'" :text="'Pengguna'" href="{{ route('user.index') }}"/>
               <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" href="{{ route('project.index') }}"/>
@@ -71,6 +70,60 @@
               <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}"/>
               <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}"/>
           @endif
+
+          @if (Auth::user()->role == 'branch_head')
+              <li class="nav-header">TRANSAKSI</li>
+              <x-nav-item :icon="'fas fa-receipt'" :text="'Voucher'" :href="route('voucher.index')"/>
+              <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')"/>
+              <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'"/>
+              <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}"/>
+              <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'" href="{{ route('rit-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'" href="{{ route('rit-mutation.balance') }}"/>
+              <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}"/>
+
+              <li class="nav-header">MASTER DATA</li>
+              <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" href="{{ route('project.index') }}"/>
+              <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}"/>
+              <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}"/>
+          @endif
+
+          @if (Auth::user()->role == 'material')
+            <li class="nav-header">TRANSAKSI</li>
+              <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'"/>
+              <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'" href="{{ route('rit-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'" href="{{ route('rit-mutation.balance') }}"/>
+              <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}"/>
+
+            <li class="nav-header">MASTER DATA</li>
+              <x-nav-item :icon="'fas fa-truck-moving'" :text="'Kendaraan'" href="{{ route('vehicle.index') }}"/>
+              <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}"/>
+          @endif
+
+          @if (Auth::user()->role == 'cashier')
+            <li class="nav-header">TRANSAKSI</li>
+            <x-nav-item :icon="'fas fa-receipt'" :text="'Voucher'" :href="route('voucher.index')"/>
+              <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')"/>
+              <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}"/>
+
+            <li class="nav-header">MASTER DATA</li>
+              <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}"/>
+          @endif
+
+          @if (Auth::user()->role == 'accountant')
+            <li class="nav-header">TRANSAKSI</li>
+              <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'"/>
+              <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}"/>
+              <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}"/>
+              <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}"/>
+
+            <li class="nav-header">MASTER DATA</li>
+              <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" href="{{ route('project.index') }}"/>
+          @endif
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
