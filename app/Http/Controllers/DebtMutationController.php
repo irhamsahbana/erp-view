@@ -131,7 +131,7 @@ class DebtMutationController extends Controller
         $totalBalance = Model::where('branch_id', $row->branch_id)
                             ->where('project_id', $row->project_id)
                             ->where('vendor_id', $row->vendor_id)
-                            ->where('debt_type_id', $row->type)
+                            ->where('debt_type_id', $row->debt_type_id)
                             ->get();
 
         $totalBalancePlus = $totalBalance->where('transaction_type', Model::TRANSACTION_TYPE_ADD)->sum('amount');
@@ -179,7 +179,7 @@ class DebtMutationController extends Controller
             'branch_id' => $row->branch_id,
             'project_id' => $row->project_id,
             'vendor_id' => $row->vendor_id,
-            'type' => $row->type
+            'debt_type_id' => $row->debt_type_id
         ]);
 
         if ($row->transaction_type == Model::TRANSACTION_TYPE_ADD) {

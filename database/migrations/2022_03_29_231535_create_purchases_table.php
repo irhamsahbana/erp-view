@@ -21,6 +21,7 @@ class CreatePurchasesTable extends Migration
             $table->string('user');
             $table->boolean('is_paid')->default(false);
             $table->boolean('is_open')->default(false);
+            $table->boolean('is_accepted')->default(false);
             $table->float('total', 15, 2);
             $table->date('created')->nullable();
             $table->timestamps();

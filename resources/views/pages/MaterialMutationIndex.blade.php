@@ -92,7 +92,7 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Material', 'Jenis', 'Harga Material', 'Volume', 'Catatan', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Proyek', 'Material', 'Jenis', 'Harga Material', 'Volume', 'Catatan', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
@@ -153,6 +153,8 @@
                                                     title="Ubah"><i class="fas fa-sync-alt"></i></button>
                                             </form>
                                         @endif
+                                        <a href="{{ route('mutasi-material.print', $data->id) }}" class="btn btn-info"
+                                            title="Print"><i class="fas fa-file-alt"></i></a>
                                     </td>
                                 </tr>
                             @endforeach

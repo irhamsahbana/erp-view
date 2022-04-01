@@ -4,6 +4,7 @@ use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\{
+    AjaxController,
     CategoryController,
     AuthController,
     BranchController,
@@ -35,6 +36,7 @@ use App\Http\Controllers\{
 use App\Models\{
     DebtMutation,
     DebtBalance,
+    Journals,
     MaterialMutation,
     MaterialBalance,
     PurchaseDetail
@@ -70,10 +72,12 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('cabang/{id}', [BranchController::class, 'show'])->name('branch.show');
         Route::delete('cabang/{id}', [BranchController::class, 'destroy'])->name('branch.destroy');
 
-        Route::get('pengguna', [UserController::class, 'index'])->name('user.index');
-        Route::post('pengguna', [UserController::class, 'store'])->name('user.store');
+        Route::get('pengguna/edit-password', [UserController::class, 'edit'])->name('user.edit-password');
+        Route::put('pengguna/update-password', [UserController::class, 'update'])->name('user.update');
         Route::get('pengguna/{id}', [UserController::class, 'show'])->name('user.show');
         Route::delete('pengguna/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+        Route::get('pengguna', [UserController::class, 'index'])->name('user.index');
+        Route::post('pengguna', [UserController::class, 'store'])->name('user.store');
 
         Route::get('proyek', [ProjectController::class, 'index'])->name('project.index');
         Route::post('proyek', [ProjectController::class, 'store'])->name('project.store');
@@ -124,12 +128,21 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['prefix' => 'journal'], function() {
         Route::get('/', [JournalController::class, 'index'])->name('journal.index');
-        Route::get('/create-journal', [JournalController::class, 'create'])->name('add.journal');
-        Route::post('/save-journal', [JournalController::class, 'save'])->name('save.journal');
-        Route::get('/delete-journal/{id}', [JournalController::class, 'delete'])->name('delete.journal');
-        Route::get('/edit-journal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
-        Route::post('/udpate-journal/{journal:id}', [JournalController::class, 'update'])->name('update.journal');
-        Route::get('/detail-journal/{journal:id}', [JournalController::class, 'detail'])->name('detail.journal');
+        Route::get('/buat-jurnal', [JournalController::class, 'create'])->name('add.journal');
+        Route::post('/simpan-jurnal', [JournalController::class, 'save'])->name('save.journal');
+        Route::get('/hapus-jurnal/{id}', [JournalController::class, 'delete'])->name('delete.journal');
+        Route::get('/ubah-jurnal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
+        Route::post('/ganti-jurnal/{journal:id}', [JournalController::class, 'update'])->name('update.journal');
+        Route::post('/tambah-sub-jurnal', [JournalController::class, 'postSubJournal'])->name('post-sub-journal');
+        Route::get('/rincian-jurnal/{journal:id}', [JournalController::class, 'detail'])->name('detail.journal');
+        Route::post('/simpan-sub-jurnal-sementara', [JournalController::class, 'saveSubJournalTemporaryToSubJournal'])->name('save-sub-journal-temporary');
+        Route::get('/hapus-sub-jurnal', [JournalController::class, 'deleteSubJournal'])->name('delete-sub-journal');
+        Route::get('/hapus-sub-jurnal-sementara', [JournalController::class, 'deleteSubJournalTemp'])->name('delete-sub-journal-temp');
+
+        Route::get('/get-budget-item', [AjaxController::class, 'getBudgetItem'])->name('get-budget-item');
+        Route::get('/get-sub-budget-item', [AjaxController::class, 'getSubBudgetItem'])->name('get-sub-budget-item');
+        Route::get('/get-budget-item-group', [AjaxController::class, 'getBudgetItemGroup'])->name('get-budget-item-group');
+        Route::get('/get-normal-balances', [AjaxController::class, 'getNormalBalance'])->name('get-normal-balance');
     });
     Route::group(['prefix' => 'neraca'], function() {
         Route::get('/', [ReportController::class, 'balancesheet'])->name('balance.index');
@@ -171,6 +184,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('mutasi-material/{id}', [MaterialMutationController::class, 'destroy'])->name('material-mutation.destroy');
         Route::put('mutasi-material/ubah-status/{id}', [MaterialMutationController::class, 'changeIsOpen'])->name('material-mutation.change-status');
         Route::get('mutasi-material/saldo', [MaterialMutationController::class, 'balance'])->name('material-mutation.balance');
+        Route::get('mutasi-material/cetak/{id}', [MaterialMutationController::class, 'print'])->name('mutasi-material.print');
 
         Route::get('mutasi-hutang/saldo', [DebtMutationController::class, 'balance'])->name('debt-mutation.balance');
         Route::get('mutasi-hutang', [DebtMutationController::class, 'index'])->name('debt-mutation.index');
@@ -198,11 +212,13 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('pembelian', [PurchaseController::class, 'store'])->name('purchase.store');
         Route::put('pembelian/ubah-status/{id}', [PurchaseController::class, 'changeIsOpen'])->name('purchase.change-status');
         Route::put('pembelian/ubah-status-bayar/{id}', [PurchaseController::class, 'changeIsPaid'])->name('purchase.change-status-paid');
+        Route::put('pembelian/ubah-status-accepted/{id}', [PurchaseController::class, 'changeIsAccepted'])->name('purchase.change-status-accept');
         Route::delete('pembelian/{id}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
         Route::get('pembelian/{id}', [PurchaseController::class, 'show'])->name('purchase.show');
         Route::post('pembelian-detail', [PurchaseDetailController::class, 'store'])->name('purchase-detail.store');
         Route::put('pembelian-detail/ubah-harga/{id}', [PurchaseDetailController::class, 'update'])->name('purchase-detail.update-price');
         Route::delete('pembelian-detail/{id}', [PurchaseDetailController::class, 'destroy'])->name('purchase-detail.destroy');
+        Route::get('pembelian-detail/cetak/{id}', [PurchaseDetailController::class, 'print'])->name('purchase-detail.print');
     });
 });
 
@@ -236,3 +252,4 @@ Route::get('delete-material', function() {
 
     echo "success delete material";
 });
+

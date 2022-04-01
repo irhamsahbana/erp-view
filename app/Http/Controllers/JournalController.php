@@ -6,10 +6,12 @@ use Error;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Journals;
+use App\Models\BudgetItem;
+use App\Models\SubJournal;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\BudgetItemGroup;
 use App\Models\Jurnal as Model;
-use App\Models\SubJournal;
 use App\Models\TemporarySubJurnal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -59,8 +61,13 @@ class JournalController extends Controller
     }
     public function create()
     {
+        if(Auth::user()->branch_id == null){
+            $branch = Branch::all();
+        }else{
+            $branch = Branch::where('id', Auth::user()->branch_id)->get();
+        }
         $data = [
-            "branches" => Branch::all(),
+            "branches" => $branch,
             "categories" => Category::where('group_by', 'journal_categories')->get(),
         ];
         return view('pages.JournalCreate', $data);
@@ -107,6 +114,20 @@ class JournalController extends Controller
     }
     public function edit(Journals $journal)
     {
+        if(Auth::user()->branch_id == null){
+            $branch = Branch::all();
+        }else{
+            $branch = Branch::where('id', Auth::user()->branch_id)->get();
+        }
+        $data = [
+            "journal" => $journal,
+            "branches" => $branch,
+            "categories" => Category::where('group_by', 'journal_categories')->get(),
+        ];
+        return view('pages.JournalEdit', $data);
+    }
+    public function change(Journals $journal)
+    {
         $data = [
             "journal" => $journal,
             "branches" => Branch::all(),
@@ -136,12 +157,83 @@ class JournalController extends Controller
     }
     public function detail(Journals $journal)
     {
-        // TemporarySubJurnal::where('user_id', Auth::user()->id)->delete();
+        if(Auth::user()->branch_id == null){
+            $branch = Branch::all();
+        }else{
+            $branch = Branch::where('id', Auth::user()->branch_id)->get();
+        }
+        $budgetItemGroups = BudgetItemGroup::all();
+
+
+        $subJournal = SubJournal::with('project', 'budgetItemGroup', 'budgetItem', 'subBudgetItem', 'category')->where('user_id', Auth::user()->id)->where('journal_id', $journal->id)->get();
+
+        $totalSub = 0;
+
+        foreach ($subJournal as $sub) {
+            if($sub->category->label == 'Kredit'){
+                $totalSub -= $sub->amount;
+            }else{
+                $totalSub += $sub->amount;
+            }
+        }
+
         $data = [
+            'budgetItemGroups' => $budgetItemGroups,
             'journal' => $journal,
-            'subjournals' => SubJournal::with('budgetItemGroup', 'project', 'budgetItem', 'subBudgetItem')->where('journal_id', $journal->id)->get(),
+            'subJournal' => $subJournal,
+            'balances' => Category::where('group_by', 'normal_balances')->get(),
+            'totalSub' => $totalSub,
         ];
         return view('pages.JournalDetail', $data);
+    }
+    public function postSubJournal(Request $request)
+    {
+        $data = [
+            'budget_item_group_id' => $request->budget_item_group_id,
+            'journal_id' => $request->journal_id, 
+            'budget_item_id' => $request->budget_item_id,
+            'sub_budget_item_id' => $request->sub_budget_item_id,
+            'project_id' => $request->project_id,
+            'normal_balance_id' => $request->normal_balance_id,
+            'user_id' => Auth::user()->id,
+            'amount' => $request->amount,
+        ];
+        DB::beginTransaction();
+        try {
+            SubJournal::create($data);
+            DB::commit();
+            return redirect()->route('detail.journal', ['journal' => $data['journal_id']])->with('success', 'Data berhasil tambah');
+        } catch (Error $e) {
+            DB::rollBack();
+            dd($e);
+        }
+    }
+    public function deleteSubJournal(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            SubJournal::where('id', $request->sub_id)->delete();
+            DB::commit();
+            return redirect()->route('detail.journal', ['journal' => $request->journal_id])->with('success', 'Data berhasil di hapus');
+            
+        } catch (Error $e) {
+            DB::rollBack();
+            dd($e);
+        }
+    }
+    public function deleteSubJournalTemp(Request $request)
+    {
+        dd($request);
+        DB::beginTransaction();
+        try {
+            TemporarySubJurnal::where('id', $request->sub_temp_id)->delete();
+            DB::commit();
+            return redirect()->route('detail.journal', ['journal' => $request->journal_id])->with('success', 'Data berhasil di hapus');
+            
+        } catch (Error $e) {
+            DB::rollBack();
+            dd($e);
+        }
     }
     public static function staticOptions()
     {

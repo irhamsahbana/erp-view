@@ -44,6 +44,27 @@ class UserController extends Controller
         return redirect()->back()->with('f-msg', 'Pengguna berhasil disimpan.');
     }
 
+    public function edit()
+    {
+        $data = Model::findOrFail(Auth::user()->id);
+        return view('pages.UserEdit', compact('data'));
+    }
+
+    public function update(Request $request)
+    {
+        $row = Model::findOrFail(Auth::user()->id);
+        $request->validate([
+            'username' => ['nullable'],
+            'password' => ['required', 'string','min:5', 'max:255'],
+            'password_confirmation' => ['required_with:password', 'string', 'max:255', 'same:password']
+        ]);
+
+        $row->password = bcrypt($request->password);
+        $row->save();
+
+        return redirect(route('app'))->with('f-msg', 'Berhasil Mengubah Password Pengguna.');
+    }
+
     public function show($id)
     {
         $data = Model::findOrFail($id);

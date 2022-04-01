@@ -60,7 +60,7 @@
             <x-card-collapsible>
                 <x-row>
                     <x-col>
-                        <x-table :thead="['Cabang', 'proyek', 'Material', 'Kuantitas (Volume)', 'Total Harga Beli']">
+                        <x-table :thead="['Cabang', 'Proyek', 'Material', 'Kuantitas (Volume)', 'Total Harga Beli']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>

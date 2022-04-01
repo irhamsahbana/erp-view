@@ -98,7 +98,7 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Ref Mutasi Material', 'Cabang', 'proyek', 'Jenis Transaksi', 'Jumlah (Biaya)', 'Status', 'Status Bayar', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Ref Mutasi Material', 'Cabang', 'Proyek', 'Pengendara', 'Jumlah (Biaya)', 'Status', 'Status Bayar', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
@@ -107,7 +107,7 @@
                                     <td>{{ $data->materialMutation->ref_no }}</td>
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->project->name }}</td>
-                                    <td>{{ $data->transaction_type == 1 ? 'Tambah' : 'Kurang' }}</td>
+                                    <td>{{ $data->driver->name }}</td>
                                     <td>{{ 'Rp. ' . number_format($data->amount, 2) }}</td>
                                     <td>
                                         @if($data->is_open)
@@ -116,24 +116,23 @@
                                             <span class="badge badge-danger">Close</span>
                                         @endif
                                     </td>
-                                    {{-- <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#status-modal"><i class="fa-solid fa-circle-xmark"></i></button></td> --}}
                                     <td>
                                         <form action="{{ route('rit-mutation.change-status-paid', $data->id) }}" style="display:inline!important;" method="POST">
                                             @method('PUT')
                                             @csrf
-                                            <button 
+                                            <button
                                                 type="submit"
-                                                class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}" 
+                                                class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
                                                 onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
                                                 title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
                                         </form>
                                     </td>
                                     <td>
                                         @if ($data->is_open)
-                                            <a
+                                            {{-- <a
                                                 href="{{ route('rit-mutation.show', $data->id) }}"
                                                 class="btn btn-warning"
-                                                title="Ubah"><i class="fas fa-pencil-alt"></i></a>
+                                                title="Ubah"><i class="fas fa-pencil-alt"></i></a> --}}
                                             <form
                                                 style=" display:inline!important;"
                                                 method="POST"

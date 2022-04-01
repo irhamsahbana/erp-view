@@ -68,6 +68,9 @@ $optionsAuth['roles'] = [
       <li class="nav-header">TRANSAKSI PEMBELIAN</li>
       <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchasing'" :href="route('purchasing.index')" />
 
+      {{-- <li class="nav-header">LAPORAN</li>
+      <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="route('purchasing.index')" /> --}}
+
       <li class="nav-header">MASTER DATA</li>
       <x-nav-item :icon="'fas fa-list'" :text="'List Kategori'" href="{{ route('category.list') }}" />
       <x-nav-item :icon="'fas fa-sitemap'" :text="'Cabang'" href="{{ route('branch.index') }}" />
@@ -77,6 +80,10 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" href="{{ route('driver.index') }}" />
       <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}" />
       <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}" />
+
+      <x-nav-item :icon="'fas fa-list'" :text="'Kelompok Mata Anggaran'" href="{{ route('big.index') }}" />
+      <x-nav-item :icon="'fas fa-list'" :text="'Mata Anggaran'" href="{{ route('bi.index') }}" />
+      <x-nav-item :icon="'fas fa-list'" :text="'Sub-Mata Anggaran'" href="{{ route('sbi.index') }}" />
       @endif
 
       @if (Auth::user()->role == 'purchaser')

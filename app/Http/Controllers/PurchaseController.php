@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchase as Model;
-use App\Models\Branch;
-use App\Models\PurchaseDetail;
-use App\Models\User;
-use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+use App\Models\User;
+use App\Models\Branch;
+use App\Models\Vendor;
+use App\Models\PurchaseDetail;
+use App\Models\Purchase as Model;
 
 class PurchaseController extends Controller
 {
@@ -132,6 +133,16 @@ class PurchaseController extends Controller
         return redirect()->back()->with('f-msg', 'Status Bayar berhasil diubah.');
     }
 
+    public function changeIsAccepted($id)
+    {
+        $row = Model::findOrFail($id);
+        $row->is_accepted = !$row->is_accepted;
+
+        $row->save();
+
+        return redirect()->back()->with('f-msg', 'Status diterima berhasil diubah');
+    }
+
     public static function staticOptions()
     {
         $branches = Branch::all();
@@ -187,4 +198,5 @@ class PurchaseController extends Controller
 
         return $options;
     }
+
 }

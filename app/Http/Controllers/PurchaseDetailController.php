@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchase;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
+
+use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 
 class PurchaseDetailController extends Controller
@@ -121,5 +123,14 @@ class PurchaseDetailController extends Controller
         $purchase->total -= $row->amount;
         $purchase->save();
         return redirect()->back()->with('f-msg', 'Detail Pembelian berhasil dihapus.');
+    }
+
+    public function print($id)
+    {
+        $purchaseDetail = PurchaseDetail::where('purchase_id', $id)->get();
+        $purchase = Purchase::findOrFail($id);
+
+        $pdf = PDF::loadView('pdf.invoice-purchase', compact('purchaseDetail', 'purchase'));
+        return $pdf->stream();
     }
 }

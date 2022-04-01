@@ -22,10 +22,6 @@ class AlterRitBalancesTable extends Migration
             $table->foreign('project_id')
             ->references('id')->on('projects');
 
-            $table->index('material_mutation_id');
-            $table->foreign('material_mutation_id')
-            ->references('id')->on('material_mutations');
-
             $table->index('driver_id');
             $table->foreign('driver_id')
             ->references('id')->on('drivers');

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\MaterialMutation as Model;
 use App\Models\Branch;
 use App\Models\MaterialBalance;
-use Illuminate\Support\Facades\Auth;
 
 class MaterialMutationController extends Controller
 {
@@ -240,6 +241,14 @@ class MaterialMutationController extends Controller
         $options = self::staticOptions();
 
         return view('pages.MaterialBalanceIndex', compact('datas', 'options'));
+    }
+
+    public function print($id)
+    {
+        $data = Model::findOrFail($id);
+
+        $pdf = PDF::loadView('pdf.invoice-material-mutation', compact('data'));
+        return $pdf->stream();
     }
 
     public static function staticOptions()

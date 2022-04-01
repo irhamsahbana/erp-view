@@ -72,12 +72,12 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Vendor', 'Nama Pemesan', 'Total Harga', 'Status Bayar', 'Status Close', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Vendor', 'Nama Pemesan', 'Total Harga', 'Status Bayar','Status Diterima', 'Status Close', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
-                                    <td>{{ $data->ref_no }}</td>
+                                    <td>{{ $data->ref_no }}</td>, 'Status Close'
                                     <td>{{ $data->vendor->name }}</td>
                                     <td>{{ $data->user }}</td>
                                     <td>{{ 'Rp. ' . number_format($data->total, 2) }}</td>
@@ -90,6 +90,17 @@
                                                 class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
                                                 onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
                                                 title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('purchase.change-status-accept', $data->id) }}" style="display:inline!important;" method="POST">
+                                            @method('PUT')
+                                            @csrf
+                                            <button
+                                                type="submit"
+                                                class="btn btn-{{ $data->is_accepted == false ? 'danger' : 'success' }}"
+                                                onclick="return confirm('Apakah anda ingin mengubah status diterima ini?')"
+                                                title="ubah status"><i class="{{ $data->is_accepted == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
                                         </form>
                                     </td>
                                     <td>
@@ -138,6 +149,8 @@
                                                 class="btn btn-warning"
                                                 title="detail"><i class="fas fa-eye"></i></a>
                                         @endif
+                                        <a href="{{ route('purchase-detail.print', $data->id) }}" class="btn btn-info"
+                                            title="Print"><i class="fas fa-file-alt"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -161,7 +174,7 @@
                 <x-in-select
                     :label="'Cabang'"
                     :placeholder="'Pilih Cabang'"
-                    :col="4"
+                    :col="6"
                     :id="'in_branch_id'"
                     :name="'branch_id'"
                     :options="$options['branches']"
@@ -170,14 +183,14 @@
                 <x-in-text
                     :type="'text'"
                     :label="'User'"
-                    :col="4"
+                    :col="6"
                     :id="'in_user'"
                     :name="'user'"
                     :required="true"></x-in-text>
                 <x-in-select
                     :label="'Vendor'"
                     :placeholder="'Pilih Vendor'"
-                    :col="4"
+                    :col="6"
                     :id="'in_vendor_id'"
                     :name="'vendor_id'"
                     :options="$options['vendors']"
@@ -186,7 +199,7 @@
                 <x-in-text
                     :type="'date'"
                     :label="'Tanggal'"
-                    :col="3"
+                    :col="6"
                     :id="'in_created'"
                     :name="'created'"
                     :required="true"></x-in-text>

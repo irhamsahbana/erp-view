@@ -15,14 +15,14 @@ class CreateSubJournalsTable extends Migration
     {
         Schema::create('sub_journals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('budget_item_group_id');
-            $table->foreignId('journal_id');
-            $table->foreignId('budget_item_id');
-            $table->foreignId('sub_budget_item_id');
-            $table->foreignId('project_id')->nullable();
-            $table->foreignId('normal_balance_id');
-            $table->foreignId('user_id');
-            $table->float('amount');
+            $table->unsignedBigInteger('budget_item_group_id');
+            $table->unsignedBigInteger('journal_id');
+            $table->unsignedBigInteger('budget_item_id');
+            $table->unsignedBigInteger('sub_budget_item_id');
+            $table->unsignedBigInteger('project_id')->nullable();
+            $table->unsignedBigInteger('normal_balance_id');
+            $table->unsignedBigInteger('user_id');
+            $table->float('amount', 15, 2);
             $table->longText('notes')->nullable();
             $table->boolean('is_open')->default(false);
             $table->timestamps();
