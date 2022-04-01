@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(CategorySeeder::class);
 
-        $this->dummy();
+        // $this->dummy();
         $this->call(BudgetItemGroupSeeder::class);
         $this->call(BudgetItemSeeder::class);
         $this->call(SubBudgetItemSeeder::class);
