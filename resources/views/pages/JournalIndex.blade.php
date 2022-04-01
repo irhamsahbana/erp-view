@@ -99,7 +99,7 @@ $option = [
                             @foreach ($datas as $journal)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $journal->date }}</td>
+                                <td>{{ $journal->created }}</td>
                                 <td>{{ $journal->branch->name }}</td>
                                 <td>{{ $journal->category->label }}</td>
                                 <td>{{ $journal->ref_no }}</td>

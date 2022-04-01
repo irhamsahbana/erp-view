@@ -85,7 +85,7 @@ $option = [
                     </div>
                     <div class="my-2">
                         <label for=""></label>
-                        <input class="form-control" type="date" name="date" placeholder="Tanggal" required>
+                        <input class="form-control" type="date" name="created" placeholder="Tanggal" required>
                     </div>
                     {{-- <div class="my-2">
                         <label for=""></label>

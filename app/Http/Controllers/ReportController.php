@@ -23,7 +23,7 @@ class ReportController extends Controller
                                 'sub_journals.normal_balance_id',
                                 'sub_journals.amount',
                                 'journals.branch_id',
-                                'journals.date'
+                                'journals.created'
                                 )
                             ->leftJoin('journals', 'journals.id', 'sub_journals.journal_id');
 
@@ -34,10 +34,10 @@ class ReportController extends Controller
             $query->where('sub_journals.project_id', $request->project_id);
 
         if ($request->date_start)
-            $query->whereDate('journals.date', '>=', new \DateTime($request->date_start));
+            $query->whereDate('journals.created', '>=', new \DateTime($request->date_start));
 
         if ($request->date_finish)
-            $query->whereDate('journals.date', '<=', new \DateTime($request->date_finish));
+            $query->whereDate('journals.created', '<=', new \DateTime($request->date_finish));
 
         $reportBalanceSheet = Category::where('slug', 'neraca')->first();
         $subBudgetItems = SubBudgetItem::where('report_category_id', $reportBalanceSheet->id)->get();
@@ -131,7 +131,7 @@ class ReportController extends Controller
                                 'sub_journals.normal_balance_id',
                                 'sub_journals.amount',
                                 'journals.branch_id',
-                                'journals.date'
+                                'journals.created'
                                 )
                             ->leftJoin('journals', 'journals.id', 'sub_journals.journal_id');
 
@@ -142,10 +142,10 @@ class ReportController extends Controller
             $query->where('sub_journals.project_id', $request->project_id);
 
         if ($request->date_start)
-            $query->whereDate('journals.date', '>=', new \DateTime($request->date_start));
+            $query->whereDate('journals.created', '>=', new \DateTime($request->date_start));
 
         if ($request->date_finish)
-            $query->whereDate('journals.date', '<=', new \DateTime($request->date_finish));
+            $query->whereDate('journals.created', '<=', new \DateTime($request->date_finish));
 
         $reportIncomeStatementSheet = Category::where('slug', 'laba-rugi')->first();
         $subBudgetItems = SubBudgetItem::where('report_category_id', $reportIncomeStatementSheet->id)->get();

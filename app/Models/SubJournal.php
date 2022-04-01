@@ -30,4 +30,8 @@ class SubJournal extends Model
     {
         return $this->belongsTo(Category::class, 'normal_balance_id');
     }
+    public function journal()
+    {
+        return $this->belongsTo(Journals::class, 'journal_id');
+    }
 }
