@@ -30,7 +30,8 @@ use App\Http\Controllers\{
     JournalController,
     NeracaController,
     ProfitLossController,
-    ReportController
+    ReportController,
+    GeneralLedgerController,
 };
 
 use App\Models\{
@@ -149,6 +150,9 @@ Route::group(['middleware' => ['auth']], function(){
     });
     Route::group(['prefix' => 'laba-rugi'], function() {
         Route::get('/', [ReportController::class, 'incomeStatement'])->name('income.statement.index');
+    });
+    Route::group(['prefix' => 'buku-besar'], function() {
+        Route::get('/', [GeneralLedgerController::class, 'index'])->name('general.ledger.index');
     });
 
     Route::group(['prefix' => 'transaksi'], function() {

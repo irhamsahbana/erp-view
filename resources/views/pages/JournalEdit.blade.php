@@ -66,7 +66,7 @@ $option = [
                         <select class="form-control" name="branch_id" required>
                             <option value="">Pilih Cabang</option>
                             @foreach ($branches as $branch)
-                            <option value="{{ $branch['name'] }}" @if($branch->id == $journal['branch_id']) selected @endif>{{
+                            <option value="{{ $branch->id }}" @if($branch->id == $journal['branch_id']) selected @endif>{{
                                 $branch->name }}</option>
                             @endforeach
                         </select>
@@ -90,8 +90,8 @@ $option = [
                     </div>
                     <div class="my-2">
                         <label for=""></label>
-                        <input class="form-control" type="date" name="date" placeholder="Tanggal"
-                            value="{{ old('date') ? old('date') : $journal->date }}" required>
+                        <input class="form-control" type="date" name="created" placeholder="Tanggal"
+                            value="{{ old('created') ? old('created') : $journal->created }}" required>
                     </div>
                     {{-- <div class="my-2">
                         <label for=""></label>

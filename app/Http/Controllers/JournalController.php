@@ -41,7 +41,7 @@ class JournalController extends Controller
         if ($request->date_finish)
             $query->whereDate('date', '<=', new \DateTime($request->date_finish));
 
-        $query->orderBy('date', 'desc');
+        $query->orderBy('created', 'desc');
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
@@ -79,7 +79,7 @@ class JournalController extends Controller
         $journal = $request->validate([
             'branch_id' => 'required',
             'journal_category_id' => 'required',
-            'date' => 'required',
+            'created' => 'required',
             'notes' => 'required',
         ]);
         $prefix = sprintf('%s/', $row->getTable());
@@ -101,10 +101,10 @@ class JournalController extends Controller
         $subjurnal = SubJournal::where('journal_id', $id)->get();
         DB::beginTransaction();
         try {
-            Journals::where('id', $id)->delete();
             foreach ($subjurnal as $sub) {
                 SubJournal::where('id', $sub->id)->delete();
             }
+            Journals::where('id', $id)->delete();
             DB::commit();
             return redirect()->route('journal.index')->with('success', 'Data berhasil dihapus');
         } catch (Error $e) {
@@ -140,8 +140,7 @@ class JournalController extends Controller
         $jurnal = $request->validate([
             'branch_id' => 'required',
             'journal_category_id' => 'required',
-            'date' => 'required',
-            'voucher_number' => 'required',
+            'created' => 'required',
             'notes' => 'required',
             'is_open' => 'required',
         ]);
@@ -169,8 +168,10 @@ class JournalController extends Controller
 
         $totalSub = 0;
 
+        $kredit = Category::where('slug', 'kredit')->first();
+
         foreach ($subJournal as $sub) {
-            if($sub->category->label == 'Kredit'){
+            if($sub->normal_balance_id == $kredit->id){
                 $totalSub -= $sub->amount;
             }else{
                 $totalSub += $sub->amount;

@@ -34,26 +34,35 @@ $option = [
             <x-row>
                 <div class="row">
                     <div class="col-sm-4 mb-2">
+                        <label for="">Cabang</label>
                         <input class="form-control" type="text" value="{{ $journal->branch->name }}" readonly>
                     </div>
                     <div class="col-sm-4 mb-2">
+                        <label for="">Di buat oleh</label>
                         <input class="form-control" type="text" value="{{ $journal->user->username }}" readonly>
                     </div>
                     <div class="col-sm-4 mb-2">
+                        <label for="">Posisi</label>
                         <input class="form-control" type="text" value="{{ $journal->category->label }}" readonly>
                     </div>
                     <div class="col-sm-4 mb-2">
-                        <input class="form-control" type="text" value="{{ $journal->date }}" readonly>
+                        <label for="">Tanggal</label>
+                        <input class="form-control" type="text" value="{{ $journal->created }}" readonly>
                     </div>
                     <div class="col-sm-4 mb-2">
-                        <input class="form-control" type="text" value="{{ $journal->voucher_number }}" readonly>
+                        <label for="">Nomor Referensi</label>
+                        <input class="form-control" type="text" value="{{ $journal->ref_no }}" readonly>
                     </div>
                     <div class="col-sm-4 mb-2">
+                        <label for="">Kondisi</label>
                         <input class="form-control" type="text"
                             value="{{ ($journal->is_open == 0) ? 'Nonaktif' : 'Aktif' }}" readonly>
                     </div>
-                    <textarea class="form-control" name="" id="" cols="30" rows="5"
+                    <div class="col-sm-12">
+                        <label for="">Catatan</label>
+                        <textarea class="form-control" name="" id="" cols="30" rows="5"
                         readonly>{{ $journal->notes }}</textarea>
+                    </div>
                 </div>
             </x-row>
             <div class="mt-3"></div>
@@ -104,14 +113,7 @@ $option = [
                                 <td>{{ $sub->subBudgetItem->name }}</td>
                                 <td>{{ $journal->notes }}</td>
                                 <td>{{ $sub->category->label }}</td>
-                                <td>
-                                    @if ($sub->category->label == 'Kredit')
-                                    {{ $sub->amount*-1 }}
-                                    @else
-                                    {{ $sub->amount }}
-                                    @endif
-
-                                </td>
+                                <td>{{ $sub->amount }}</td>
                                 <td>
                                     {{-- <a href="" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></a> --}}
                                     <a href="{{ route('delete-sub-journal', ['sub_id' => $sub->id, 'journal_id' => $journal->id]) }}"
@@ -122,7 +124,7 @@ $option = [
                             @endforeach
                             <tr>
                                 <td colspan="7">
-                                    <h4>Total</h4>
+                                    <h5>Total Selisih Debit dan Kredit</h5>
                                 </td>
                                 <td>{{ $totalSub }}</td>
                                 <td>

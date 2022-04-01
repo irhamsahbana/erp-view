@@ -18,7 +18,7 @@ class CreateJournalsTable extends Migration
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('journal_category_id');
-            $table->date('date');
+            $table->date('created');
             $table->longText('notes');
             $table->string('ref_no');
             $table->boolean('is_open')->default(false);
