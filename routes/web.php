@@ -173,6 +173,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('mutasi-material/{id}', [MaterialMutationController::class, 'destroy'])->name('material-mutation.destroy');
         Route::put('mutasi-material/ubah-status/{id}', [MaterialMutationController::class, 'changeIsOpen'])->name('material-mutation.change-status');
         Route::get('mutasi-material/saldo', [MaterialMutationController::class, 'balance'])->name('material-mutation.balance');
+        Route::get('mutasi-material/cetak/{id}', [MaterialMutationController::class, 'print'])->name('mutasi-material.print');
 
         Route::get('mutasi-hutang/saldo', [DebtMutationController::class, 'balance'])->name('debt-mutation.balance');
         Route::get('mutasi-hutang', [DebtMutationController::class, 'index'])->name('debt-mutation.index');

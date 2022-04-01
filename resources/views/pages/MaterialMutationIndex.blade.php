@@ -153,6 +153,8 @@
                                                     title="Ubah"><i class="fas fa-sync-alt"></i></button>
                                             </form>
                                         @endif
+                                        <a href="{{ route('mutasi-material.print', $data->id) }}" class="btn btn-info"
+                                            title="Print"><i class="fas fa-file-alt"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
