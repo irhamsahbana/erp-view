@@ -189,6 +189,28 @@ class RitMutationController extends Controller
         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
     }
 
+    public function changeIsPaid($id)
+    {
+        $row = Model::findOrFail($id);
+        $row->is_paid = !$row->is_paid;
+
+        $balance = RitBalance::firstOrNew([
+            'branch_id' => $row->branch_id,
+            'project_id' => $row->project_id,
+            'driver_id' => $row->driver_id,
+        ]);
+
+        if($row->is_paid == true)
+            $balance->total -= $row->amount;
+        else
+            $balance->total += $row->amount;
+
+        $balance->save();
+        $row->save();
+
+        return redirect()->back()->with('f-msg', 'Status Pembayaran berhasil diubah.');
+    }
+
     public function balance(Request $request)
     {
         $query = RitBalance::select('*');
@@ -283,31 +305,5 @@ class RitMutationController extends Controller
         ];
 
         return $options;
-    }
-
-    public function changeIsPaid($id)
-    {
-        $row = Model::findOrFail($id);
-        $row->is_paid = !$row->is_paid;
-
-
-        $row->save();
-
-        $balance = RitBalance::firstOrNew([
-            'branch_id' => $row->branch_id,
-            'project_id' => $row->project_id,
-            'driver_id' => $row->driver_id,
-            'material_mutation_id' => $row->material_mutation_id,
-        ]);
-
-        if($row->is_paid == true){
-            $balance->total -= $row->amount;
-        }else{
-            $balance->total += $row->amount;
-        }
-
-        $balance->save();
-
-        return redirect()->back()->with('f-msg', 'Status Pembayaran berhasil diubah.');
     }
 }
