@@ -119,7 +119,7 @@ class ReportController extends Controller
         $balances = $report;
         $options = self::staticOptions();
 
-        return view('pages.BalanceSheet', compact('balances', 'options'));
+        return view('pages.BalanceSheetIndex', compact('balances', 'options'));
     }
 
     public function incomeStatement(Request $request)

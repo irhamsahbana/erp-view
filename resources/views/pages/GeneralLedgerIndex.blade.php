@@ -11,9 +11,6 @@ $breadcrumbList = [
 ],
 ];
 
-$option = [
-'value' => "test",
-]
 @endphp
 
 @push('css')
@@ -31,125 +28,143 @@ $option = [
 <x-content>
     <x-row>
         <x-card-collapsible :title="'Filter Sub Jurnal'" :collapse="false">
-            <form style="width: 100%" method="GET" action="">
+
+            <form style="width: 100%">
                 <x-row>
-                    <div class="col-sm-12">
-                        <label for="">Cabang</label>
-                        <select class="form-control" name="branch_id" id="select_branch">
-                            <option value="">Pilih Cabang</option>
-                            @foreach ($options['branches'] as $br)
-                            <option value="{{ $br['value'] }}">{{ $br['text'] }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-in-select 
+                        :label="'Cabang'" 
+                        :placeholder="'Pilih Cabang'" 
+                        :id="'select_branch'"
+                        :name="'branch_id'" 
+                        :options="$options['branches']"
+                        :value="app('request')->input('branch_id') ?? null" 
+                        :required="true"></x-in-select>
                 </x-row>
-                <div class="my-2"></div>
                 <x-row>
-                    <div class="col-sm-3">
-                        <label for="">Proyek</label>
-                        <select class="form-control" name="project_id" id="select_project">
-                            <option value="">Pilih Proyek</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="">Kelompok Mata Anggaran</label>
-                        <select class="form-control" name="budget_item_group_id" id="select_budget_item_group">
-                            <option value="">Pilih Kelompok Mata Anggaran</option>
-                            @foreach ($budgetItemGroup as $big)
-                            <option value="{{ $big->id }}">{{ $big->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="">Mata Anggaran</label>
-                        <select class="form-control" name="budget_item_id" id="select_budget_item">
-                            <option value="">Pilih Mata Anggaran</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="">Sub Mata Anggaran</label>
-                        <select class="form-control" name="sub_budget_item_id" id="select_sub_budget_item">
-                            <option value="">Pilih Sub Mata Anggaran</option>
-                        </select>
-                    </div>
+                    <x-in-select 
+                        :label="'Proyek'" 
+                        :placeholder="'Pilih Proyek'" 
+                        :col="3" 
+                        :id="'select_project'"
+                        :name="'project_id'" 
+                        :required="false" 
+                        :value="app('request')->input('project_id') ?? null">
+                    </x-in-select>
+
+                    <x-in-select 
+                        :label="'Kelompok Mata Angggaran'" 
+                        :placeholder="'Pilih Kelompok Mata Anggaran'"
+                        :col="3" :id="'select_budget_item_group'" 
+                        :name="'budget_item_group_id'"
+                        :options="$options['budgetItemGroups']" 
+                        :required="true"
+                        :value="app('request')->input('budget_item_group_id') ?? null">
+                    </x-in-select>
+
+                    <x-in-select 
+                        :label="'Mata Anggaran'" 
+                        :placeholder="'Pilih Mata Anggaran'" 
+                        :col="3"
+                        :id="'select_budget_item'" 
+                        :name="'budget_item_id'" 
+                        :value="app('request')->input('budget_item_id') ?? null" 
+                        :required="true">
+                    </x-in-select>
+
+                    <x-in-select 
+                        :label="'Sub Mata Anggaran'" 
+                        :placeholder="'Pilih Sub Mata Anggaran'" 
+                        :col="3"
+                        :id="'select_sub_budget_item'" 
+                        :name="'sub_budget_item_id'" 
+                        :required="true" 
+                        :value="app('request')->input('sub_budget_item_id') ?? null">
+                    </x-in-select>
                 </x-row>
-                <div class="my-2"></div>
+
                 <x-row>
-                    <div class="col-sm-6">
-                        <label for="">Tanggal Mulai</label>
-                        <input type="date" class="form-control" name="date_start">
-                    </div>
-                    <div class="col-sm-6">
-                        <label for="">Tanggal Akhir</label>
-                        <input type="date" class="form-control" name="date_finish">
-                    </div>
+
+                    <x-in-text 
+                        :type="'date'" 
+                        :label="'Tanggal Mulai'" 
+                        :col="6" 
+                        :name="'date_start'" 
+                        :required="true"
+                        :value="app('request')->input('date_start') ?? null">
+                    </x-in-text>
+
+                    <x-in-text 
+                        :type="'date'" 
+                        :label="'Tanggal Akhir'" 
+                        :col="6" 
+                        :name="'date_finish'" 
+                        :required="true"
+                        :value="app('request')->input('date_finish') ?? null">
+                    </x-in-text>
                 </x-row>
-                <div class="my-2"></div>
+
                 <x-col class="text-right">
-                    <a type="button" class="btn btn-default" href="{{ route('general.ledger.index') }}">reset</a>
+                    <a 
+                        type="button" 
+                        class="btn btn-default" 
+                        href="{{ route('general.ledger.index') }}">reset
+                    </a>
                     <button type="submit" class="btn btn-primary">Cari</button>
                 </x-col>
             </form>
+
         </x-card-collapsible>
-        <x-card-collapsible :title="'Sub Jurnal'" :collapse="false">
+        <x-card-collapsible 
+            :title="'Sub Jurnal'" 
+            :collapse="false">
             <x-row>
+                
                 <x-col>
                     @if (session('success'))
-                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    <div 
+                        class="alert alert-primary alert-dismissible fade show" 
+                        role="alert">
                         {{session('success') }}
-                        <button wire:click='resetData' type="button" class="close" data-dismiss="alert"
+                        <button type="button" class="close" data-dismiss="alert"
                             aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     @endif
                 </x-col>
+
                 <div class="table-responsive">
-                    <table class="table table-bordered table-sm" id="table-sub-journal">
-                        <thead>
-                            <tr>
-                                <th style="width: 10px;">#</th>
-                                <th>Tanggal</th>
-                                <th>No. Jurnal</th>
-                                <th>Proyek</th>
-                                <th>Kelompok MA</th>
-                                <th>MA</th>
-                                <th>Sub MA</th>
-                                <th>Catatan</th>
-                                <th>Posisi</th>
-                                <th>Jumlah</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="9">
-                                    <h5>Saldo Awal</h5>
-                                </td>
-                                <td>{{ $firstSaldo }}</td>
-                            </tr>
-                            @foreach ($subJournal as $sub)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $sub->created }}</td>
-                                <td>{{ $sub->ref_no }}</td>
-                                <td>{{ $sub->project_name }}</td>
-                                <td>{{ $sub->budget_item_group_name }}</td>
-                                <td>{{ $sub->budget_item_name }}</td>
-                                <td>{{ $sub->sub_budget_item_name }}</td>
-                                <td>{{ $sub->notes }}</td>
-                                <td>{{ $sub->category_name }}</td>
-                                <td>{{ $sub->amount }}</td>
-                            </tr>
-                            @endforeach
-                            <tr>
-                                <td colspan="9">
-                                    <h5>Saldo Akhir</h5>
-                                </td>
-                                <td>{{ $lastSaldo }}</td>
-                            </tr>
-                        </tbody>
+                    <x-table 
+                        :thead="['Tanggal', 'No, Jurnal', 'Proyek', 'Kelompok MA', 'MA', 'Sub MA', 'Catatan', 'Posisi', 'Jumlah']">
+                        <tr>
+                            <td colspan="9">
+                                <h5>Saldo Awal</h5>
+                            </td>
+                            <td>{{ $firstSaldo }}</td>
+                        </tr>
+                        @foreach ($subJournal as $sub)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $sub->created }}</td>
+                            <td>{{ $sub->ref_no }}</td>
+                            <td>{{ $sub->project_name }}</td>
+                            <td>{{ $sub->budget_item_group_name }}</td>
+                            <td>{{ $sub->budget_item_name }}</td>
+                            <td>{{ $sub->sub_budget_item_name }}</td>
+                            <td>{{ $sub->notes }}</td>
+                            <td>{{ $sub->category_name }}</td>
+                            <td>{{ $sub->amount }}</td>
+                        </tr>
+                        @endforeach
+                        <tr>
+                            <td colspan="9">
+                                <h5>Saldo Akhir</h5>
+                            </td>
+                            <td>{{ $lastSaldo }}</td>
+                        </tr>
+                    </x-table>
                 </div>
-                </table>
+                
             </x-row>
         </x-card-collapsible>
     </x-row>
@@ -180,7 +195,30 @@ $option = [
     $(document).ready(function() {
         let selectBranch = $('#select_branch');
         let selectProject = $('#select_project');
+        let selectBudgetItemGroups = $('#select_budget_item_group');
+        let selectBudgetItem = $('#select_budget_item');
+        let selectSubBudgetItem = $('#select_sub_budget_item');
 
+        selectProject.select2({
+                        theme: 'bootstrap4',
+                        placeholder: 'Pilih Proyek',
+                        allowClear: true,
+                    });
+                    selectBudgetItemGroups.select2({
+                        theme: 'bootstrap4',
+                        placeholder: 'Pilih Kelompok Mata Anggaran',
+                        allowClear: true,
+                    });
+                    selectBudgetItem.select2({
+                        theme: 'bootstrap4',
+                        placeholder: 'Pilih Mata Anggaran',
+                        allowClear: true,
+                    });
+                    selectSubBudgetItem.select2({
+                        theme: 'bootstrap4',
+                        placeholder: 'Pilih Sub Mata Anggaran',
+                        allowClear: true,
+                    });
         selectBranch.on('change', function () {
             let branchId = $(this).val();
             let searchProject = $('meta[name="search-project"]').attr('content');
@@ -207,12 +245,6 @@ $option = [
                         selectProject.append(`<option value="${item.id}">${item.name}</option>`);
                     });
 
-                    selectProject.select2({
-                        theme: 'bootstrap4',
-                        placeholder: 'Pilih Proyek',
-                        allowClear: true,
-                    });
-
                     if (searchProject != '') {
                         selectProject.val(searchProject).trigger('change');
                     }
@@ -223,7 +255,7 @@ $option = [
         if (selectBranch.val() != '')
             selectBranch.trigger('change');
 
-        $('#select_budget_item_group').on('change', function(){
+        selectBudgetItemGroups.on('change', function(){
             let budgetItemGroupId = $(this).val();
             let url = $('meta[name="url-budget-item"]').attr('content');
 
@@ -238,22 +270,25 @@ $option = [
                 },
                 cache: false,
                 success: function (data) {
-                    $('#select_budget_item').empty();
-                    $('#select_budget_item').append(`<option value="">Pilih Mata Anggaran</option>`);
+                    selectBudgetItem.empty();
+                    selectBudgetItem.append(`<option value="">Pilih Mata Anggaran</option>`);
 
-                    $('#select_sub_budget_item').empty();
-                    $('#select_sub_budget_item').append(`<option value="">Pilih Sub Mata Anggaran</option>`);
+                    selectSubBudgetItem.empty();
+                    selectSubBudgetItem.append(`<option value="">Pilih Sub Mata Anggaran</option>`);
 
                     data.forEach(element => {
                         let option = `<option value="${element.id}">${element.name}</option>`;
 
-                        $('#select_budget_item').append(option);
+                        selectBudgetItem.append(option);
                     });
                 }
             });
         });
 
-        $('#select_budget_item').on('change', function() {
+        // if (selectBudgetItemGroups.val() != '')
+        //     selectBudgetItemGroups.trigger('change');
+
+        selectBudgetItem.on('change', function() {
             let budgetItemId = $(this).val();
             let url = $('meta[name="url-sub-budget-item"]').attr('content');
             
@@ -269,8 +304,8 @@ $option = [
                 cache: false,
                 success: function (data) {
 
-                    $('#select_sub_budget_item').empty();
-                    $('#select_sub_budget_item').append(`<option value="">Pilih Sub Mata Anggaran</option>`);
+                    selectSubBudgetItem.empty();
+                    selectSubBudgetItem.append(`<option value="">Pilih Sub Mata Anggaran</option>`);
 
                     data.forEach(element => {
                         let option = `<option value="${element.id}">${element.name}</option>`;
@@ -280,6 +315,8 @@ $option = [
                 }
             });
         });
+        // if (selectBudgetItem.val() != '')
+        //     selectBudgetItem.trigger('change');
     });
 </script>
 @endpush

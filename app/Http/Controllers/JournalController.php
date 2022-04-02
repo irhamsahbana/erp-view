@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\BudgetItemGroup;
 use App\Models\Jurnal as Model;
+use App\Models\Project;
 use App\Models\TemporarySubJurnal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +55,7 @@ class JournalController extends Controller
             ]);
         }
 
-        $datas = $query->paginate(40)->withQueryString();
+        $datas = $query->paginate(40);
         $options = self::staticOptions();
 
         return view('pages.JournalIndex', compact('datas', 'options'));
@@ -67,8 +68,7 @@ class JournalController extends Controller
             $branch = Branch::where('id', Auth::user()->branch_id)->get();
         }
         $data = [
-            "branches" => $branch,
-            "categories" => Category::where('group_by', 'journal_categories')->get(),
+            "options" =>self::staticOptions(),
         ];
         return view('pages.JournalCreate', $data);
     }
@@ -121,9 +121,12 @@ class JournalController extends Controller
         }
         $data = [
             "journal" => $journal,
-            "branches" => $branch,
-            "categories" => Category::where('group_by', 'journal_categories')->get(),
+            // "branches" => $branch,
+            // "categories" => Category::where('group_by', 'journal_categories')->get(),
+            'options' => $options = self::staticOptions(),
         ];
+        // $options = self::staticOptions();
+
         return view('pages.JournalEdit', $data);
     }
     public function change(Journals $journal)
@@ -184,6 +187,7 @@ class JournalController extends Controller
             'subJournal' => $subJournal,
             'balances' => Category::where('group_by', 'normal_balances')->get(),
             'totalSub' => $totalSub,
+            'options' => self::staticOptions(),
         ];
         return view('pages.JournalDetail', $data);
     }
@@ -240,6 +244,7 @@ class JournalController extends Controller
     {
         $branches = Branch::all();
         $category = Category::where('group_by', 'journal_categories')->get();
+        $budgetItemGroups = BudgetItemGroup::all();
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
@@ -261,9 +266,18 @@ class JournalController extends Controller
                 ];
             });
         }
+        if ($budgetItemGroups->isNotEmpty()) {
+            $budgetItemGroups = $budgetItemGroups->map(function ($big) {
+                return [
+                    'text' => $big->name,
+                    'value' => $big->id,
+                ];
+            });
+        }
         $options = [
             'branches' => $branches,
             'categories' => $category,
+            'budgetItemGroups' => $budgetItemGroups,
         ];
 
         return $options;

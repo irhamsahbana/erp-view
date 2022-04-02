@@ -15,47 +15,51 @@ class GeneralLedgerController extends Controller
     public function index(Request $request)
     {
 
-        $query = self::getAllSubJournal();
-        self::filters($request, $query);
-        $subJournal = $query->get();
+        if($request->budget_item_group_id && $request->budget_item_id && $request->sub_budget_item_id && $request->date_start && $request->date_finish && $request->branch_id){
+            $query = self::getAllSubJournal();
+            self::filters($request, $query);
+            $subJournal = $query->get();
 
-        $allJournals = self::getAllSubJournal();
-        $allJournals2 = self::getAllSubJournal();
-        $firstSaldo = 0;
-        $lastSaldo = 0;
-        $firstDebitCount = 0;
-        $firstCreditCount = 0;
-        $lastDebitCount = 0;
-        $lastCreditCount = 0;
-        
-        foreach ($allJournals2->get() as $all) {
-            if($all->sub_journal_balance_id == $all->sub_budget_item_balance_id){
-                $lastDebitCount += $all->amount;
-            }else{
-                $lastCreditCount += $all->amount;
-            }
-        }
-        $lastSaldo = $lastDebitCount - $lastCreditCount;
+            $allJournals = self::getAllSubJournal();
+            $allJournals2 = self::getAllSubJournal();
+            $firstSaldo = 0;
+            $saldo = 0;
+            $lastSaldo = 0;
+            $firstDebitCount = 0;
+            $firstCreditCount = 0;
+            $lastDebitCount = 0;
+            $lastCreditCount = 0;
 
-        // Set data
-        if(count($subJournal) > 0){
-            foreach ($allJournals->get() as $all) {
-                if($all->id == $subJournal[0]['id']){
-                    break;
-                }else {
-                    if($all->sub_journal_balance_id == $all->sub_budget_item_balance_id){
-                        $firstDebitCount += $all->amount;
-                    }else{
-                        $firstCreditCount += $all->amount;
-                    }
+
+            // get Firstt Saldo
+            foreach ($allJournals->whereDate('journals.created', '<', new \DateTime($request->date_start))->where('journals.branch_id', $request->branch_id)->where('sub_budget_items.id', $request->sub_budget_item_id)->get() as $data ) {
+                if($data->sub_journal_balance_id == $data->sub_budget_item_balance_id){
+                    $firstDebitCount += $data->amount;
+                }else{
+                    $firstCreditCount += $data->amount;
                 }
+                $firstSaldo = $firstDebitCount - $firstCreditCount;
             }
-            $firstSaldo = $firstDebitCount - $firstCreditCount;
+            
+
+            // get Saldo
+            foreach ($query->get() as $data2) {
+                if($data2->sub_journal_balance_id == $data2->sub_budget_item_balance_id){
+                    $lastDebitCount += $data2->amount;
+                }else{
+                    $lastCreditCount += $data2->amount;
+                }
+                $saldo = $lastDebitCount - $lastCreditCount;
+            }
+
+            //Last Saldo 
+            $lastSaldo = $firstSaldo + $saldo;
         }else{
-            $firstSaldo = $lastSaldo;
+            $subJournal = [];
+            $firstSaldo = 0;
+            $lastSaldo = 0;
         }
 
-        
         $data = [
             'subJournal' => $subJournal,
             'budgetItemGroup' => BudgetItemGroup::all(),
@@ -68,6 +72,7 @@ class GeneralLedgerController extends Controller
     public static function staticOptions()
     {
         $branches = Branch::all();
+        $budgetItemGroups = BudgetItemGroup::all();
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
@@ -80,8 +85,17 @@ class GeneralLedgerController extends Controller
                 ];
             });
         }
+        if ($budgetItemGroups->isNotEmpty()) {
+            $budgetItemGroups = $budgetItemGroups->map(function ($big) {
+                return [
+                    'text' => $big->name,
+                    'value' => $big->id,
+                ];
+            });
+        }
         $options = [
             'branches' => $branches,
+            'budgetItemGroups' => $budgetItemGroups,
         ];
 
         return $options;

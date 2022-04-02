@@ -11,9 +11,6 @@ $breadcrumbList = [
 ],
 ];
 
-$option = [
-'value' => "test",
-]
 @endphp
 
 @push('css')
@@ -33,107 +30,107 @@ $option = [
         <x-card-collapsible :title="'Tambah Journal'" :collapse="false">
             <x-row>
                 <div class="row">
-                    <div class="col-sm-4 mb-2">
-                        <label for="">Cabang</label>
-                        <input class="form-control" type="text" value="{{ $journal->branch->name }}" readonly>
-                    </div>
-                    <div class="col-sm-4 mb-2">
-                        <label for="">Di buat oleh</label>
-                        <input class="form-control" type="text" value="{{ $journal->user->username }}" readonly>
-                    </div>
-                    <div class="col-sm-4 mb-2">
-                        <label for="">Posisi</label>
-                        <input class="form-control" type="text" value="{{ $journal->category->label }}" readonly>
-                    </div>
-                    <div class="col-sm-4 mb-2">
-                        <label for="">Tanggal</label>
-                        <input class="form-control" type="text" value="{{ $journal->created }}" readonly>
-                    </div>
-                    <div class="col-sm-4 mb-2">
-                        <label for="">Nomor Referensi</label>
-                        <input class="form-control" type="text" value="{{ $journal->ref_no }}" readonly>
-                    </div>
-                    <div class="col-sm-4 mb-2">
-                        <label for="">Kondisi</label>
-                        <input class="form-control" type="text"
-                            value="{{ ($journal->is_open == 0) ? 'Nonaktif' : 'Aktif' }}" readonly>
-                    </div>
+                    <x-in-text 
+                        :type="'text'" 
+                        :label="'Cabang'" 
+                        :col="4" 
+                        :readonly="'true'" 
+                        :value="$journal->branch->name">
+                    </x-in-text>
+
+                    <x-in-text 
+                        :type="'text'" 
+                        :label="'Dibuat Oleh'" 
+                        :col="4" 
+                        :readonly="'true'" 
+                        :value="$journal->user->username">
+                    </x-in-text>
+                    
+                    <x-in-text 
+                        :type="'text'" 
+                        :label="'Posisi'" 
+                        :col="4" 
+                        :readonly="'true'" 
+                        :value="$journal->category->label">
+                    </x-in-text>
+
+                    <x-in-text 
+                        :type="'text'" 
+                        :label="'Tanggal'" 
+                        :col="4" 
+                        :readonly="'true'" 
+                        :value="$journal->created">
+                    </x-in-text>
+
+                    <x-in-text 
+                        :type="'text'" 
+                        :label="'Nomor Referensi'" 
+                        :col="4" 
+                        :readonly="'true'" 
+                        :value="$journal->ref_no">
+                    </x-in-text>
+
+                    <x-in-text 
+                        :type="'text'" 
+                        :label="'Status'" 
+                        :col="4" 
+                        :readonly="'true'" 
+                        :value="($journal->is_open == 0) ? 'Nonaktif' : 'Aktif'">
+                    </x-in-text>
+
                     <div class="col-sm-12">
                         <label for="">Catatan</label>
-                        <textarea class="form-control" name="" id="" cols="30" rows="5"
-                        readonly>{{ $journal->notes }}</textarea>
+                        <textarea class="form-control" name="" id="" cols="30" rows="5" readonly>{{ $journal->notes }}</textarea>
                     </div>
                 </div>
             </x-row>
-            <div class="mt-3"></div>
 
             <x-row>
                 <x-col>
-                    <div class="mb-3">
-                        <div class="my-2">
-                            <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target="#add-modal">Tambah</button>
-                        </div>
+                    <div class="my-3">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-modal">Tambah</button>
                     </div>
                 </x-col>
                 <x-col>
                     @if (session('success'))
-                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert"> 
                         {{session('success') }}
-                        <button wire:click='resetData' type="button" class="close" data-dismiss="alert"
-                            aria-label="Close">
+                        <button wire:click='resetData' type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     @endif
                 </x-col>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-sm" id="table-sub-journal">
-                        <thead>
-                            <tr>
-                                <th style="width: 10px;">#</th>
-                                <th>Proyek</th>
-                                <th>Kelompok MA</th>
-                                <th>MA</th>
-                                <th>Sub MA</th>
-                                <th>Catatan</th>
-                                <th>Posisi</th>
-                                <th>Jumlah</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($subJournal as $sub)
+                    <x-table :thead="['Proyek', 'Kelompok MA', 'MA', 'Sub MA', 'Catatan', 'Posisi', 'Jumlah', 'Aksi']">
+                        @foreach ($subJournal as $sub)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $sub->project->name }}</td>
+                            <td>{{ $sub->budgetItemGroup->name }}</td>
+                            <td>{{ $sub->budgetItem->name }}</td>
+                            <td>{{ $sub->subBudgetItem->name }}</td>
+                            <td>{{ $journal->notes }}</td>
+                            <td>{{ $sub->category->label }}</td>
+                            <td>{{ $sub->amount }}</td>
+                            <td>
+                                <a href="{{ route('delete-sub-journal', ['sub_id' => $sub->id, 'journal_id' => $journal->id]) }}" class="btn btn-danger" onclick="return confirm('apakah anda yakin ?')"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        @endforeach
+                        <tr>
+                            <td colspan="7">
+                                <h5>Total Selisih Debit dan Kredit</h5>
+                            </td>
+                            <td>
+                                {{ $totalSub }}
+                            </td>
+                            <td>
 
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $sub->project->name }}</td>
-                                <td>{{ $sub->budgetItemGroup->name }}</td>
-                                <td>{{ $sub->budgetItem->name }}</td>
-                                <td>{{ $sub->subBudgetItem->name }}</td>
-                                <td>{{ $journal->notes }}</td>
-                                <td>{{ $sub->category->label }}</td>
-                                <td>{{ $sub->amount }}</td>
-                                <td>
-                                    {{-- <a href="" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></a> --}}
-                                    <a href="{{ route('delete-sub-journal', ['sub_id' => $sub->id, 'journal_id' => $journal->id]) }}"
-                                        class="btn btn-danger" onclick="return confirm('apakah anda yakin ?')"><i
-                                            class="fas fa-trash"></i></a>
-                                </td>
-                            </tr>
-                            @endforeach
-                            <tr>
-                                <td colspan="7">
-                                    <h5>Total Selisih Debit dan Kredit</h5>
-                                </td>
-                                <td>{{ $totalSub }}</td>
-                                <td>
-
-                                </td>
-                            </tr>
-                        </tbody>
+                            </td>
+                        </tr>
+                    </x-table>
                 </div>
-                </table>
             </x-row>
         </x-card-collapsible>
         {{-- Modal Add --}}
@@ -152,51 +149,63 @@ $option = [
                             @csrf
                             @method('post')
                             <input type="hidden" name="journal_id" value="{{ $journal->id }}">
-                            <div class="row">
-                                <div class="col-sm-4 mb-2">
-                                    <label for="">Kelompok Mata Anggaran</label>
-                                    <select id="select_budget_item_group" name="budget_item_group_id"
-                                        class="form-control" required>
-                                        <option value="">Pilih Kelompok Mata Anggaran</option>
-                                        @foreach ($budgetItemGroups as $big)
-                                        <option value="{{ $big->id }}">{{ $big->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-sm-4 mb-2">
-                                    <label for="">Mata Anggaran</label>
-                                    <select id="select_budget_item" name="budget_item_id" class="form-control" required>
-                                        <option value="">Pilih Kelompok MA</option>
-                                    </select>
+                            <x-row>
 
-                                </div>
-                                <div class="col-sm-4 mb-2">
-                                    <label for="">Mata Anggaran</label>
-                                    <select id="select_sub_budget_item" name="sub_budget_item_id" class="form-control"
-                                        required>
-                                        <option value="">Pilih Sub Mata Anggaran</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-4 mb-2">
-                                    <label for="">Proyek</label>
-                                    <select id="project" name="project_id" class="form-control" required>
-                                        <option value="">Pilih Proyek</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-4 mb-2">
-                                    <label for="">Saldo Normal</label>
-                                    <select id="normal_balance" name="normal_balance_id" class="form-control" required>
-                                        <option value="">Pilih Saldo Normal</option>
-                                        @foreach ($balances as $nb)
-                                        <option value="{{ $nb->id }}">{{ $nb->label }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-sm-4 mb-2">
-                                    <label for="">Jumlah</label>
-                                    <input class="form-control" type="number" name="amount" required>
-                                </div>
-                            </div>
+                                <x-in-select 
+                                    :label="'Kelompok Mata Anggaran'"
+                                    :placeholder="'Pilih Kelompok Mata Anggaran'" 
+                                    :id="'select_budget_item_group'"
+                                    :name="'budget_item_group_id'" 
+                                    :options="$options['budgetItemGroups']"
+                                    :required="true" 
+                                    :col="4">
+                                </x-in-select>
+
+                                <x-in-select 
+                                    :label="'Kelompok Mata Anggaran'" 
+                                    :placeholder="'Pilih Mata Anggaran'"
+                                    :id="'select_budget_item'" 
+                                    :name="'budget_item_id'" 
+                                    :required="true" 
+                                    :col="4">
+                                </x-in-select>
+
+                                <x-in-select 
+                                    :label="'Kelompok Sub Mata Anggaran'"
+                                    :placeholder="'Pilih Sub Mata Anggaran'" 
+                                    :id="'select_sub_budget_item'"
+                                    :name="'sub_budget_item_id'" 
+                                    :required="true" 
+                                    :col="4">
+                                </x-in-select>
+
+                                <x-in-select 
+                                    :label="'Proyek'" 
+                                    :placeholder="'Pilih Proyek'" 
+                                    :id="'project'"
+                                    :name="'project_id'" 
+                                    :required="true" 
+                                    :col="4">
+                                </x-in-select>
+
+                                <x-in-select 
+                                    :label="'Saldo Normal'" 
+                                    :placeholder="'Pilih Saldo Normal'"
+                                    :id="'normal_balance'" 
+                                    :name="'normal_balance_id'" 
+                                    :required="true" 
+                                    :col="4">
+                                </x-in-select>
+
+                                <x-in-text 
+                                    :type="'text'" 
+                                    :label="'Jumlah'" 
+                                    :col="6" 
+                                    :name="'amount'" 
+                                    :required="true">
+                                </x-in-text>
+                                
+                            </x-row>
                             <button type="submit" class="btn btn-primary float-right">Simpan</button>
                         </form>
                     </div>
@@ -223,8 +232,9 @@ $option = [
 <meta name="url-project" content="{{ route('project.index') }}">
 <meta name="url-normal-balances" content="{{ route('get-normal-balance') }}">
 
-<meta name='branch-id' content="{{ $journal->id }}">
+<meta name='branch-id' content="{{ $journal->branch_id }}">
 <meta name="journal-note" content="{{ $journal->notes }}">
+<meta name="journal-id" content="{{ $journal->id }}">
 <meta name="url-budget-item-group" content="{{ route('get-budget-item-group') }}">
 
 <script>
@@ -330,7 +340,7 @@ $option = [
             }
         });
 
-        // Get All Normal Balance
+        // Set Normal Balance To Select Element
         $.ajax({
             url: $('meta[name="url-normal-balances"]').attr('content'),
             data: {
@@ -339,7 +349,10 @@ $option = [
             cache: true,
             success: function (data) {
                 data.forEach(function (element) {
-                    normalBalances.push(element)
+                    // normalBalances.push(element)
+                    let option = `<option value="${element.id}">${element.label}</option>`;
+
+                    $('#normal_balance').append(option);
                 });
             }
         });
@@ -388,11 +401,11 @@ $option = [
             $('#add-modal').modal('toggle');
         });
 
-        //Get project for select option
+        // Get project for select option
         $.ajax({
             url: $('meta[name="url-project"]').attr('content'),
             data: {
-                id: $('meta[name="branch-id"]').attr('content'),
+                branch_id: $('meta[name="branch-id"]').attr('content'),
             },
             cache: false,
             success: function (data) {
