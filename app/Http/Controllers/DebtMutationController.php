@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Validation\Rule;
 
-use App\Http\Controllers\Repositories\DebtMutation;
-
 use App\Models\DebtMutation as Model;
 use App\Models\Branch;
 use App\Models\Category;

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Barryvdh\DomPDF\PDF;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 use App\Models\Branch;
 use App\Models\Driver;
