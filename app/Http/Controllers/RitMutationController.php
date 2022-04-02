@@ -19,7 +19,7 @@ class RitMutationController extends Controller
     public function __construct()
     {
         $this->middleware('has.access:owner,admin,branch_head,material', ['only' => ['index']]);
-        $this->middleware('has.access:owner,admin,cashier', ['only'=> ['changeIsPaid']]);
+        $this->middleware('has.access:owner,admin,material', ['only'=> ['changeIsPaid']]);
         $this->middleware('has.access:owner,admin,material', ['only' => ['store']]);
         $this->middleware('has.access:owner,admin', ['only' => ['destroy']]);
         $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
