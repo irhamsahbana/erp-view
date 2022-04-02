@@ -200,25 +200,25 @@ $breadcrumbList = [
         let selectSubBudgetItem = $('#select_sub_budget_item');
 
         selectProject.select2({
-                        theme: 'bootstrap4',
-                        placeholder: 'Pilih Proyek',
-                        allowClear: true,
-                    });
-                    selectBudgetItemGroups.select2({
-                        theme: 'bootstrap4',
-                        placeholder: 'Pilih Kelompok Mata Anggaran',
-                        allowClear: true,
-                    });
-                    selectBudgetItem.select2({
-                        theme: 'bootstrap4',
-                        placeholder: 'Pilih Mata Anggaran',
-                        allowClear: true,
-                    });
-                    selectSubBudgetItem.select2({
-                        theme: 'bootstrap4',
-                        placeholder: 'Pilih Sub Mata Anggaran',
-                        allowClear: true,
-                    });
+            theme: 'bootstrap4',
+            placeholder: 'Pilih Proyek',
+            allowClear: true,
+        });
+        selectBudgetItemGroups.select2({
+            theme: 'bootstrap4',
+            placeholder: 'Pilih Kelompok Mata Anggaran',
+            allowClear: true,
+        });
+        selectBudgetItem.select2({
+            theme: 'bootstrap4',
+            placeholder: 'Pilih Mata Anggaran',
+            allowClear: true,
+        });
+        selectSubBudgetItem.select2({
+            theme: 'bootstrap4',
+            placeholder: 'Pilih Sub Mata Anggaran',
+            allowClear: true,
+        });
         selectBranch.on('change', function () {
             let branchId = $(this).val();
             let searchProject = $('meta[name="search-project"]').attr('content');
@@ -285,9 +285,6 @@ $breadcrumbList = [
             });
         });
 
-        // if (selectBudgetItemGroups.val() != '')
-        //     selectBudgetItemGroups.trigger('change');
-
         selectBudgetItem.on('change', function() {
             let budgetItemId = $(this).val();
             let url = $('meta[name="url-sub-budget-item"]').attr('content');
@@ -315,8 +312,7 @@ $breadcrumbList = [
                 }
             });
         });
-        // if (selectBudgetItem.val() != '')
-        //     selectBudgetItem.trigger('change');
+
     });
 </script>
 @endpush
