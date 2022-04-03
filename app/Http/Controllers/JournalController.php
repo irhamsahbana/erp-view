@@ -23,6 +23,7 @@ class JournalController extends Controller
     {
         
     }
+
     public function index(Request $request)
     {
         $query = Journals::select('*');
@@ -33,6 +34,7 @@ class JournalController extends Controller
             else
                 $query->where('branch_id', $request->branch_id);
         }
+
         if ($request->category_id)
             $query->where('journal_category_id', $request->category_id);
 
@@ -60,6 +62,7 @@ class JournalController extends Controller
 
         return view('pages.JournalIndex', compact('datas', 'options'));
     }
+
     public function create()
     {
         if(Auth::user()->branch_id == null){
@@ -72,6 +75,7 @@ class JournalController extends Controller
         ];
         return view('pages.JournalCreate', $data);
     }
+
     public function save(Request $request)
     {
         $row = Journals::findOrNew($request->id);
@@ -82,10 +86,12 @@ class JournalController extends Controller
             'created' => 'required',
             'notes' => 'required',
         ]);
+
         $prefix = sprintf('%s/', $row->getTable());
         $postfix = sprintf('/%s.%s', date('m'), date('y'));
         $journal['user_id'] = Auth::user()->id;
         $journal['ref_no'] = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
+
         DB::beginTransaction();
         try {
             Journals::create($journal);
@@ -96,9 +102,11 @@ class JournalController extends Controller
             dd($e);
         }
     }
+
     public function delete($id)
     {
         $subjurnal = SubJournal::where('journal_id', $id)->get();
+
         DB::beginTransaction();
         try {
             foreach ($subjurnal as $sub) {
@@ -112,6 +120,7 @@ class JournalController extends Controller
             dd($e);
         }
     }
+
     public function edit(Journals $journal)
     {
         if(Auth::user()->branch_id == null){
@@ -119,16 +128,15 @@ class JournalController extends Controller
         }else{
             $branch = Branch::where('id', Auth::user()->branch_id)->get();
         }
+
         $data = [
             "journal" => $journal,
-            // "branches" => $branch,
-            // "categories" => Category::where('group_by', 'journal_categories')->get(),
             'options' => $options = self::staticOptions(),
         ];
-        // $options = self::staticOptions();
 
         return view('pages.JournalEdit', $data);
     }
+
     public function change(Journals $journal)
     {
         $data = [
@@ -136,8 +144,10 @@ class JournalController extends Controller
             "branches" => Branch::all(),
             "categories" => Category::where('group_by', 'journal_categories')->get(),
         ];
+
         return view('pages.JournalEdit', $data);
     }
+
     public function update(Request $request, Journals $journal)
     {
         $jurnal = $request->validate([
@@ -147,6 +157,7 @@ class JournalController extends Controller
             'notes' => 'required',
             'is_open' => 'required',
         ]);
+
         DB::beginTransaction();
         try {
             Journals::where('id', $journal->id)->update($jurnal);
@@ -157,6 +168,7 @@ class JournalController extends Controller
             dd($e);
         }
     }
+
     public function detail(Journals $journal)
     {
         if(Auth::user()->branch_id == null){
@@ -164,10 +176,10 @@ class JournalController extends Controller
         }else{
             $branch = Branch::where('id', Auth::user()->branch_id)->get();
         }
+
         $budgetItemGroups = BudgetItemGroup::all();
 
-
-        $subJournal = SubJournal::with('project', 'budgetItemGroup', 'budgetItem', 'subBudgetItem', 'category')->where('user_id', Auth::user()->id)->where('journal_id', $journal->id)->get();
+        $subJournal = SubJournal::with('project', 'budgetItemGroup', 'budgetItem', 'subBudgetItem', 'category')->where('journal_id', $journal->id)->get();
 
         $totalSub = 0;
 
@@ -189,8 +201,10 @@ class JournalController extends Controller
             'totalSub' => $totalSub,
             'options' => self::staticOptions(),
         ];
+
         return view('pages.JournalDetail', $data);
     }
+
     public function postSubJournal(Request $request)
     {
         $data = [
@@ -203,6 +217,7 @@ class JournalController extends Controller
             'user_id' => Auth::user()->id,
             'amount' => $request->amount,
         ];
+
         DB::beginTransaction();
         try {
             SubJournal::create($data);
@@ -213,6 +228,7 @@ class JournalController extends Controller
             dd($e);
         }
     }
+
     public function deleteSubJournal(Request $request)
     {
         DB::beginTransaction();
@@ -229,6 +245,7 @@ class JournalController extends Controller
     public function deleteSubJournalTemp(Request $request)
     {
         dd($request);
+
         DB::beginTransaction();
         try {
             TemporarySubJurnal::where('id', $request->sub_temp_id)->delete();
@@ -240,6 +257,7 @@ class JournalController extends Controller
             dd($e);
         }
     }
+
     public static function staticOptions()
     {
         $branches = Branch::all();
@@ -266,6 +284,7 @@ class JournalController extends Controller
                 ];
             });
         }
+
         if ($budgetItemGroups->isNotEmpty()) {
             $budgetItemGroups = $budgetItemGroups->map(function ($big) {
                 return [
@@ -274,6 +293,7 @@ class JournalController extends Controller
                 ];
             });
         }
+        
         $options = [
             'branches' => $branches,
             'categories' => $category,
