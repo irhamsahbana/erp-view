@@ -55,6 +55,10 @@ class SubBudgetItemController extends Controller
                 'required_without:id',
                 Rule::exists('budget_items', 'id'),
             ],
+            'normal_balance_id' => [
+                'required_without:id',
+                Rule::exists('categories', 'id'),
+            ],
             'name' => [
                 'required',
                 'string',
@@ -68,6 +72,7 @@ class SubBudgetItemController extends Controller
             $row->report_category_id = $request->report_category_id;
             $row->budget_item_group_id = $request->budget_item_group_id;
             $row->budget_item_id = $request->budget_item_id;
+            $row->normal_balance_id = $request->normal_balance_id;
         }
         $row->name = $request->name;
 

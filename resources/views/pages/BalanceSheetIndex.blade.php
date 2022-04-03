@@ -11,9 +11,6 @@ $breadcrumbList = [
 ],
 ];
 
-$option = [
-'value' => "test",
-]
 @endphp
 
 @section('content-header', 'Neraca')
@@ -34,9 +31,11 @@ $option = [
                 <x-row>
                     <x-in-select :label="'Cabang'" :placeholder="'Pilih Cabang'" :col="6" :name="'branch_id'"
                         :options="$options['branches']" :value="app('request')->input('branch_id') ?? null"
-                        :required="false"></x-in-select>
+                        :required="false">
+                    </x-in-select>
                     <x-in-select :label="'Proyek'" :placeholder="'Pilih Proyek'" :col="6" :name="'project_id'"
-                        :required="false"></x-in-select>
+                        :required="false">
+                    </x-in-select>
                     <x-in-text :type="'date'" :label="'Tanggal Mulai'" :col="6"
                         :value="app('request')->input('date_start') ?? null" :name="'date_start'"></x-in-text>
                     <x-in-text :type="'date'" :label="'Tanggal Selesai'" :col="6"
@@ -50,65 +49,53 @@ $option = [
         </x-card-collapsible>
 
         <x-card-collapsible>
+            @if(request('branch_id')||request('journal_category_id')||request('date_start')||request('date_finish'))
+
+            @foreach ($balances as $balance)
             <x-row>
-                <x-col>
-                    @if (request('branch_id')||request('journal_category_id')||request('date_start')||request('date_finish'))
-                        @foreach ($balances as $balance)
-                        <x-row>
-                           <x-col :col='10'>
-                            <h3>{{ $balance['name'] }}</h3>
-                           </x-col>
-                           <x-col :col='2'>
-                            <span class="ml-1 text-right"><h4>Rp. {{ number_format($balance['total'], 2) }}</h4></span>
-                           </x-col>
-                        </x-row>
-                        {{-- <p>{{ $balance['budget_items']['total'] }}</p> --}}
-                            @foreach ($balance['budget_items'] as $budgetItem)
-                            <div class="pl-3">
-                                <x-row>
-                                    <x-col :col='10'>
-                                        <h4>{{ $budgetItem['name'] }}</h4>
-                                    </x-col>
-                                    <x-col :col='2'>
-                                        <span class="ml-1 text-right"><h4>Rp. {{ number_format($budgetItem['total'], 2) }}</h4></span>
-                                    </x-col>
-                                </x-row>
-                            </div>
-                                @foreach ($budgetItem['sub_budget_items'] as $subBudgetItem)
-                                <div class="pl-5">
-                                    <x-row>
-                                        <x-col :col='10'>
-                                            <h5>{{ $subBudgetItem['name'] }}</h5>
-                                        </x-col>
-                                        <x-col :col='2'>
-                                            <span class="ml-1 text-right"><h4>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h4></span>
-                                        </x-col>
-                                    </x-row>
-                                </div>
-                                @endforeach
-                            @endforeach
-                        @endforeach
+                <x-col :col='10'>
+                    <h3>{{ $balance['name'] }}</h3>
+                </x-col>
+                <x-col :col='2'>
+                    <span class="ml-1 text-right">
+                        <h4>Rp. {{ number_format($balance['total'], 2) }}</h4>
+                    </span>
+                </x-col>
+            </x-row>
+            {{-- <p>{{ $balance['budget_items']['total'] }}</p> --}}
+            @foreach ($balance['budget_items'] as $budgetItem)
+            <div class="pl-3">
+                <x-row>
+                    <x-col :col='10'>
+                        <h4>{{ $budgetItem['name'] }}</h4>
+                    </x-col>
+                    <x-col :col='2'>
+                        <span class="ml-1 text-right">
+                            <h4>Rp. {{ number_format($budgetItem['total'], 2) }}</h4>
+                        </span>
                     </x-col>
                 </x-row>
-                @endif
+            </div>
+            @foreach ($budgetItem['sub_budget_items'] as $subBudgetItem)
+            <div class="pl-5">
+                <x-row>
+                    <x-col :col='10'>
+                        <h5>{{ $subBudgetItem['name'] }}</h5>
+                    </x-col>
+                    <x-col :col='2'>
+                        <span class="ml-1 text-right">
+                            <h4>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h4>
+                        </span>
+                    </x-col>
+                </x-row>
+            </div>
+            @endforeach
+            @endforeach
+            @endforeach
+            @endif
         </x-card-collapsible>
     </x-row>
 </x-content>
-
-<x-modal :title="'Tambah Data'" :id="'add-modal'">
-    <form style="width: 100%" action="{{ route('debt-mutation.store') }}" method="POST">
-        @csrf
-        @method('POST')
-        <x-row>
-            <x-in-select :label="'Cabang'" :placeholder="'Pilih Cabang'" :col="4" :id="'in_branch_id'"
-                :name="'cabang_id'" :options="$option" :value="old('cabang_id')" :required="true"></x-in-select>
-            <x-col class="text-right">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </x-col>
-        </x-row>
-    </form>
-</x-modal>
 @endsection
 @push('js')
 <!-- Select2 -->
@@ -121,8 +108,6 @@ $option = [
 
 <meta name="url-branch" content="{{ route('branch.index') }}">
 <meta name="url-project" content="{{ route('project.index') }}">
-
-<meta name="">
 
 {{-- Searching --}}
 <script>
