@@ -3,25 +3,24 @@
 @php
 $breadcrumbList = [
 [
-'name' => 'Home',
-'href' => '/'
+    'name' => 'Home',
+    'href' => '/'
 ],
 [
-'name' => 'Jurnal'
+    'name' => 'Jurnal'
 ],
 ];
-
 @endphp
 
 @push('css')
-<link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
-<link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 @endpush
 
 @section('content-header', 'Jurnal')
 
 @section('breadcrumb')
-<x-breadcrumb :list="$breadcrumbList" />
+    <x-breadcrumb :list="$breadcrumbList" />
 @endsection
 
 @section('content')
@@ -200,7 +199,7 @@ $breadcrumbList = [
                                 <x-in-text 
                                     :type="'text'" 
                                     :label="'Jumlah'" 
-                                    :col="6" 
+                                    :col="4" 
                                     :name="'amount'" 
                                     :required="true">
                                 </x-in-text>

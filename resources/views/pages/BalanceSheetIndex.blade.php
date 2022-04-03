@@ -29,17 +29,40 @@ $breadcrumbList = [
         <x-card-collapsible :title="'Pencarian'" :collapse="false">
             <form style="width: 100%">
                 <x-row>
-                    <x-in-select :label="'Cabang'" :placeholder="'Pilih Cabang'" :col="6" :name="'branch_id'"
-                        :options="$options['branches']" :value="app('request')->input('branch_id') ?? null"
+                    <x-in-select 
+                        :label="'Cabang'" 
+                        :placeholder="'Pilih Cabang'" 
+                        :col="6" 
+                        :name="'branch_id'"
+                        :options="$options['branches']" 
+                        :value="app('request')->input('branch_id') ?? null"
                         :required="false">
                     </x-in-select>
-                    <x-in-select :label="'Proyek'" :placeholder="'Pilih Proyek'" :col="6" :name="'project_id'"
+
+                    <x-in-select 
+                        :label="'Proyek'" 
+                        :placeholder="'Pilih Proyek'" 
+                        :col="6" 
+                        :name="'project_id'"
                         :required="false">
                     </x-in-select>
-                    <x-in-text :type="'date'" :label="'Tanggal Mulai'" :col="6"
-                        :value="app('request')->input('date_start') ?? null" :name="'date_start'"></x-in-text>
-                    <x-in-text :type="'date'" :label="'Tanggal Selesai'" :col="6"
-                        :value="app('request')->input('date_finish') ?? null" :name="'date_finish'"></x-in-text>
+
+                    <x-in-text 
+                        :type="'date'" 
+                        :label="'Tanggal Mulai'" 
+                        :col="6"
+                        :value="app('request')->input('date_start') ?? null" 
+                        :name="'date_start'">
+                    </x-in-text>
+
+                    <x-in-text 
+                        :type="'date'" 
+                        :label="'Tanggal Selesai'" 
+                        :col="6"
+                        :value="app('request')->input('date_finish') ?? null" 
+                        :name="'date_finish'">
+                    </x-in-text>
+
                     <x-col class="text-right">
                         <a href="{{ route('balance.index') }}" type="reset" class="btn btn-default">reset</a>
                         <button type="submit" class="btn btn-primary">Cari</button>
@@ -54,7 +77,7 @@ $breadcrumbList = [
             @foreach ($balances as $balance)
             <x-row>
                 <x-col :col='10'>
-                    <h3>{{ $balance['name'] }}</h3>
+                    <h4>{{ $balance['name'] }}</h4>
                 </x-col>
                 <x-col :col='2'>
                     <span class="ml-1 text-right">
@@ -67,11 +90,11 @@ $breadcrumbList = [
             <div class="pl-3">
                 <x-row>
                     <x-col :col='10'>
-                        <h4>{{ $budgetItem['name'] }}</h4>
+                        <h5>{{ $budgetItem['name'] }}</h5>
                     </x-col>
                     <x-col :col='2'>
                         <span class="ml-1 text-right">
-                            <h4>Rp. {{ number_format($budgetItem['total'], 2) }}</h4>
+                            <h5>Rp. {{ number_format($budgetItem['total'], 2) }}</h5>
                         </span>
                     </x-col>
                 </x-row>
@@ -80,11 +103,11 @@ $breadcrumbList = [
             <div class="pl-5">
                 <x-row>
                     <x-col :col='10'>
-                        <h5>{{ $subBudgetItem['name'] }}</h5>
+                        <h6>{{ $subBudgetItem['name'] }}</h6>
                     </x-col>
                     <x-col :col='2'>
                         <span class="ml-1 text-right">
-                            <h4>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h4>
+                            <h6>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h6>
                         </span>
                     </x-col>
                 </x-row>

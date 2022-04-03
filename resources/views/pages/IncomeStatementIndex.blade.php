@@ -76,18 +76,19 @@ $breadcrumbList = [
         <x-card-collapsible>
             @if(request('branch_id')||request('journal_category_id')||request('date_start')||request('date_finish'))
             @foreach ($incomes as $income)
+
             @if ($income['name'] == 'Pendapatan')
-            <?php  $PendapatanTotal = $income['total']  ?>
+                <?php  $PendapatanTotal = $income['total']  ?>
             @endif
             @if ($income['name'] == 'HPP')
-            <?php  $HPPTotal = $income['total']  ?>
+                <?php  $HPPTotal = $income['total']  ?>
             @endif
             @if ($income['name'] == 'Biaya')
-            <?php $BiayaTotal = $income['total'] ?>
+                <?php $BiayaTotal = $income['total'] ?>
             @endif
             <x-row>
                 <x-col :col='10'>
-                    <h3>{{ $income['name'] }}</h3>
+                    <h4>{{ $income['name'] }}</h4>
                 </x-col>
                 <x-col :col='2'>
                     <span class="ml-1 text-right">
@@ -101,11 +102,11 @@ $breadcrumbList = [
             <div class="pl-3">
                 <x-row>
                     <x-col :col='10'>
-                        <h4>{{ $budgetItem['name'] }}</h4>
+                        <h5>{{ $budgetItem['name'] }}</h5>
                     </x-col>
                     <x-col :col='2'>
                         <span class="ml-1 text-right">
-                            <h4>Rp. {{ number_format($budgetItem['total'], 2) }}</h4>
+                            <h5>Rp. {{ number_format($budgetItem['total'], 2) }}</h5>
                         </span>
                     </x-col>
                 </x-row>
@@ -113,54 +114,44 @@ $breadcrumbList = [
             @foreach ($budgetItem['sub_budget_items'] as $subBudgetItem)
             <div class="pl-5">
                 <x-row>
-
                     <x-col :col='10'>
-                        <h5>{{ $subBudgetItem['name'] }}</h5>
+                        <h6>{{ $subBudgetItem['name'] }}</h6>
                     </x-col>
 
                     <x-col :col='2'>
                         <span class="ml-1 text-right">
-                            <h4>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h4>
+                            <h6>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h6>
                         </span>
                     </x-col>
-
                 </x-row>
             </div>
             @endforeach
             @endforeach
             @if ($income['name'] == 'HPP')
             <div class="text-warning">
-
                 <x-row>
-
                     <x-col :col='10'>
-                        <h2>Laba Kotor</h2>
+                        <h4>Laba Kotor</h4>
                     </x-col>
-
                     <x-col :col='2'>
                         <span class="ml-1 text-right">
                             <h4>Rp. {{ number_format($PendapatanTotal - $HPPTotal) }}</h4>
                         </span>
                     </x-col>
-
                 </x-row>
-
             </div>
             @endif
             @if ($income['name'] == 'Biaya')
             <div class="text-warning">
                 <x-row>
-
                     <x-col :col='10'>
-                        <h2>Laba Bersih</h2>
+                        <h4>Laba Bersih</h4>
                     </x-col>
-
                     <x-col :col='2'>
                         <span class="ml-1 text-right">
                             <h4>Rp. {{ number_format($PendapatanTotal - $HPPTotal - $BiayaTotal) }}</h4>
                         </span>
                     </x-col>
-                    
                 </x-row>
             </div>
             @endif
