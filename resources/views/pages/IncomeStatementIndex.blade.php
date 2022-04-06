@@ -11,6 +11,13 @@ $breadcrumbList = [
 ],
 ];
 
+$dateNow = date("Y");
+for($i = $dateNow; $i>= 1980; $i--){
+    $year[] = [
+        'text' => $i,
+        'value' => $i,
+    ];
+}
 @endphp
 
 @section('content-header', 'Laba Rugi')
@@ -33,7 +40,7 @@ $breadcrumbList = [
                     <x-in-select 
                         :label="'Cabang'" 
                         :placeholder="'Pilih Cabang'" 
-                        :col="6" 
+                        :col="4" 
                         :name="'branch_id'"
                         :options="$options['branches']" 
                         :value="app('request')->input('branch_id') ?? null"
@@ -43,26 +50,20 @@ $breadcrumbList = [
                     <x-in-select 
                         :label="'Proyek'" 
                         :placeholder="'Pilih Proyek'" 
-                        :col="6" 
+                        :col="4" 
                         :name="'project_id'"
                         :required="false">
                     </x-in-select>
 
-                    <x-in-text 
-                        :type="'date'" 
-                        :label="'Tanggal Mulai'" 
-                        :col="6"
-                        :value="app('request')->input('date_start') ?? null" 
-                        :name="'date_start'">
-                    </x-in-text>
-
-                    <x-in-text 
-                        :type="'date'" 
-                        :label="'Tanggal Selesai'" 
-                        :col="6"
-                        :value="app('request')->input('date_finish') ?? null" 
-                        :name="'date_finish'">
-                    </x-in-text>
+                    <x-in-select 
+                        :label="'Tahun'" 
+                        :placeholder="'Pilih Tahun'" 
+                        :col="4" 
+                        :name="'date'"
+                        :options="$year"
+                        :value="app('request')->input('date') ?? null"
+                        :required="false">
+                    </x-in-select>
 
                     <x-col class="text-right">
                         <a href="{{ route('income.statement.index') }}" type="reset" class="btn btn-default">reset</a>
@@ -74,7 +75,7 @@ $breadcrumbList = [
         </x-card-collapsible>
 
         <x-card-collapsible>
-            @if(request('branch_id')||request('journal_category_id')||request('date_start')||request('date_finish'))
+            @if(request('branch_id')||request('journal_category_id')||request('date'))
             @foreach ($incomes as $income)
             @if ($income['name'] == 'Pendapatan')
             <?php  $PendapatanTotal = $income['total']  ?>

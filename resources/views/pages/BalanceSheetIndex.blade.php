@@ -11,6 +11,13 @@ $breadcrumbList = [
 ],
 ];
 
+$dateNow = date("Y");
+for($i = $dateNow; $i>= 1980; $i--){
+    $year[] = [
+        'text' => $i,
+        'value' => $i,
+    ];
+}
 @endphp
 
 @section('content-header', 'Neraca')
@@ -29,17 +36,31 @@ $breadcrumbList = [
         <x-card-collapsible :title="'Pencarian'" :collapse="false">
             <form style="width: 100%">
                 <x-row>
-                    <x-in-select :label="'Cabang'" :placeholder="'Pilih Cabang'" :col="6" :name="'branch_id'"
-                        :options="$options['branches']" :value="app('request')->input('branch_id') ?? null"
+                    <x-in-select 
+                        :label="'Cabang'" 
+                        :placeholder="'Pilih Cabang'" 
+                        :col="4" 
+                        :name="'branch_id'"
+                        :options="$options['branches']" 
+                        :value="app('request')->input('branch_id') ?? null"
                         :required="false">
                     </x-in-select>
-                    <x-in-select :label="'Proyek'" :placeholder="'Pilih Proyek'" :col="6" :name="'project_id'"
+                    <x-in-select 
+                        :label="'Proyek'" 
+                        :placeholder="'Pilih Proyek'" 
+                        :col="4" 
+                        :name="'project_id'"
                         :required="false">
                     </x-in-select>
-                    <x-in-text :type="'date'" :label="'Tanggal Mulai'" :col="6"
-                        :value="app('request')->input('date_start') ?? null" :name="'date_start'"></x-in-text>
-                    <x-in-text :type="'date'" :label="'Tanggal Selesai'" :col="6"
-                        :value="app('request')->input('date_finish') ?? null" :name="'date_finish'"></x-in-text>
+                    <x-in-select 
+                        :label="'Tahun'" 
+                        :placeholder="'Pilih Tahun'" 
+                        :col="4" 
+                        :name="'date'"
+                        :options="$year"
+                        :value="app('request')->input('date') ?? null"
+                        :required="false">
+                    </x-in-select>
                     <x-col class="text-right">
                         <a href="{{ route('balance.index') }}" type="reset" class="btn btn-default">reset</a>
                         <button type="submit" class="btn btn-primary">Cari</button>
@@ -49,7 +70,7 @@ $breadcrumbList = [
         </x-card-collapsible>
 
         <x-card-collapsible>
-            @if(request('branch_id')||request('journal_category_id')||request('date_start')||request('date_finish'))
+            @if(request('branch_id')||request('journal_category_id')||request('date'))
 
             @foreach ($balances as $balance)
             <x-row>

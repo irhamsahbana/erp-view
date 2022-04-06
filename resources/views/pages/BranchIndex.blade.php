@@ -69,7 +69,8 @@
                     :placeholder="'Masukkan Nama Cabang'"
                     :col="12"
                     :name="'name'"
-                    :required="true"></x-in-text>
+                    :required="true">
+                </x-in-text>
             </x-row>
 
             <x-col class="text-right">

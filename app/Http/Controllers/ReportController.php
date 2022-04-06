@@ -33,11 +33,8 @@ class ReportController extends Controller
         if ($request->project_id)
             $query->where('sub_journals.project_id', $request->project_id);
 
-        if ($request->date_start)
-            $query->whereDate('journals.created', '>=', new \DateTime($request->date_start));
-
-        if ($request->date_finish)
-            $query->whereDate('journals.created', '<=', new \DateTime($request->date_finish));
+        if ($request->date)
+            $query->whereYear('journals.created', $request->date);
 
         $reportBalanceSheet = Category::where('slug', 'neraca')->first();
         $subBudgetItems = SubBudgetItem::where('report_category_id', $reportBalanceSheet->id)->get();
@@ -141,11 +138,8 @@ class ReportController extends Controller
         if ($request->project_id)
             $query->where('sub_journals.project_id', $request->project_id);
 
-        if ($request->date_start)
-            $query->whereDate('journals.created', '>=', new \DateTime($request->date_start));
-
-        if ($request->date_finish)
-            $query->whereDate('journals.created', '<=', new \DateTime($request->date_finish));
+        if ($request->date)
+            $query->whereYear('journals.created', $request->date);
 
         $reportIncomeStatementSheet = Category::where('slug', 'laba-rugi')->first();
         $subBudgetItems = SubBudgetItem::where('report_category_id', $reportIncomeStatementSheet->id)->get();
