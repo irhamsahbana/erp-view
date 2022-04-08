@@ -1,0 +1,320 @@
+@extends('App')
+
+@php
+    $breadcrumbList = [
+        [
+            'name' => 'Home',
+            'href' => '/'
+        ],
+        [
+            'name' => 'Anggaran'
+        ],
+    ];
+@endphp
+
+@push('css')
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+@endpush
+
+@section('content-header', 'Anggaran')
+
+@section('breadcrumb')
+    <x-breadcrumb :list="$breadcrumbList"/>
+@endsection
+
+@section('content')
+    <x-content>
+        <x-row>
+            <x-card-collapsible>
+                <x-row>
+                    <x-col class="mb-3">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-modal">Tambah</button>
+                    </x-col>
+
+                    <x-col>
+                        <x-table :thead="['Tahun', 'Cabang', 'Proyek', 'Sub Mata Anggaran', 'Anggaran', 'Status Close', 'Aksi']">
+                            @foreach($datas as $data)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $data->created }}</td>
+                                    <td>{{ $data->branch->name }}</td>
+                                    <td>{{ $data->project->name }}</td>
+                                    <td>{{ $data->subBudgetItem->name }}</td>
+                                    <td>{{ 'Rp. ' . number_format($data->amount, 2) }}</td>
+                                    <td>
+                                        @if($data->is_open)
+                                            <span class="badge badge-success">Open</span>
+                                        @else
+                                            <span class="badge badge-danger">Close</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if(Auth::user()->role == 'owner' || Auth::user()->role == 'admin' || Auth::user()->role == 'purchaser')
+                                        <form action="{{ route('budget.change-status', $data->id) }}" style="display:inline!important;" method="POST">
+                                            @method('PUT')
+                                            @csrf
+                                            <button
+                                                type="submit"
+                                                class="btn btn-secondary"
+                                                onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
+                                                title="ubah status"><i class="fas fa-sync-alt"></i></button>
+                                        </form>
+                                        @endif
+                                        @if ($data->is_open)
+                                        <form
+                                            style=" display:inline!important;"
+                                            method="POST"
+                                            action="{{ route('budget.destroy', $data->id)}}">
+                                                @csrf
+                                                @method('DELETE')
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+                                                title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                        @endif
+                                        <a
+                                            type="button"
+                                            class="btn btn-warning"
+                                            title="Edit"
+                                            href="{{ route('budget.show', $data->id) }}"><i class="fas fa-pencil-alt"></i></a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </x-table>
+                    </x-col>
+
+                    <x-col class="d-flex justify-content-end">
+                        {{ $datas->links() }}
+                    </x-col>
+                </x-row>
+            </x-card-collapsible>
+        </x-row>
+    </x-content>
+
+    <x-modal :title="'Tambah Data'" :id="'add-modal'">
+        <form style="width: 100%" action="{{ route('budget.store') }}" method="POST" id="add-form">
+            @csrf
+            @method('POST')
+
+            <x-row>
+                <x-in-select
+                    :label="'Cabang'"
+                    :placeholder="'Pilih Cabang'"
+                    :col="6"
+                    :id="'in_branch_id'"
+                    :name="'branch_id'"
+                    :options="$options['branches']"
+                    :value="old('branch_id')"
+                    :required="true"></x-in-select>
+                <x-in-select
+                    :label="'Proyek'"
+                    :placeholder="'Pilih Proyek'"
+                    :col="6"
+                    :id="'in_project_id'"
+                    :name="'project_id'"
+                    :required="true"></x-in-select>
+                <x-in-select
+                    :label="'Kelompok Mata Anggaran'"
+                    :placeholder="'Pilih Kelompok Mata Anggaran'"
+                    :col="6"
+                    :id="'budget_item_group_id_in'"
+                    :name="'budget_item_group_id'"
+                    :options="$options['groups']"
+                    :required="true"></x-in-select>
+                <x-in-select
+                    :label="'Mata Anggaran'"
+                    :placeholder="'Pilih Mata Anggaran'"
+                    :col="6"
+                    :id="'budget_item_id_in'"
+                    :name="'budget_item_id'"
+                    :required="true"></x-in-select>
+                <x-in-select
+                    :label="'Sub Mata Anggaran'"
+                    :placeholder="'Pilih Sub Mata Anggaran'"
+                    :col="4"
+                    :id="'sub_budget_item_id_in'"
+                    :name="'sub_budget_item_id'"
+                    :required="true"></x-in-select>
+                <x-in-text
+                    :type="'number'"
+                    :label="'Total Harga'"
+                    :col="4"
+                    :id="'in_amount'"
+                    :name="'amount'"
+                    :required="true"></x-in-text>
+                <x-in-select
+                    :type="'number'"
+                    :label="'Tahun'"
+                    :col="4"
+                    :id="'in_created'"
+                    :name="'created'"
+                    :options="$options['years']"
+                    :required="true"></x-in-select>
+                <x-col class="text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </x-col>
+            </x-row>
+        </form>
+    </x-modal>
+
+@endsection
+
+@push('js')
+    <script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-branch" content="{{ Auth::user()->branch_id ?? null }}">
+
+    <meta name="search-project" content="{{ app('request')->input('project_id') ?? null }}">
+
+    <meta name="old-project" content="{{ old('project_id') ?? null }}">
+
+    <meta name="url-project" content="{{ route('project.index') }}">
+    <meta name="url-big" content="{{ route('big.index') }}">
+    <meta name="url-bi" content="{{ route('bi.index') }}">
+    <meta name="url-sbi" content="{{ route('sbi.index') }}">
+
+    <script>
+       $(function () {
+            $('#add-modal').on('hidden.bs.modal', function() {
+                $('#add-form').trigger('reset');
+            });
+
+            let selectBranchIn = $('#in_branch_id');
+            let selectProjectIn = $('#in_project_id');
+
+            selectBranchIn.on('change', function () {
+                let branchId = $(this).val();
+                let searchProject = $('meta[name="search-project"]').attr('content');
+
+                if (branchId == '') {
+                    selectProjectIn.empty();
+                    selectProjectIn.append('<option value="">Pilih Proyek</option>');
+
+                    return;
+                }
+
+                // Get project
+                $.ajax({
+                    url: $('meta[name="url-project"]').attr('content'),
+                    type: 'GET',
+                    data: {
+                        branch_id: branchId,
+                    },
+                    success: function (data) {
+                        let oldProject = $('meta[name="old-project"]').attr('content');
+
+                        selectProjectIn.empty();
+                        selectProjectIn.append(`<option value="">Pilih Proyek</option>`);
+
+                        data.datas.forEach(function(item) {
+                            selectProjectIn.append(`<option value="${item.id}">${item.name}</option>`);
+                        });
+
+                        selectProjectIn.select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Proyek',
+                            allowClear: true,
+                        });
+
+                        if (oldProject != '') {
+                            selectProjectIn.val(oldProject).trigger('change');
+                        }
+                    }
+                });
+            });
+
+            if (selectBranchIn.val() != '')
+                selectBranchIn.trigger('change');
+        });
+
+        $(document).ready(function() {
+            $('#budget_item_group_id_in').on('change', function() {
+                let budgetItemGroupId = $(this).val();
+
+                if (budgetItemGroupId == '') {
+                    $('#budget_item_id_in').empty();
+                    $('#budget_item_id_in').append('<option value="">Pilih Mata Anggaran</option>');
+                    return;
+                }
+
+                let url = $('meta[name="url-bi"]').attr('content');
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        budget_item_group_id: budgetItemGroupId
+                    },
+                    cache: false,
+                    success: function(data) {
+                        $('#budget_item_id_in').empty();
+                        $('#budget_item_id_in').append('<option value="">Pilih Mata Anggaran</option>');
+
+                        data.datas.forEach(function(item) {
+                            $('#budget_item_id_in').append(`<option value="${item.id}">${item.name}</option>`);
+                        });
+
+                        //make using select2
+
+                        $('#budget_item_id_in').select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Mata Anggaran',
+                            allowClear: true
+                        });
+                    },
+                    error: function(data) {
+                        alert(data);
+                    }
+                });
+            });
+
+            $('#budget_item_id_in').on('change', function(){
+                let budgetItemId = $(this).val();
+
+                if(budgetItemId == ''){
+                    $('#sub_budget_item_id_in').empty();
+                    $('#sub_budget_item_id_in').append('<option value="">Pilih Sub Mata Anggaran</option>');
+
+                    return;
+                }
+
+                let url = $('meta[name="url-sbi"]').attr('content');
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        budget_item_id: budgetItemId
+                    },
+                    cache: false,
+                    success: function(data){
+                        $('#sub_budget_item_id_in').empty();
+                        $('#sub_budget_item_id_in').append('<option value="">Pilih Sub Mata Anggaran</option>');
+
+                        data.datas.forEach(function(item){
+                            $('#sub_budget_item_id_in').append(`<option value="${item.id}">${item.name}</option>`);
+                        });
+
+                        $('#sub_budget_item_id_in').select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Sub Mata Anggaran',
+                            allowClear: true
+                        });
+                    },
+                    error: function(data){
+                        alert(data);
+                    }
+                });
+            });
+        });
+
+    </script>
+@endpush

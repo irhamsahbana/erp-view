@@ -77,48 +77,48 @@ $breadcrumbList = [
 
         <x-row>
 
-            <x-in-select 
-                :label="'Jenis Laporan'" 
-                :placeholder="'Pilih Jenis Laporan'" 
+            <x-in-select
+                :label="'Jenis Laporan'"
+                :placeholder="'Pilih Jenis Laporan'"
                 :col="12"
-                :id="'report_category_id_in'" 
-                :name="'report_category_id'" 
+                :id="'report_category_id_in'"
+                :name="'report_category_id'"
                 :options="$options['reportCategories']"
                 :required="true">
             </x-in-select>
 
-            <x-in-select 
-                :label="'Kelompok Mata Anggaran'" 
-                :placeholder="'Pilih Kelompok Mata Anggaran'" 
+            <x-in-select
+                :label="'Kelompok Mata Anggaran'"
+                :placeholder="'Pilih Kelompok Mata Anggaran'"
                 :col="12"
-                :id="'budget_item_group_id_in'" 
-                :name="'budget_item_group_id'" 
+                :id="'budget_item_group_id_in'"
+                :name="'budget_item_group_id'"
                 :required="true">
             </x-in-select
             >
-            <x-in-select 
-                :label="'Mata Anggaran'" 
-                :placeholder="'Pilih Mata Anggaran'" 
+            <x-in-select
+                :label="'Mata Anggaran'"
+                :placeholder="'Pilih Mata Anggaran'"
                 :col="12"
-                :id="'budget_item_id_in'" 
-                :name="'budget_item_id'" 
+                :id="'budget_item_id_in'"
+                :name="'budget_item_id'"
                 :required="true">
             </x-in-select>
 
-            <x-in-select 
-                :label="'Saldo Normal'" 
-                :placeholder="'Pilih Saldo Normal'" 
+            <x-in-select
+                :label="'Saldo Normal'"
+                :placeholder="'Pilih Saldo Normal'"
                 :col="12"
-                :id="'normal_balance_id_in'" 
-                :name="'normal_balance_id'" 
+                :id="'normal_balance_id_in'"
+                :name="'normal_balance_id'"
                 :required="true">
             </x-in-select>
 
-            <x-in-text 
-                :label="'Nama'" 
-                :placeholder="'Masukkaan Nama'" 
-                :col="12" 
-                :id="'name_in'" 
+            <x-in-text
+                :label="'Nama'"
+                :placeholder="'Masukkaan Nama'"
+                :col="12"
+                :id="'name_in'"
                 :name="'name'"
                 :required="true">
             </x-in-text>
@@ -138,16 +138,16 @@ $breadcrumbList = [
         <x-row>
             <input type="hidden" name="id" id="id" value="">
 
-            <x-in-text 
-                :label="'Nama'" 
-                :placeholder="'Masukkaan Nama'" 
-                :col="12" 
-                :id="'name_edit'" 
+            <x-in-text
+                :label="'Nama'"
+                :placeholder="'Masukkaan Nama'"
+                :col="12"
+                :id="'name_edit'"
                 :name="'name'"
-                value="" 
+                value=""
                 :required="true">
             </x-in-text>
-            
+
             <x-col class="text-right">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                 <button type="submit" class="btn btn-primary"
