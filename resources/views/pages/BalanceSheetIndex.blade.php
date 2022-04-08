@@ -12,11 +12,11 @@ $breadcrumbList = [
 ];
 
 $dateNow = date("Y");
-for($i = $dateNow; $i>= 1980; $i--){
-    $year[] = [
-        'text' => $i,
-        'value' => $i,
-    ];
+for($i = $dateNow + 5; $i>= 1980; $i--){
+$year[] = [
+'text' => $i,
+'value' => $i,
+];
 }
 @endphp
 
@@ -43,23 +43,23 @@ for($i = $dateNow; $i>= 1980; $i--){
                         :name="'branch_id'"
                         :options="$options['branches']" 
                         :value="app('request')->input('branch_id') ?? null"
-                        :required="false">
+                        :required="true">
                     </x-in-select>
                     <x-in-select 
                         :label="'Proyek'" 
                         :placeholder="'Pilih Proyek'" 
                         :col="4" 
                         :name="'project_id'"
-                        :required="false">
+                        :required="true">
                     </x-in-select>
                     <x-in-select 
                         :label="'Tahun'" 
                         :placeholder="'Pilih Tahun'" 
                         :col="4" 
-                        :name="'date'"
+                        :name="'year'" 
                         :options="$year"
-                        :value="app('request')->input('date') ?? null"
-                        :required="false">
+                        :value="app('request')->input('year') ?? null" 
+                        :required="true">
                     </x-in-select>
                     <x-col class="text-right">
                         <a href="{{ route('balance.index') }}" type="reset" class="btn btn-default">reset</a>
@@ -70,49 +70,41 @@ for($i = $dateNow; $i>= 1980; $i--){
         </x-card-collapsible>
 
         <x-card-collapsible>
-            @if(request('branch_id')||request('journal_category_id')||request('date'))
+            @if(request('branch_id')||request('journal_category_id')||request('year'))
 
-            @foreach ($balances as $balance)
-            <x-row>
-                <x-col :col='10'>
-                    <h3>{{ $balance['name'] }}</h3>
-                </x-col>
-                <x-col :col='2'>
-                    <span class="ml-1 text-right">
-                        <h4>Rp. {{ number_format($balance['total'], 2) }}</h4>
-                    </span>
-                </x-col>
-            </x-row>
-            {{-- <p>{{ $balance['budget_items']['total'] }}</p> --}}
-            @foreach ($balance['budget_items'] as $budgetItem)
-            <div class="pl-3">
-                <x-row>
-                    <x-col :col='10'>
-                        <h4>{{ $budgetItem['name'] }}</h4>
-                    </x-col>
-                    <x-col :col='2'>
-                        <span class="ml-1 text-right">
-                            <h4>Rp. {{ number_format($budgetItem['total'], 2) }}</h4>
-                        </span>
-                    </x-col>
-                </x-row>
-            </div>
-            @foreach ($budgetItem['sub_budget_items'] as $subBudgetItem)
-            <div class="pl-5">
-                <x-row>
-                    <x-col :col='10'>
-                        <h5>{{ $subBudgetItem['name'] }}</h5>
-                    </x-col>
-                    <x-col :col='2'>
-                        <span class="ml-1 text-right">
-                            <h4>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h4>
-                        </span>
-                    </x-col>
-                </x-row>
-            </div>
-            @endforeach
-            @endforeach
-            @endforeach
+
+            <x-table :thead="['Data Neraca', 'Anggaran',  request('year') ?? 'Tahun', request('year') - 1 ?? 'Tahun Sebelumnya', 'Selisih']">
+                @foreach ($balances as $balance)
+                    <tr>
+                        <td></td>
+                        <td class="pl-1"><h6>{{ $balance['name'] }}</h6></td>
+                        <td></td>
+                        <td><h6>Rp. {{ number_format($balance['total'], 2) }}</h6></td>
+                        <td><h6>Rp. {{ number_format($balance['total_before'], 2) }}</h6></td>
+                        <td></td>
+                    </tr>
+                    @foreach ($balance['budget_items'] as $budgetItem)
+                        <tr>
+                            <td></td>
+                            <td class="pl-3"><h6>{{ $budgetItem['name'] }}</h6></td>
+                            <td></td>
+                            <td><h6>Rp. {{ number_format($budgetItem['total'], 2) }}</h6></td>
+                            <td><h6>Rp. {{ number_format($budgetItem['total_before'], 2) }}</h6></td>
+                            <td></td>
+                        </tr>
+                        @foreach ($budgetItem['sub_budget_items'] as $subBudgetItem)
+                            <tr>
+                                <td></td>
+                                <td class="pl-5"><h6>{{ $subBudgetItem['name'] }}</h6></td>
+                                <td></td>
+                                <td><h6>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h6></td>
+                                <td><h6>Rp. {{ number_format($subBudgetItem['total_before'], 2) }}</h6></td>
+                                <td></td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                @endforeach
+            </x-table>
             @endif
         </x-card-collapsible>
     </x-row>
@@ -180,3 +172,5 @@ for($i = $dateNow; $i>= 1980; $i--){
         });
 </script>
 @endpush
+
+

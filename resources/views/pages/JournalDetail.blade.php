@@ -200,7 +200,7 @@ $breadcrumbList = [
                                 <x-in-text 
                                     :type="'text'" 
                                     :label="'Jumlah'" 
-                                    :col="6" 
+                                    :col="4" 
                                     :name="'amount'" 
                                     :required="true">
                                 </x-in-text>
