@@ -1,16 +1,23 @@
 @extends('App')
 
 @php
-$breadcrumbList = [
-[
-'name' => 'Home',
-'href' => '/'
-],
-[
-'name' => 'Neraca'
-],
-];
+    $breadcrumbList = [
+        [
+            'name' => 'Home',
+            'href' => '/'
+        ],
+        [
+            'name' => 'Neraca'
+        ],
+    ];
 
+    $dateNow = date("Y");
+    for($i = $dateNow + 5; $i>= 1980; $i--){
+        $year[] = [
+            'text' => $i,
+            'value' => $i,
+        ];
+    }
 @endphp
 
 @section('content-header', 'Laba Rugi')
@@ -30,39 +37,33 @@ $breadcrumbList = [
         <x-card-collapsible :title="'Pencarian'" :collapse="false">
             <form style="width: 100%">
                 <x-row>
-                    <x-in-select 
-                        :label="'Cabang'" 
-                        :placeholder="'Pilih Cabang'" 
-                        :col="6" 
+                    <x-in-select
+                        :label="'Cabang'"
+                        :placeholder="'Pilih Cabang'"
+                        :col="4"
                         :name="'branch_id'"
-                        :options="$options['branches']" 
+                        :options="$options['branches']"
                         :value="app('request')->input('branch_id') ?? null"
-                        :required="false">
+                        :required="true">
                     </x-in-select>
 
-                    <x-in-select 
-                        :label="'Proyek'" 
-                        :placeholder="'Pilih Proyek'" 
-                        :col="6" 
+                    <x-in-select
+                        :label="'Proyek'"
+                        :placeholder="'Pilih Proyek'"
+                        :col="4"
                         :name="'project_id'"
-                        :required="false">
+                        :required="true">
                     </x-in-select>
 
-                    <x-in-text 
-                        :type="'date'" 
-                        :label="'Tanggal Mulai'" 
-                        :col="6"
-                        :value="app('request')->input('date_start') ?? null" 
-                        :name="'date_start'">
-                    </x-in-text>
-
-                    <x-in-text 
-                        :type="'date'" 
-                        :label="'Tanggal Selesai'" 
-                        :col="6"
-                        :value="app('request')->input('date_finish') ?? null" 
-                        :name="'date_finish'">
-                    </x-in-text>
+                    <x-in-select
+                        :label="'Tahun'"
+                        :placeholder="'Pilih Tahun'"
+                        :col="4"
+                        :name="'year'"
+                        :options="$year"
+                        :value="app('request')->input('year') ?? null"
+                        :required="true">
+                    </x-in-select>
 
                     <x-col class="text-right">
                         <a href="{{ route('income.statement.index') }}" type="reset" class="btn btn-default">reset</a>
@@ -74,88 +75,77 @@ $breadcrumbList = [
         </x-card-collapsible>
 
         <x-card-collapsible>
-            @if(request('branch_id')||request('journal_category_id')||request('date_start')||request('date_finish'))
-            @foreach ($incomes as $income)
-
-            @if ($income['name'] == 'Pendapatan')
-                <?php  $PendapatanTotal = $income['total']  ?>
-            @endif
-            @if ($income['name'] == 'HPP')
-                <?php  $HPPTotal = $income['total']  ?>
-            @endif
-            @if ($income['name'] == 'Biaya')
-                <?php $BiayaTotal = $income['total'] ?>
-            @endif
-            <x-row>
-                <x-col :col='10'>
-                    <h4>{{ $income['name'] }}</h4>
-                </x-col>
-                <x-col :col='2'>
-                    <span class="ml-1 text-right">
-                        <h4>Rp. {{ number_format($income['total'], 2) }}</h4>
-                    </span>
-                </x-col>
-            </x-row>
-
-            {{-- <p>{{ $income['budget_items']['total'] }}</p> --}}
-            @foreach ($income['budget_items'] as $budgetItem)
-            <div class="pl-3">
-                <x-row>
-                    <x-col :col='10'>
-                        <h5>{{ $budgetItem['name'] }}</h5>
-                    </x-col>
-                    <x-col :col='2'>
-                        <span class="ml-1 text-right">
-                            <h5>Rp. {{ number_format($budgetItem['total'], 2) }}</h5>
-                        </span>
-                    </x-col>
-                </x-row>
-            </div>
-            @foreach ($budgetItem['sub_budget_items'] as $subBudgetItem)
-            <div class="pl-5">
-                <x-row>
-                    <x-col :col='10'>
-                        <h6>{{ $subBudgetItem['name'] }}</h6>
-                    </x-col>
-
-                    <x-col :col='2'>
-                        <span class="ml-1 text-right">
-                            <h6>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h6>
-                        </span>
-                    </x-col>
-                </x-row>
-            </div>
-            @endforeach
-            @endforeach
-            @if ($income['name'] == 'HPP')
-            <div class="text-warning">
-                <x-row>
-                    <x-col :col='10'>
-                        <h4>Laba Kotor</h4>
-                    </x-col>
-                    <x-col :col='2'>
-                        <span class="ml-1 text-right">
-                            <h4>Rp. {{ number_format($PendapatanTotal - $HPPTotal) }}</h4>
-                        </span>
-                    </x-col>
-                </x-row>
-            </div>
-            @endif
-            @if ($income['name'] == 'Biaya')
-            <div class="text-warning">
-                <x-row>
-                    <x-col :col='10'>
-                        <h4>Laba Bersih</h4>
-                    </x-col>
-                    <x-col :col='2'>
-                        <span class="ml-1 text-right">
-                            <h4>Rp. {{ number_format($PendapatanTotal - $HPPTotal - $BiayaTotal) }}</h4>
-                        </span>
-                    </x-col>
-                </x-row>
-            </div>
-            @endif
-            @endforeach
+            @if(request('branch_id')||request('journal_category_id')||request('year'))
+            <x-table :thead="['Data Laba/Rugi', 'Anggaran',  'Realisasi '. request('year') ?? '', 'Realisasi '. request('year') - 1 ?? 'Tahun Sebelumnya', 'Selisih']">
+                @foreach ($incomes as $income)
+                    @if ($income['name'] == 'Pendapatan')
+                    <?php
+                        $PendapatanTotal = $income['total'];
+                        $PendapatanTotalBefore = $income['total_before'];
+                    ?>
+                    @endif
+                    @if ($income['name'] == 'HPP')
+                    <?php
+                        $HPPTotal = $income['total'];
+                        $HPPTotalBefore = $income['total_before']
+                    ?>
+                    @endif
+                    @if ($income['name'] == 'Biaya')
+                    <?php
+                        $BiayaTotal = $income['total'];
+                        $BiayaTotalBefore = $income['total_before'];
+                    ?>
+                    @endif
+                    <tr>
+                        <td></td>
+                        <td class="pl-1"><h6>{{ $income['name'] }}</h6></td>
+                        <td></td>
+                        <td><h6>Rp. {{ number_format($income['total'], 2) }}</h6></td>
+                        <td><h6>Rp. {{ number_format($income['total_before'], 2) }}</h6></td>
+                        <td></td>
+                    </tr>
+                    @foreach ($income['budget_items'] as $budgetItem)
+                        <tr>
+                            <td></td>
+                            <td class="pl-3"><h6>{{ $budgetItem['name'] }}</h6></td>
+                            <td></td>
+                            <td><h6>Rp. {{ number_format($budgetItem['total'], 2) }}</h6></td>
+                            <td><h6>Rp. {{ number_format($budgetItem['total_before'], 2) }}</h6></td>
+                            <td></td>
+                        </tr>
+                        @foreach ($budgetItem['sub_budget_items'] as $subBudgetItem)
+                            <tr>
+                                <td></td>
+                                <td class="pl-5"><h6>{{ $subBudgetItem['name'] }}</h6></td>
+                                <td></td>
+                                <td><h6>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h6></td>
+                                <td><h6>Rp. {{ number_format($subBudgetItem['total_before'], 2) }}</h6></td>
+                                <td></td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                    @if ($income['name'] == 'HPP')
+                        <tr>
+                            <td></td>
+                            <td><h4 class="text-primary">Laba Kotor</h4></td>
+                            <td></td>
+                            <td><h5 class="text-primary">Rp. {{ number_format($PendapatanTotal - $HPPTotal, 2) }}</h5></td>
+                            <td><h5 class="text-primary">Rp. {{ number_format($PendapatanTotalBefore - $HPPTotalBefore), 2 }}</h5></td>
+                            <td></td>
+                        </tr>
+                    @endif
+                    @if ($income['name'] == 'Biaya')
+                        <tr>
+                            <td></td>
+                            <td><h4 class="text-primary">Laba Bersih</h4></td>
+                            <td></td>
+                            <td><h5 class="text-primary">Rp. {{ number_format($PendapatanTotal - $HPPTotal - $BiayaTotal, 2) }}</h5></td>
+                            <td><h5 class="text-primary">Rp. {{ number_format($PendapatanTotalBefore - $HPPTotalBefore - $BiayaTotalBefore, 2) }}</h5></td>
+                            <td></td>
+                        </tr>
+                    @endif
+                @endforeach
+            </x-table>
             @endif
         </x-card-collapsible>
     </x-row>

@@ -14,33 +14,27 @@ use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
-
     public function balanceSheet(Request $request)
     {
-        if(request('branch_id')||request('journal_category_id')||request('date_start')||request('date_finish')){
+        if($request->branch_id||$request->journal_category_id||$request->year){
+            $query = self::getSubJournals();
 
-            $query = SubJournal::select(
-                            'sub_journals.id',
-                            'sub_journals.project_id',
-                            'sub_journals.sub_budget_item_id',
-                            'sub_journals.normal_balance_id',
-                            'sub_journals.amount',
-                            'journals.branch_id',
-                            'journals.created'
-                            )
-                            ->leftJoin('journals', 'journals.id', 'sub_journals.journal_id');
+            $query2 = self::getSubJournals();
 
-            if ($request->branch_id)
+            if ($request->branch_id){
                 $query->where('journals.branch_id', $request->branch_id);
+                $query2->where('journals.branch_id', $request->branch_id);
+            }
 
-            if ($request->project_id)
+            if ($request->project_id){
                 $query->where('sub_journals.project_id', $request->project_id);
+                $query2->where('sub_journals.project_id', $request->project_id);
+            }
 
-            if ($request->date_start)
-                $query->whereDate('journals.created', '>=', new \DateTime($request->date_start));
-
-            if ($request->date_finish)
-                $query->whereDate('journals.created', '<=', new \DateTime($request->date_finish));
+            if ($request->year){
+                $query->whereYear('journals.created', $request->year);
+                $query2->whereYear('journals.created', $request->year - 1);
+            }
 
             $reportBalanceSheet = Category::where('slug', 'neraca')->first();
             $subBudgetItems = SubBudgetItem::where('report_category_id', $reportBalanceSheet->id)->get();
@@ -52,25 +46,40 @@ class ReportController extends Controller
 
             $subJournals1 = $query->get();
 
+            $subJournalBefore1 = $query2->get();
+
             foreach ($subBudgetItems as $subBudgetItem) {
                 $tmp = [];
                 $total = 0.00;
+                $totalBefore = 0.00;
 
                 $tmp['budget_item_group_id'] = $subBudgetItem->budget_item_group_id;
                 $tmp['budget_item_id'] = $subBudgetItem->budget_item_id;
                 $tmp['name'] = $subBudgetItem->name;
 
-                $subJournals =  $subJournals1->where('sub_budget_item_id', $subBudgetItem->id);
+            $subJournals =  $subJournals1->where('sub_budget_item_id', $subBudgetItem->id);
 
-                foreach ($subJournals as $subJournal) {
-                    if ($subJournal->normal_balance_id == $subBudgetItem->normal_balance_id) {
-                        $total += $subJournal->amount;
+            foreach ($subJournals as $subJournal) {
+                if ($subJournal->normal_balance_id == $subBudgetItem->normal_balance_id) {
+                    $total += $subJournal->amount;
                     } else {
                         $total -= $subJournal->amount;
                     }
                 }
 
+                // Get total before this request year
+                $subJournalBefore = $subJournalBefore1->where('sub_budget_item_id', $subBudgetItem->id);
+
+                foreach ($subJournalBefore as $subJournalBefore) {
+                    if ($subJournalBefore->normal_balance_id == $subBudgetItem->normal_balance_id) {
+                        $totalBefore += $subJournalBefore->amount;
+                    } else {
+                        $totalBefore -= $subJournalBefore->amount;
+                    }
+                }
+
                 $tmp['total'] = $total;
+                $tmp['total_before'] = $totalBefore;
 
                 $sbi[] = $tmp;
             }
@@ -80,12 +89,14 @@ class ReportController extends Controller
             foreach ($budgetItems as $budgetItem) {
                 $tmp = [];
                 $total = $sbi->where('budget_item_id', $budgetItem->id)->sum('total');
+                $totalBefore = $sbi->where('budget_item_id', $budgetItem->id)->sum('total_before');
 
                 $tmp['budget_item_group_id'] = $budgetItem->budget_item_group_id;
                 $tmp['budget_item_id'] = $budgetItem->id;
                 $tmp['sub_budget_item_id'] = $budgetItem->id;
                 $tmp['name'] = $budgetItem->name;
                 $tmp['total'] = $total;
+                $tmp['total_before'] = $totalBefore;
                 $bi[] = $tmp;
             }
 
@@ -94,10 +105,12 @@ class ReportController extends Controller
             foreach ($budgetItemGroups as $budgetItemGroup) {
                 $tmp = [];
                 $total = $sbi->where('budget_item_group_id', $budgetItemGroup->id)->sum('total');
+                $totalBefore = $sbi->where('budget_item_group_id', $budgetItemGroup->id)->sum('total_before');
 
                 $tmp['budget_item_group_id'] = $budgetItemGroup->id;
                 $tmp['name'] = $budgetItemGroup->name;
                 $tmp['total'] = $total;
+                $tmp['total_before'] = $totalBefore;
 
                 $big[] = $tmp;
             }
@@ -105,7 +118,6 @@ class ReportController extends Controller
             $big = collect($big);
 
             $report = [];
-
             foreach ($big as $data) {
                 $tmpBis = $bi->where('budget_item_group_id', $data['budget_item_group_id']);
 
@@ -119,12 +131,11 @@ class ReportController extends Controller
 
                 $report[] = $data;
             }
-            $balances = $report; 
-
+            $balances = $report;
         }else{
             $balances = [];
         }
-        
+
         $options = self::staticOptions();
 
         return view('pages.BalanceSheetIndex', compact('balances', 'options'));
@@ -132,30 +143,25 @@ class ReportController extends Controller
 
     public function incomeStatement(Request $request)
     {
-        if(request('branch_id')||request('journal_category_id')||request('date_start')||request('date_finish')){
+        if($request->branch_id||$request->journal_category_id||$request->year){
+            $query = self::getSubJournals();
 
-            $query = SubJournal::select(
-                                    'sub_journals.id',
-                                    'sub_journals.project_id',
-                                    'sub_journals.sub_budget_item_id',
-                                    'sub_journals.normal_balance_id',
-                                    'sub_journals.amount',
-                                    'journals.branch_id',
-                                    'journals.created'
-                                    )
-                                ->leftJoin('journals', 'journals.id', 'sub_journals.journal_id');
+            $query2 = self::getSubJournals();
 
-            if ($request->branch_id)
+            if ($request->branch_id){
                 $query->where('journals.branch_id', $request->branch_id);
+                $query2->where('journals.branch_id', $request->branch_id);
+            }
 
-            if ($request->project_id)
+            if ($request->project_id){
                 $query->where('sub_journals.project_id', $request->project_id);
+                $query2->where('sub_journals.project_id', $request->project_id);
+            }
 
-            if ($request->date_start)
-                $query->whereDate('journals.created', '>=', new \DateTime($request->date_start));
-
-            if ($request->date_finish)
-                $query->whereDate('journals.created', '<=', new \DateTime($request->date_finish));
+            if ($request->year){
+                $query->whereYear('journals.created', $request->year);
+                $query2->whereYear('journals.created', $request->year - 1);
+            }
 
             $reportIncomeStatementSheet = Category::where('slug', 'laba-rugi')->first();
             $subBudgetItems = SubBudgetItem::where('report_category_id', $reportIncomeStatementSheet->id)->get();
@@ -168,9 +174,12 @@ class ReportController extends Controller
 
             $subJournals1 = $query->get();
 
+            $subJournalBefore1 = $query2->get();
+
             foreach ($subBudgetItems as $subBudgetItem) {
                 $tmp = [];
                 $total = 0.00;
+                $totalBefore = 0.00;
 
                 $tmp['budget_item_group_id'] = $subBudgetItem->budget_item_group_id;
                 $tmp['budget_item_id'] = $subBudgetItem->budget_item_id;
@@ -179,14 +188,26 @@ class ReportController extends Controller
                 $subJournals =  $subJournals1->where('sub_budget_item_id', $subBudgetItem->id);
 
                 foreach ($subJournals as $subJournal) {
-                    if ($subJournal->normal_balance_id == $subBudgetItem->normal_balance_id) {
+                if ($subJournal->normal_balance_id == $subBudgetItem->normal_balance_id) {
                     $total += $subJournal->amount;
                     } else {
-                    $total -= $subJournal->amount;
+                        $total -= $subJournal->amount;
+                    }
+                }
+
+                // Get total before this request year
+                $subJournalBefore = $subJournalBefore1->where('sub_budget_item_id', $subBudgetItem->id);
+
+                foreach ($subJournalBefore as $subJournalBefore) {
+                    if ($subJournalBefore->normal_balance_id == $subBudgetItem->normal_balance_id) {
+                        $totalBefore += $subJournalBefore->amount;
+                    } else {
+                        $totalBefore -= $subJournalBefore->amount;
                     }
                 }
 
                 $tmp['total'] = $total;
+                $tmp['total_before'] = $totalBefore;
 
                 $sbi[] = $tmp;
             }
@@ -196,12 +217,14 @@ class ReportController extends Controller
             foreach ($budgetItems as $budgetItem) {
                 $tmp = [];
                 $total = $sbi->where('budget_item_id', $budgetItem->id)->sum('total');
+                $totalBefore = $sbi->where('budget_item_id', $budgetItem->id)->sum('total_before');
 
                 $tmp['budget_item_group_id'] = $budgetItem->budget_item_group_id;
                 $tmp['budget_item_id'] = $budgetItem->id;
                 $tmp['sub_budget_item_id'] = $budgetItem->id;
                 $tmp['name'] = $budgetItem->name;
                 $tmp['total'] = $total;
+                $tmp['total_before'] = $totalBefore;
                 $bi[] = $tmp;
             }
 
@@ -210,10 +233,12 @@ class ReportController extends Controller
             foreach ($budgetItemGroups as $budgetItemGroup) {
                 $tmp = [];
                 $total = $sbi->where('budget_item_group_id', $budgetItemGroup->id)->sum('total');
+                $totalBefore = $sbi->where('budget_item_group_id', $budgetItemGroup->id)->sum('total_before');
 
                 $tmp['budget_item_group_id'] = $budgetItemGroup->id;
                 $tmp['name'] = $budgetItemGroup->name;
                 $tmp['total'] = $total;
+                $tmp['total_before'] = $totalBefore;
 
                 $big[] = $tmp;
             }
@@ -221,7 +246,6 @@ class ReportController extends Controller
             $big = collect($big);
 
             $report = [];
-
             foreach ($big as $data) {
                 $tmpBis = $bi->where('budget_item_group_id', $data['budget_item_group_id']);
 
@@ -235,18 +259,15 @@ class ReportController extends Controller
 
                 $report[] = $data;
             }
-
             $incomes = $report;
-
         }else{
             $incomes = [];
         }
-
         $options = self::staticOptions();
 
         return view('pages.IncomeStatementIndex', compact('incomes', 'options'));
     }
-    
+
     public static function staticOptions()
     {
         $branches = Branch::all();
@@ -278,5 +299,20 @@ class ReportController extends Controller
         ];
 
         return $options;
+    }
+    public static function getSubJournals()
+    {
+        $query = SubJournal::select(
+                'sub_journals.id',
+                'sub_journals.project_id',
+                'sub_journals.sub_budget_item_id',
+                'sub_journals.normal_balance_id',
+                'sub_journals.amount',
+                'journals.branch_id',
+                'journals.created'
+                )
+            ->leftJoin('journals', 'journals.id', 'sub_journals.journal_id');
+
+        return $query;
     }
 }
