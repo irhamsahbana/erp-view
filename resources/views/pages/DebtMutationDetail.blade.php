@@ -119,7 +119,6 @@
     <meta name="data-project" content={{ $data->project_id ?? null }}>
     <meta name="data-vendor" content={{ $data->vendor_id ?? null }}>
 
-
     <meta name="url-branch" content="{{ route('branch.index') }}">
     <meta name="url-project" content="{{ route('project.index') }}">
     <meta name="url-vendor" content="{{ route('vendor.index') }}">
