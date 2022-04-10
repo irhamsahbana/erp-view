@@ -75,12 +75,12 @@
                                                 onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
                                                 title="Hapus"><i class="fas fa-trash-alt"></i></button>
                                         </form>
-                                        @endif
-                                        <a
+                                        {{-- <a
                                             type="button"
                                             class="btn btn-warning"
                                             title="Edit"
-                                            href="{{ route('budget.show', $data->id) }}"><i class="fas fa-pencil-alt"></i></a>
+                                            href="{{ route('budget.show', $data->id) }}"><i class="fas fa-pencil-alt"></i></a> --}}
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

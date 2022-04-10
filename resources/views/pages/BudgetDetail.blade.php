@@ -40,7 +40,7 @@
                                 :id="'in_branch_id'"
                                 :name="'branch_id'"
                                 :options="$options['branches']"
-                                :value="app('request')->input('branch_id') ?? $data->branch_id"
+                                :value="$data->branch_id"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Proyek'"
@@ -48,7 +48,6 @@
                                 :col="6"
                                 :id="'in_project_id'"
                                 :name="'project_id'"
-                                :value="app('request')->input('project_id') ?? $data->project_id"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Kelompok Mata Anggaran'"
@@ -57,7 +56,7 @@
                                 :id="'budget_item_group_id_in'"
                                 :name="'budget_item_group_id'"
                                 :options="$options['groups']"
-                                :value="app('request')->input('budget_item_group_id') ?? $data->budget_item_group_id"
+                                :value="$data->budget_item_group_id"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Mata Anggaran'"
@@ -65,7 +64,6 @@
                                 :col="6"
                                 :id="'budget_item_id_in'"
                                 :name="'budget_item_id'"
-                                :value="app('request')->input('budget_item_id') ?? $data->budget_item_id"
                                 :required="true"></x-in-select>
                             <x-in-select
                                 :label="'Sub Mata Anggaran'"
@@ -73,7 +71,6 @@
                                 :col="4"
                                 :id="'sub_budget_item_id_in'"
                                 :name="'sub_budget_item_id'"
-                                :value="app('request')->input('sub_budget_item_id') ?? $data->sub_budget_item_id"
                                 :required="true"></x-in-select>
                             <x-in-text
                                 :type="'number'"
@@ -168,6 +165,7 @@
                         }
                     }
                 });
+
             });
 
             if (selectBranchIn.val() != '')
@@ -177,14 +175,13 @@
             selectBudgetItemGroup.on('change', function () {
                 let groupId = $(this).val();
                 let dataBudget = $('meta[name=data-bi]').attr('content');
-                // let dataSubBudget = $('meta[name=data-sbi]').attr('content');
+
+                selectSubBudgetItem.empty();
+                selectSubBudgetItem.append('<option value="">Pilih Sub Mata Anggaran</option>');
 
                 if (groupId == '') {
                     selectBudgetItem.empty();
                     selectBudgetItem.append('<option value="">Pilih Mata Anggaran</option>');
-
-                    selectSubBudgetItem.empty();
-                    selectSubBudgetItem.append('<option value="">Pilih Sub Mata Anggaran</option>');
 
                     return;
                 }
@@ -209,12 +206,12 @@
                             placeholder: 'Pilih Mata Anggaran',
                             allowClear: true,
                         });
-
                         if (dataBudget != '') {
                             selectBudgetItem.val(dataBudget).trigger('change');
                         }
                     }
                 });
+
             });
 
             selectBudgetItem.on('change', function(){
@@ -248,12 +245,12 @@
                             placeholder: 'Pilih Sub Mata Anggaran',
                             allowClear: true,
                         });
-
-                        if (dataSubBudget != '') {
-                            selectSubBudgetItem.val(dataSubBudget).trigger('change');
-                        }
                     }
                 });
+
+                if (dataSubBudget != '') {
+                    selectSubBudgetItem.val(dataSubBudget).trigger('change');
+                }
             });
 
             if (selectBranchIn.val() != '')
