@@ -48,18 +48,10 @@ class BudgetController extends Controller
         $request->validate([
             'branch_id' => ['required_without:id', 'exists:branches,id'],
             'project_id' => ['required_without:id', 'exists:projects,id'],
-            'budget_item_group_id' =>
-            [
-                'required_without:id',
-                Rule::exists('budgets', 'id'),
-            ],
-            'budget_item_id' => [
-                'required_without:id',
-                Rule::exists('budgets', 'id'),
-            ],
+            'budget_item_group_id' => ['required'],
+            'budget_item_id' => ['required'],
             'sub_budget_item_id' => [
-                'required_without:id',
-                Rule::exists('budgets', 'id'),
+                'required',
                 Rule::unique('budgets')->where(function ($query) use ($request) {
                     $query->where('created', $request->created)->where('project_id', $request->project_id);
                 }),
@@ -129,26 +121,16 @@ class BudgetController extends Controller
         $budget = $request->validate([
             'branch_id' => ['required', 'exists:branches,id'],
             'project_id' => ['required', 'exists:projects,id'],
-            'budget_item_group_id' => [
-                'required',
-                Rule::exists('budgets', 'id'),
-            ],
-            'budget_item_id' => [
-                'required',
-                Rule::exists('budgets', 'id'),
-            ],
-            'sub_budget_item_id' => [
-                'required',
-                Rule::exists('budgets', 'id'),
-                $unique,
-            ],
+            'budget_item_group_id' => ['required'],
+            'budget_item_id' => ['required'],
+            'sub_budget_item_id' => ['required', $unique],
             'amount' => ['required', 'numeric'],
             'created' => ['required', 'date_format:Y'],
         ]);
 
         Model::where('id', $id)->update($budget);
 
-        return redirect()->back()->with('f-msg', 'Anggaran berhasil diubah.');
+        return redirect()->route('budget.index')->with('f-msg', 'Anggaran berhasil diubah.');
     }
 
     /**
