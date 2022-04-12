@@ -8,6 +8,7 @@ use App\Http\Controllers\{
     CategoryController,
     AuthController,
     BranchController,
+    BudgetController,
     FuelController,
     UserController,
     ProjectController,
@@ -223,6 +224,14 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('pembelian-detail/ubah-harga/{id}', [PurchaseDetailController::class, 'update'])->name('purchase-detail.update-price');
         Route::delete('pembelian-detail/{id}', [PurchaseDetailController::class, 'destroy'])->name('purchase-detail.destroy');
         Route::get('pembelian-detail/cetak/{id}', [PurchaseDetailController::class, 'print'])->name('purchase-detail.print');
+    });
+    Route::group(['prefix' => 'anggaran'], function() {
+        Route::get('anggaran/{id}', [BudgetController::class, 'show'])->name('budget.show');
+        Route::get('anggaran', [BudgetController::class, 'index'])->name('budget.index');
+        Route::post('anggaran', [BudgetController::class, 'store'])->name('budget.store');
+        Route::put('anggaran/{id}', [BudgetController::class, 'changeIsOpen'])->name('budget.change-status');
+        Route::put('anggaran-ubah/{id}', [BudgetController::class, 'update'])->name('budget.update');
+        Route::delete('anggaran/{id}', [BudgetController::class, 'destroy'])->name('budget.destroy');
     });
 });
 

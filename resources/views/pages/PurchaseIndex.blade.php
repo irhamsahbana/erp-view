@@ -77,7 +77,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->created }}</td>
-                                    <td>{{ $data->ref_no }}</td>, 'Status Close'
+                                    <td>{{ $data->ref_no }}</td>
                                     <td>{{ $data->vendor->name }}</td>
                                     <td>{{ $data->user }}</td>
                                     <td>{{ 'Rp. ' . number_format($data->total, 2) }}</td>

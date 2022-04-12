@@ -5,30 +5,63 @@
     <div class="invoice-box">
         <table cellpadding="0" cellspacing="0">
             <tr class="top">
-                <td colspan="4">
+                <td colspan="1">
                     <table>
                         <tr>
                             <td><b>Pembelian</b></td>
                         </tr>
                         <tr>
                             <td>
-                                Ref #: {{ $purchase->ref_no }}<br />
-                                Dicetak: {{ date('d/m/Y') }}<br />
+                                Ref#<br />
+                                Dicetak<br />
                             </td>
                         </tr>
                     </table>
                 </td>
-            </tr>
-
-            <tr class="information">
-                <td colspan="4">
+                <td colspan="1">
                     <table>
                         <tr>
+                            <td><b>&nbsp;</b></td>
+                        </tr>
+                        <tr>
                             <td>
-                                Cabang: {{ $purchase->branch->name }}<br />
-                                Tanggal: {{ $purchase->created }}<br />
-                                Vendor: {{ $purchase->vendor->name }}<br />
-                                Pemesan: {{ $purchase->user }}<br />
+                                :{{ $purchase->ref_no }}<br />
+                                :{{ date('d/m/Y') }}<br />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td colspan="1"></td>
+                <td colspan="1">
+                    <table>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                            <td>
+                                Cabang <br />
+                                Tanggal<br />
+                                Vendor<br />
+                                Pemesan <br/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td colspan="1">
+                    <table>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                            <td>
+                                : {{ $purchase->branch->name }}<br />
+                                : {{ $purchase->created }}<br />
+                                : {{ $purchase->vendor->name }}<br />
+                                : {{ $purchase->user }}<br />
                             </td>
                         </tr>
                     </table>

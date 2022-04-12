@@ -140,11 +140,22 @@ $breadcrumbList = [
         @method('POST')
 
         <x-row>
-            <x-in-select :label="'Cabang'" :placeholder="'Pilih Cabang'" :col="4" :id="'in_branch_id'"
-                :name="'branch_id'" :options="$options['branches']" :value="old('branch_id')" :required="true">
-            </x-in-select>
-            <x-in-select :label="'Proyek'" :placeholder="'Pilih Proyek'" :col="4" :id="'in_project_id'"
-                :name="'project_id'" :required="true"></x-in-select>
+            <x-in-select
+                :label="'Cabang'"
+                :placeholder="'Pilih Cabang'"
+                :col="4"
+                :id="'in_branch_id'"
+                :name="'branch_id'"
+                :options="$options['branches']"
+                :value="old('branch_id')"
+                :required="true"></x-in-select>
+            <x-in-select
+                :label="'Proyek'"
+                :placeholder="'Pilih Proyek'"
+                :col="4"
+                :id="'in_project_id'"
+                :name="'project_id'"
+                :required="true"></x-in-select>
             <x-in-select :label="'Vendor'" :placeholder="'Pilih Vendor'" :col="4" :id="'in_vendor_id'"
                 :name="'vendor_id'" :required="true"></x-in-select>
             <x-in-select :label="'Jenis Mutasi'" :placeholder="'Pilih Jenis Mutasi'" :col="6" :name="'type'"

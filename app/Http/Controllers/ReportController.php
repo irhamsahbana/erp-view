@@ -18,7 +18,7 @@ class ReportController extends Controller
     {
         if($request->branch_id||$request->journal_category_id||$request->year){
             $query = self::getSubJournals();
-        
+
             $query2 = self::getSubJournals();
 
             if ($request->branch_id){
@@ -133,7 +133,7 @@ class ReportController extends Controller
         }else{
             $balances = [];
         }
-        
+
         $options = self::staticOptions();
 
         return view('pages.BalanceSheetIndex', compact('balances', 'options'));
@@ -143,7 +143,7 @@ class ReportController extends Controller
     {
         if($request->branch_id||$request->journal_category_id||$request->year){
             $query = self::getSubJournals();
-        
+
             $query2 = self::getSubJournals();
 
             if ($request->branch_id){
@@ -184,7 +184,7 @@ class ReportController extends Controller
                 $tmp['name'] = $subBudgetItem->name;
 
                 $subJournals =  $subJournals1->where('sub_budget_item_id', $subBudgetItem->id);
-            
+
                 foreach ($subJournals as $subJournal) {
                 if ($subJournal->normal_balance_id == $subBudgetItem->normal_balance_id) {
                     $total += $subJournal->amount;
@@ -192,7 +192,7 @@ class ReportController extends Controller
                         $total -= $subJournal->amount;
                     }
                 }
-                
+
                 // Get total before this request year
                 $subJournalBefore = $subJournalBefore1->where('sub_budget_item_id', $subBudgetItem->id);
 
@@ -265,6 +265,7 @@ class ReportController extends Controller
 
         return view('pages.IncomeStatementIndex', compact('incomes', 'options'));
     }
+
     public static function staticOptions()
     {
         $branches = Branch::all();

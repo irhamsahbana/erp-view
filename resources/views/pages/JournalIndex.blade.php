@@ -91,7 +91,7 @@ $breadcrumbList = [
                     @endif
                 </x-col>
                 <x-col>
-                    <x-table :thead="['Tanggal', 'Cabang', 'Kategori', 'Referensi', 'Catatan', 'Status', 'Aksi']">
+                    <x-table :thead="['Tanggal', 'Cabang', 'Kategori', 'Referensi', 'Catatan', 'Dibuat Oleh', 'Status', 'Aksi']">
 
                             @foreach ($datas as $journal)
                             <tr>
@@ -101,6 +101,7 @@ $breadcrumbList = [
                                 <td>{{ $journal->category->label }}</td>
                                 <td>{{ $journal->ref_no }}</td>
                                 <td>{{ $journal->notes }}</td>
+                                <td>{{ $journal->user->username}}</td>
                                 <td>
                                     @if ( $journal->is_open == 0)
                                     <button class="badge bg-danger border-0">Nonaktif</button>

@@ -1,23 +1,23 @@
 @extends('App')
 
 @php
-$breadcrumbList = [
-[
-'name' => 'Home',
-'href' => '/'
-],
-[
-'name' => 'Neraca'
-],
-];
-
-$dateNow = date("Y");
-for($i = $dateNow + 5; $i>= 1980; $i--){
-    $year[] = [
-        'text' => $i,
-        'value' => $i,
+    $breadcrumbList = [
+        [
+            'name' => 'Home',
+            'href' => '/'
+        ],
+        [
+            'name' => 'Neraca'
+        ],
     ];
-}
+
+    $dateNow = date("Y");
+    for($i = $dateNow + 5; $i>= 1980; $i--){
+        $year[] = [
+            'text' => $i,
+            'value' => $i,
+        ];
+    }
 @endphp
 
 @section('content-header', 'Laba Rugi')
@@ -37,28 +37,28 @@ for($i = $dateNow + 5; $i>= 1980; $i--){
         <x-card-collapsible :title="'Pencarian'" :collapse="false">
             <form style="width: 100%">
                 <x-row>
-                    <x-in-select 
-                        :label="'Cabang'" 
-                        :placeholder="'Pilih Cabang'" 
-                        :col="4" 
+                    <x-in-select
+                        :label="'Cabang'"
+                        :placeholder="'Pilih Cabang'"
+                        :col="4"
                         :name="'branch_id'"
-                        :options="$options['branches']" 
+                        :options="$options['branches']"
                         :value="app('request')->input('branch_id') ?? null"
                         :required="true">
                     </x-in-select>
 
-                    <x-in-select 
-                        :label="'Proyek'" 
-                        :placeholder="'Pilih Proyek'" 
-                        :col="4" 
+                    <x-in-select
+                        :label="'Proyek'"
+                        :placeholder="'Pilih Proyek'"
+                        :col="4"
                         :name="'project_id'"
                         :required="true">
                     </x-in-select>
 
-                    <x-in-select 
-                        :label="'Tahun'" 
-                        :placeholder="'Pilih Tahun'" 
-                        :col="4" 
+                    <x-in-select
+                        :label="'Tahun'"
+                        :placeholder="'Pilih Tahun'"
+                        :col="4"
                         :name="'year'"
                         :options="$year"
                         :value="app('request')->input('year') ?? null"
@@ -79,19 +79,19 @@ for($i = $dateNow + 5; $i>= 1980; $i--){
             <x-table :thead="['Data Laba/Rugi', 'Anggaran',  'Realisasi '. request('year') ?? '', 'Realisasi '. request('year') - 1 ?? 'Tahun Sebelumnya', 'Selisih']">
                 @foreach ($incomes as $income)
                     @if ($income['name'] == 'Pendapatan')
-                    <?php  
+                    <?php
                         $PendapatanTotal = $income['total'];
                         $PendapatanTotalBefore = $income['total_before'];
                     ?>
                     @endif
                     @if ($income['name'] == 'HPP')
-                    <?php  
+                    <?php
                         $HPPTotal = $income['total'];
-                        $HPPTotalBefore = $income['total_before']  
+                        $HPPTotalBefore = $income['total_before']
                     ?>
                     @endif
                     @if ($income['name'] == 'Biaya')
-                    <?php 
+                    <?php
                         $BiayaTotal = $income['total'];
                         $BiayaTotalBefore = $income['total_before'];
                     ?>

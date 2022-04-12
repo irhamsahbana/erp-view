@@ -42,9 +42,6 @@ class AlterRitBalancesTable extends Migration
             $table->dropForeign(['project_id']);
             $table->dropIndex(['project_id']);
 
-            $table->dropForeign(['material_mutation_id']);
-            $table->dropIndex(['material_mutation_id']);
-
             $table->dropForeign(['driver_id']);
             $table->dropIndex(['driver_id']);
         });
