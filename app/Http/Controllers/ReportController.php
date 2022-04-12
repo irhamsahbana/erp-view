@@ -57,19 +57,17 @@ class ReportController extends Controller
                 $tmp['budget_item_id'] = $subBudgetItem->budget_item_id;
                 $tmp['name'] = $subBudgetItem->name;
 
-            $subJournals =  $subJournals1->where('sub_budget_item_id', $subBudgetItem->id);
-            
-            foreach ($subJournals as $subJournal) {
-                if ($subJournal->normal_balance_id == $subBudgetItem->normal_balance_id) {
-                    $total += $subJournal->amount;
+                $subJournals =  $subJournals1->where('sub_budget_item_id', $subBudgetItem->id);
+                foreach ($subJournals as $subJournal) {
+                    if ($subJournal->normal_balance_id == $subBudgetItem->normal_balance_id) {
+                        $total += $subJournal->amount;
                     } else {
                         $total -= $subJournal->amount;
                     }
                 }
-                
+                    
                 // Get total before this request year
                 $subJournalBefore = $subJournalBefore1->where('sub_budget_item_id', $subBudgetItem->id);
-
                 foreach ($subJournalBefore as $subJournalBefore) {
                     if ($subJournalBefore->normal_balance_id == $subBudgetItem->normal_balance_id) {
                         $totalBefore += $subJournalBefore->amount;
