@@ -13,14 +13,42 @@ use App\Models\Project;
 
 class BudgetController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function __construct()
+    {
+        $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
+    }
+
+    public function index(Request $request)
     {
         $query = Model::select('*');
+
+        if($request->branch_id){
+            if(!in_array(Auth::user()->role, self::$fullAccess)){
+                $query->where('branch_id', Auth::user()->branch_id);
+            }else{
+                $query->where('branch_id', $request->branch_id);
+            }
+        }
+
+        if($request->project_id){
+            $query->where('project_id', $request->project_id);
+        }
+
+        if($request->date_start){
+            $query->where('created', '>=', $request->date_start);
+        }
+
+        if($request->date_finish){
+            $query->where('created', '<=', $request->date_finish);
+        }
+
+        if($request->ajax()){
+            $datas = $query->get();
+
+            return response()->json([
+                'datas' => $datas
+            ]);
+        }
 
         $datas = $query->paginate(40)->withQueryString();
         $options = self::staticOptions();
