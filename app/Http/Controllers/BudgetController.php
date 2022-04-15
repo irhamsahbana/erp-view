@@ -13,14 +13,42 @@ use App\Models\Project;
 
 class BudgetController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function __construct()
+    {
+        $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
+    }
+
+    public function index(Request $request)
     {
         $query = Model::select('*');
+
+        if($request->branch_id){
+            if(!in_array(Auth::user()->role, self::$fullAccess)){
+                $query->where('branch_id', Auth::user()->branch_id);
+            }else{
+                $query->where('branch_id', $request->branch_id);
+            }
+        }
+
+        if($request->project_id){
+            $query->where('project_id', $request->project_id);
+        }
+
+        if($request->date_start){
+            $query->where('created', '>=', $request->date_start);
+        }
+
+        if($request->date_finish){
+            $query->where('created', '<=', $request->date_finish);
+        }
+
+        if($request->ajax()){
+            $datas = $query->get();
+
+            return response()->json([
+                'datas' => $datas
+            ]);
+        }
 
         $datas = $query->paginate(40)->withQueryString();
         $options = self::staticOptions();
@@ -48,18 +76,10 @@ class BudgetController extends Controller
         $request->validate([
             'branch_id' => ['required_without:id', 'exists:branches,id'],
             'project_id' => ['required_without:id', 'exists:projects,id'],
-            'budget_item_group_id' =>
-            [
-                'required_without:id',
-                Rule::exists('budgets', 'id'),
-            ],
-            'budget_item_id' => [
-                'required_without:id',
-                Rule::exists('budgets', 'id'),
-            ],
+            'budget_item_group_id' => ['required'],
+            'budget_item_id' => ['required'],
             'sub_budget_item_id' => [
-                'required_without:id',
-                Rule::exists('budgets', 'id'),
+                'required',
                 Rule::unique('budgets')->where(function ($query) use ($request) {
                     $query->where('created', $request->created)->where('project_id', $request->project_id);
                 }),
@@ -129,26 +149,16 @@ class BudgetController extends Controller
         $budget = $request->validate([
             'branch_id' => ['required', 'exists:branches,id'],
             'project_id' => ['required', 'exists:projects,id'],
-            'budget_item_group_id' => [
-                'required',
-                Rule::exists('budgets', 'id'),
-            ],
-            'budget_item_id' => [
-                'required',
-                Rule::exists('budgets', 'id'),
-            ],
-            'sub_budget_item_id' => [
-                'required',
-                Rule::exists('budgets', 'id'),
-                $unique,
-            ],
+            'budget_item_group_id' => ['required'],
+            'budget_item_id' => ['required'],
+            'sub_budget_item_id' => ['required', $unique],
             'amount' => ['required', 'numeric'],
             'created' => ['required', 'date_format:Y'],
         ]);
 
         Model::where('id', $id)->update($budget);
 
-        return redirect()->back()->with('f-msg', 'Anggaran berhasil diubah.');
+        return redirect()->route('budget.index')->with('f-msg', 'Anggaran berhasil diubah.');
     }
 
     /**

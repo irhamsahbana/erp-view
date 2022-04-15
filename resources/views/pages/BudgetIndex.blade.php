@@ -26,6 +26,47 @@
 @section('content')
     <x-content>
         <x-row>
+            <x-card-collapsible :title="'Pencarian'" :collapse="false">
+                <form style="width: 100%">
+                    <x-row>
+                        <x-in-select
+                            :label="'Cabang'"
+                            :placeholder="'Pilih Cabang'"
+                            :col="6"
+                            :name="'branch_id'"
+                            :options="$options['branches']"
+                            :value="app('request')->input('branch_id') ?? null"
+                            :required="false"></x-in-select>
+                        <x-in-select
+                            :label="'Project'"
+                            :placeholder="'Pilih Project'"
+                            :col="6"
+                            :name="'project_id'"
+                            :value="app('request')->input('project_id') ?? null"
+                            :required="false"></x-in-select>
+                        <x-in-select
+                            :type="'number'"
+                            :label="'Tahun Mulai'"
+                            :col="6"
+                            :name="'date_start'"
+                            :placeholder="'Pilih Tahun Mulai'"
+                            :options="$options['years']"
+                            :value="app('request')->input('date_start') ?? null"></x-in-select>
+                        <x-in-select
+                            :type="'number'"
+                            :label="'Tahun Selesai'"
+                            :col="6"
+                            :name="'date_finish'"
+                            :placeholder="'Pilih Tahun Selesai'"
+                            :options="$options['years']"
+                            :value="app('request')->input('date_finish') ?? null"></x-in-select>
+                        <x-col class="text-right">
+                            <a type="button" class="btn btn-default" href="{{ route('budget.index') }}">reset</a>
+                            <button type="submit" class="btn btn-primary">Cari</button>
+                        </x-col>
+                    </x-row>
+                </form>
+            </x-card-collapsible>
             <x-card-collapsible>
                 <x-row>
                     <x-col class="mb-3">
@@ -75,12 +116,12 @@
                                                 onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
                                                 title="Hapus"><i class="fas fa-trash-alt"></i></button>
                                         </form>
-                                        @endif
-                                        <a
+                                        {{-- <a
                                             type="button"
                                             class="btn btn-warning"
                                             title="Edit"
-                                            href="{{ route('budget.show', $data->id) }}"><i class="fas fa-pencil-alt"></i></a>
+                                            href="{{ route('budget.show', $data->id) }}"><i class="fas fa-pencil-alt"></i></a> --}}
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -170,6 +211,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-branch" content="{{ Auth::user()->branch_id ?? null }}">
 
+    <!-- Searching -->
+    <meta name="search-branch" content="{{ app('request')->input('branch_id') ?? null }}">
+    <meta name="search-project" content="{{ app('request')->input('project_id') ?? null }}">
+    <meta name="search-date-start" content="{{ app('request')->input('date_start') ?? null }}">
+    <meta name="search-date-finish" content="{{ app('request')->input('date_finish') ?? null }}">
+
+
     <meta name="search-project" content="{{ app('request')->input('project_id') ?? null }}">
 
     <meta name="old-project" content="{{ old('project_id') ?? null }}">
@@ -180,6 +228,57 @@
     <meta name="url-sbi" content="{{ route('sbi.index') }}">
 
     <script>
+        //  searching
+        $(function(){
+            let selectBranch = $('#branch_id');
+            let selectProject = $('#project_id');
+            let selectDateStart = $('#date_start');
+            let selectDateFinish = $('#date_finish');
+
+            selectBranch.on('change', function(){
+                let branchId = $(this).val();
+
+                let searchProject = $('meta[name="search-project"]').attr('content');
+
+                if (branchId == '') {
+                    selectProject.empty();
+                    selectProject.append('<option value="">Pilih Project</option>');
+
+                    return;
+                }
+
+                // get project
+                $.ajax({
+                    url: $('meta[name="url-project"]').attr('content'),
+                    type: "GET",
+                    data: {
+                        branch_id : branchId
+                    },
+                    success: function(data){
+                        selectProject.empty();
+                        selectProject.append('<option value="">Pilih Project</option>');
+
+                        data.datas.forEach(function(item){
+                            selectProject.append(`<option value="${item.id}">${item.name}</option>`);
+                        });
+
+                        selectProject.select2({
+                            theme: 'bootstrap4',
+                            placeholder: 'Pilih Project',
+                            allowClear: true
+                        });
+
+                        selectProject.val(searchProject).trigger('change');
+                    }
+                });
+            });
+
+            if(selectBranch.val() != ''){
+                selectBranch.trigger('change');
+            }
+        });
+
+
        $(function () {
             $('#add-modal').on('hidden.bs.modal', function() {
                 $('#add-form').trigger('reset');
