@@ -57,10 +57,20 @@ class JournalController extends Controller
             ]);
         }
 
+        $kredit = Category::where('slug', 'kredit')->first();
+
+        // foreach ($subJournal as $sub) {
+        //     if($sub->normal_balance_id == $kredit->id){
+        //         $totalSub -= $sub->amount;
+        //     }else{
+        //         $totalSub += $sub->amount;
+        //     }
+        // }
+
         $datas = $query->paginate(40);
         $options = self::staticOptions();
 
-        return view('pages.JournalIndex', compact('datas', 'options'));
+        return view('pages.JournalIndex', compact('datas', 'options', 'kredit'));
     }
 
     public function create()
@@ -229,6 +239,27 @@ class JournalController extends Controller
         }
     }
 
+    public function updateSubJournal(Request $request)
+    {
+        $subJournal = $request->validate([
+            'budget_item_group_id' => 'required',
+            'budget_item_id' => 'required',
+            'sub_budget_item_id' => 'required',
+            'project_id' => 'required',
+            'normal_balance_id' => 'required',
+            'amount' => 'required|numeric',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            SubJournal::where('id', $request->id_sub_journal)->update($subJournal);
+            DB::commit();
+            return redirect()->route('detail.journal', ['journal' => $request->journal_id_edit])->with('success', 'Data berhasil diubah');
+        } catch (Error $e) {
+            DB::rollBack();
+            dd($e);
+        }
+    }
     public function deleteSubJournal(Request $request)
     {
         DB::beginTransaction();

@@ -21,4 +21,8 @@ class Journals extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function subJournal()
+    {
+        return $this->hasMany(SubJournal::class, 'journal_id');
+    }
 }

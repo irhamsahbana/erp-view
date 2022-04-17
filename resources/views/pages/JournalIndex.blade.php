@@ -91,7 +91,7 @@ $breadcrumbList = [
                     @endif
                 </x-col>
                 <x-col>
-                    <x-table :thead="['Tanggal', 'Cabang', 'Kategori', 'Referensi', 'Catatan', 'Dibuat Oleh', 'Aksi']">
+                    <x-table :thead="['Tanggal', 'Cabang', 'Kategori', 'Referensi', 'Catatan', 'Dibuat Oleh', 'Selisih Debit dan Kredit', 'Aksi']">
 
                             @foreach ($datas as $journal)
                             <tr>
@@ -102,6 +102,21 @@ $breadcrumbList = [
                                 <td>{{ $journal->ref_no }}</td>
                                 <td>{{ $journal->notes }}</td>
                                 <td>{{ $journal->user->username}}</td>
+                                    <?php 
+                                        $totalSub = 0;    
+                                    ?>
+                                    @foreach ($journal->subJournal as $sub)
+                                        <?php 
+                                            if($sub->normal_balance_id == $kredit->id){
+                                                $totalSub -= $sub->amount;
+                                            }else{
+                                                $totalSub += $sub->amount;
+                                            }
+                                        ?>
+                                    @endforeach
+                                <td>
+                                    {{ $totalSub }}
+                                </td>
                                 <td nowrap="nowrap">
                                     <a href="{{ route('edit.journal', ['journal' => $journal->id]) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
                                     <a href="{{ route('delete.journal', $journal->id) }}"

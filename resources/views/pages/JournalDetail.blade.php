@@ -3,24 +3,24 @@
 @php
 $breadcrumbList = [
 [
-    'name' => 'Home',
-    'href' => '/'
+'name' => 'Home',
+'href' => '/'
 ],
 [
-    'name' => 'Jurnal'
+'name' => 'Jurnal'
 ],
 ];
 @endphp
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
-    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+<link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 @endpush
 
 @section('content-header', 'Jurnal')
 
 @section('breadcrumb')
-    <x-breadcrumb :list="$breadcrumbList" />
+<x-breadcrumb :list="$breadcrumbList" />
 @endsection
 
 @section('content')
@@ -33,7 +33,7 @@ $breadcrumbList = [
                         :type="'text'" 
                         :label="'Cabang'" 
                         :col="4" 
-                        :readonly="'true'" 
+                        :readonly="'true'"
                         :value="$journal->branch->name">
                     </x-in-text>
 
@@ -41,15 +41,15 @@ $breadcrumbList = [
                         :type="'text'" 
                         :label="'Dibuat Oleh'" 
                         :col="4" 
-                        :readonly="'true'" 
+                        :readonly="'true'"
                         :value="$journal->user->username">
                     </x-in-text>
-                    
+
                     <x-in-text 
                         :type="'text'" 
                         :label="'Posisi'" 
                         :col="4" 
-                        :readonly="'true'" 
+                        :readonly="'true'"
                         :value="$journal->category->label">
                     </x-in-text>
 
@@ -65,7 +65,7 @@ $breadcrumbList = [
                         :type="'text'" 
                         :label="'Nomor Referensi'" 
                         :col="4" 
-                        :readonly="'true'" 
+                        :readonly="'true'"
                         :value="$journal->ref_no">
                     </x-in-text>
 
@@ -73,13 +73,14 @@ $breadcrumbList = [
                         :type="'text'" 
                         :label="'Status'" 
                         :col="4" 
-                        :readonly="'true'" 
+                        :readonly="'true'"
                         :value="($journal->is_open == 0) ? 'Nonaktif' : 'Aktif'">
                     </x-in-text>
 
                     <div class="col-sm-12">
                         <label for="">Catatan</label>
-                        <textarea class="form-control" name="" id="" cols="30" rows="5" readonly>{{ $journal->notes }}</textarea>
+                        <textarea class="form-control" name="" id="" cols="30" rows="5"
+                            readonly>{{ $journal->notes }}</textarea>
                     </div>
                 </div>
             </x-row>
@@ -87,14 +88,16 @@ $breadcrumbList = [
             <x-row>
                 <x-col>
                     <div class="my-3">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-modal">Tambah</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#add-modal">Tambah</button>
                     </div>
                 </x-col>
                 <x-col>
                     @if (session('success'))
-                    <div class="alert alert-primary alert-dismissible fade show" role="alert"> 
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
                         {{session('success') }}
-                        <button wire:click='resetData' type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <button wire:click='resetData' type="button" class="close" data-dismiss="alert"
+                            aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -113,7 +116,26 @@ $breadcrumbList = [
                             <td>{{ $sub->category->label }}</td>
                             <td>{{ $sub->amount }}</td>
                             <td>
-                                <a href="{{ route('delete-sub-journal', ['sub_id' => $sub->id, 'journal_id' => $journal->id]) }}" class="btn btn-danger" onclick="return confirm('apakah anda yakin ?')"><i class="fas fa-trash"></i></a>
+                                <button 
+                                    class="btn btn-warning btn-edit-sub-journal" 
+                                    data-toggle="modal" 
+                                    data-target="#edit-modal"
+                                    data-sub-journal-id="{{ $sub->id }}"
+                                    data-project-id="{{ $sub->project_id }}"
+                                    data-budget-item-group-id="{{ $sub->budget_item_group_id }}"
+                                    data-budget-item-id="{{ $sub->budget_item_id }}"
+                                    data-sub-budget-item-id="{{ $sub->sub_budget_item_id }}"
+                                    data-sub-category-id='{{ $sub->normal_balance_id }}'
+                                    data-amount="{{ $sub->amount }}"><i class="fas fa-edit"></i>
+                                </button>
+                                <a 
+                                    href="{{ route('delete-sub-journal', ['sub_id' => $sub->id, 'journal_id' => $journal->id]) }}"
+                                    class="btn btn-danger" 
+                                    onclick="return confirm('apakah anda yakin ?')">
+                                    <i
+                                        class="fas fa-trash">
+                                    </i>
+                                </a>
                             </td>
                         </tr>
                         @endforeach
@@ -156,8 +178,7 @@ $breadcrumbList = [
                                     :id="'select_budget_item_group'"
                                     :name="'budget_item_group_id'" 
                                     :options="$options['budgetItemGroups']"
-                                    :required="true" 
-                                    :col="4">
+                                    :required="true" :col="4">
                                 </x-in-select>
 
                                 <x-in-select 
@@ -203,10 +224,94 @@ $breadcrumbList = [
                                     :name="'amount'" 
                                     :required="true">
                                 </x-in-text>
-                                
+
                             </x-row>
                             <button type="submit" class="btn btn-primary float-right">Simpan</button>
                         </form>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        {{-- Modal Edit --}}
+        <div class="modal fade" id="edit-modal">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Sub Jurnal</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div id="formeditsubjournal">
+                            <form action="{{ route('edit.sub.journal') }}" class="" style="width: 100%" method="post">
+                                @csrf
+                                @method('post')
+                                <x-row>
+                                    <input type="hidden" name="journal_id_edit" value="{{ $journal->id }}">
+                                    <input type="hidden" name="id_sub_journal" id="field_input_id">
+                                    <x-in-select 
+                                        :label="'Kelompok Mata Anggaran'"
+                                        :placeholder="'Pilih Kelompok Mata Anggaran'" 
+                                        :id="'select_budget_item_group_edit'"
+                                        :name="'budget_item_group_id'"
+                                        :required="true" 
+                                        :col="4">
+                                    </x-in-select>
+    
+                                    <x-in-select 
+                                        :label="'Kelompok Mata Anggaran'" 
+                                        :placeholder="'Pilih Mata Anggaran'"
+                                        :id="'select_budget_item_edit'" 
+                                        :name="'budget_item_id'" 
+                                        :required="true" 
+                                        :col="4">
+                                    </x-in-select>
+    
+                                    <x-in-select 
+                                        :label="'Kelompok Sub Mata Anggaran'"
+                                        :placeholder="'Pilih Sub Mata Anggaran'" 
+                                        :id="'select_sub_budget_item_edit'"
+                                        :name="'sub_budget_item_id'" 
+                                        :required="true" 
+                                        :col="4">
+                                    </x-in-select>
+    
+                                    <x-in-select 
+                                        :label="'Proyek'" 
+                                        :placeholder="'Pilih Proyek'" 
+                                        :id="'project_edit'"
+                                        :name="'project_id'" 
+                                        :required="true" 
+                                        :col="4">
+                                    </x-in-select>
+    
+                                    <x-in-select 
+                                        :label="'Saldo Normal'" 
+                                        :placeholder="'Pilih Saldo Normal'"
+                                        :id="'normal_balance_edit'" 
+                                        :name="'normal_balance_id'" 
+                                        :required="true" 
+                                        :col="4">
+                                    </x-in-select>
+    
+                                    <x-in-text 
+                                        :type="'text'" 
+                                        :label="'Jumlah'" 
+                                        :col="4"
+                                        :id="'amount_edit'" 
+                                        :name="'amount'" 
+                                        :required="true">
+                                    </x-in-text>
+    
+                                </x-row>
+                                <button type="submit" class="btn btn-primary float-right">Simpan</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -482,6 +587,176 @@ $breadcrumbList = [
                 }
             });
         });
+
+        // edit button sub journal click
+        $('.btn-edit-sub-journal').on('click', function(){
+            let subJournalId = $(this).attr('data-sub-journal-id')
+            let budgetItemGroupId = $(this).attr('data-budget-item-group-id')
+            let budgetItemId = $(this).attr('data-budget-item-id')
+            let subBudgetItemId = $(this).attr('data-sub-budget-item-id')
+            let subCategoryId = $(this).attr('data-sub-category-id')
+            let projectId = $(this).attr('data-project-id')
+            let amount = $(this).attr('data-amount')
+
+            // get budget item group for edit
+            $('#field_input_id').val(subJournalId)
+            $.ajax({
+                url: $('meta[name="url-budget-item-group"]').attr('content'),
+                data: {
+                    id: "",
+                },
+                cache: true,
+                success: function (data) {
+                    $('#select_budget_item_group_edit').empty();
+
+                    data.forEach(function (element) {
+                        let option = `<option value="${element.id}" ${element.id == budgetItemGroupId ? 'selected' : ''}>${element.name}</option>`;
+
+                        $('#select_budget_item_group_edit').append(option);
+                    });
+                }
+            });
+
+            // Get Budget Item
+            $.ajax({
+                url: $('meta[name="url-budget-item"]').attr('content'),
+                data: {
+                    id: budgetItemGroupId,
+                },
+                cache: true,
+                success: function (data) {
+
+                    $('#select_budget_item_edit').empty();
+
+                    data.forEach(element => {
+                        let option = `<option value="${element.id}" ${element.id == budgetItemId ? 'selected' : ''}>${element.name}</option>`;
+
+                        $('#select_budget_item_edit').append(option);
+                    });
+                }
+            });
+
+            // Get Sub Budget Item
+            $.ajax({
+                url: $('meta[name="url-sub-budget-item"]').attr('content'),
+                data: {
+                    id: budgetItemId,
+                },
+                cache: true,
+                success: function (data) {
+                    $('#select_sub_budget_item_edit').empty();
+
+                    data.forEach(element => {
+                        let option = `<option value="${element.id}" ${element.id == subBudgetItemId ? 'selected' : ''}>${element.name}</option>`;
+
+                        $('#select_sub_budget_item_edit').append(option);
+                    });
+                }
+            });
+
+            // Select on change
+            $('#select_budget_item_group_edit').on('change', function(){
+                let budgetItemGroupId = $(this).val();
+                let url = $('meta[name="url-budget-item"]').attr('content');
+
+                if(budgetItemGroupId == "")
+                    return;
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: {
+                        id: budgetItemGroupId
+                    },
+                    cache: false,
+                    success: function (data) {
+                        $('#select_budget_item_edit').empty();
+                        $('#select_budget_item_edit').append(`<option value="">Pilih Mata Anggaran</option>`);
+
+                        $('#select_sub_budget_item_edit').empty();
+                        $('#select_sub_budget_item_edit').append(`<option value="">Pilih Sub Mata Anggaran</option>`);
+
+                        data.forEach(element => {
+                            let option = `<option value="${element.id}">${element.name}</option>`;
+
+                            $('#select_budget_item_edit').append(option);
+                        });
+                    }
+                });
+            });
+
+            $('#select_budget_item_edit').on('change', function() {
+                let budgetItemId = $(this).val();
+                let url = $('meta[name="url-sub-budget-item"]').attr('content');
+
+                if(budgetItemId == "")
+                    return;
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: {
+                        id: budgetItemId
+                    },
+                    cache: false,
+                    success: function (data) {
+
+                        $('#select_sub_budget_item_edit').empty();
+                        $('#select_sub_budget_item_edit').append(`<option value="">Pilih Sub Mata Anggaran</option>`);
+
+                        data.forEach(element => {
+                            let option = `<option value="${element.id}">${element.name}</option>`;
+
+                            $('#select_sub_budget_item_edit').append(option);
+                        });
+                    }
+                });
+            });
+
+             // Get project for select option
+            $.ajax({
+                url: $('meta[name="url-project"]').attr('content'),
+                data: {
+                    branch_id: $('meta[name="branch-id"]').attr('content'),
+                },
+                cache: false,
+                success: function (data) {
+                    $('#project_edit').empty();
+                    $('#project_edit').append(`<option value="">Pilih Proyek</option>`);
+
+                    data.datas.forEach(function (element) {
+                        let option = `<option value="${element.id}" ${element.id == projectId ? 'selected' : ''}>${element.name}</option>`;
+
+                        $('#project_edit').append(option);
+                    });
+
+                    $('#project_edit').select2({
+                        theme: 'bootstrap4',
+                        placeholder: 'Pilih Proyek',
+                        allowClear: true
+                    });
+                }
+            });
+
+             // Set Normal Balance To Select Element
+            $.ajax({
+                url: $('meta[name="url-normal-balances"]').attr('content'),
+                data: {
+                    id: "",
+                },
+                cache: false,
+                success: function (data) {
+                    $('#normal_balance_edit').empty();
+                    data.forEach(function (element) {
+                        // normalBalances.push(element)
+                        let option = `<option value="${element.id}" ${element.id == subCategoryId ? 'selected' : ''}>${element.label}</option>`;
+
+                        $('#normal_balance_edit').append(option);
+                    });
+                }
+            });
+            $('#amount_edit').val(amount)
+        })
     });
 </script>
 @endpush

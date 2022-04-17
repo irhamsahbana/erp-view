@@ -136,6 +136,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/ubah-jurnal/{journal:id}', [JournalController::class, 'edit'])->name('edit.journal');
         Route::post('/ganti-jurnal/{journal:id}', [JournalController::class, 'update'])->name('update.journal');
         Route::post('/tambah-sub-jurnal', [JournalController::class, 'postSubJournal'])->name('post-sub-journal');
+        Route::post('/update-sub-jounal', [JournalController::class, 'updateSubJournal'])->name('edit.sub.journal');
         Route::get('/rincian-jurnal/{journal:id}', [JournalController::class, 'detail'])->name('detail.journal');
         Route::post('/simpan-sub-jurnal-sementara', [JournalController::class, 'saveSubJournalTemporaryToSubJournal'])->name('save-sub-journal-temporary');
         Route::get('/hapus-sub-jurnal', [JournalController::class, 'deleteSubJournal'])->name('delete-sub-journal');
