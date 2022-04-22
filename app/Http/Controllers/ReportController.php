@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\Budget;
+use App\Models\Project;
 use App\Models\Category;
 use App\Models\BudgetItem;
 use App\Models\SubJournal;
+use App\Exports\BalanceView;
 use Illuminate\Http\Request;
 use App\Models\SubBudgetItem;
 use App\Models\BudgetItemGroup;
-use App\Models\Project;
+use App\Exports\IncomeStatementView;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -358,5 +361,33 @@ class ReportController extends Controller
     {
         $query = Budget::select('*');
         return $query;
+    }
+    public function exportBalance(Request $request)
+    {
+        if($request->file_type == 'excel')
+        {
+            $branchId = $request->branch_id;
+            $projectId = $request->project_id;
+            $year = $request->year;
+            return Excel::download(new BalanceView($branchId, $projectId, $year), 'balances.xlsx');
+        }
+        else
+        {
+            dd('pdf');
+        }
+    }
+    public function exportIncomeStatement(Request $request)
+    {
+        if($request->file_type == 'excel')
+        {
+            $branchId = $request->branch_id;
+            $projectId = $request->project_id;
+            $year = $request->year;
+            return Excel::download(new IncomeStatementView($branchId, $projectId, $year), 'income.xlsx');
+        }
+        else
+        {
+            dd('pdf');
+        }
     }
 }

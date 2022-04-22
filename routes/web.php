@@ -149,9 +149,11 @@ Route::group(['middleware' => ['auth']], function(){
     });
     Route::group(['prefix' => 'neraca'], function() {
         Route::get('/', [ReportController::class, 'balancesheet'])->name('balance.index');
+        Route::get('/export-data-balance', [ReportController::class, 'exportBalance'])->name('export.balance');
     });
     Route::group(['prefix' => 'laba-rugi'], function() {
         Route::get('/', [ReportController::class, 'incomeStatement'])->name('income.statement.index');
+        Route::get('/export-data-income-statement', [ReportController::class, 'exportIncomeStatement'])->name('export.income.statement');
     });
     Route::group(['prefix' => 'buku-besar'], function() {
         Route::get('/', [GeneralLedgerController::class, 'index'])->name('general.ledger.index');
