@@ -73,6 +73,29 @@
             <x-card-collapsible>
                 @if(request('branch_id')||request('journal_category_id')||request('year'))
 
+                <div class="row my-4">
+                    <div class="col-sm-2">
+                        <div>
+                            <h5> Unduh Data Neraca</h5>
+                        </div>
+                        <form action="{{ route('export.balance') }}" method="GET">
+                            @csrf
+                            @method('get')
+                            <div class="input-group">
+                                <select class="custom-select" id="inputGroupSelect04" name="file_type">
+                                    <option selected>Pilih tipe file</option>
+                                    <option value="excel">Excel</option>
+                                </select>
+                                <input type="hidden" name="branch_id" value="{{ request('branch_id') }}">
+                                <input type="hidden" name="project_id" value="{{ request('project_id') }}">
+                                <input type="hidden" name="year" value="{{ request('year') }}">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">Button</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
                 <x-table :thead="['Data Neraca', 'Anggaran',  'Realisasi '.request('year') ?? 'Tahun', 'Realisasi '.request('year') - 1 ?? 'Tahun Sebelumnya', 'Selisih']">
                     @foreach ($balances as $balance)
