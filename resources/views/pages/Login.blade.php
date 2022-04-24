@@ -22,7 +22,7 @@
       <a href="#" class="h1"><b>{{ env('APP_NAME') }}</b></a>
     </div>
     <div class="card-body">
-      <p class="login-box-msg">Sign in to start your session</p>
+      <p class="login-box-msg">Masukkan Nama dan Password anda</p>
 
       <form action="{{ route('login.attempt') }}" method="post">
         @csrf
