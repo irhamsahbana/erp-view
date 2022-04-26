@@ -1,4 +1,4 @@
-<x-table :thead="['Kelompok Mata Anggaran', 'Mata Anggaran', 'Sub Mata Anggaran', 'Anggaran',  'Realisasi '.request('year') ?? 'Tahun', 'Realisasi '.request('year') - 1 ?? 'Tahun Sebelumnya', 'Selisih']">
+<x-table :thead="['Kelompok Mata Anggaran', 'Mata Anggaran', 'Sub Mata Anggaran', 'Anggaran',  'Realisasi '.(int)app('request')->input('year'), 'Realisasi '.((int)app('request')->input('year') - 1), 'Selisih']">
     @foreach ($balances as $balance)
         <tr>
             <td></td>

@@ -1,4 +1,4 @@
-<x-table :thead="['Kelompok Mata Anggaran', 'Mata Anggaran', 'Sub Mata Anggaran', 'Anggaran',  'Realisasi '. request('year') ?? '', 'Realisasi '. request('year') - 1 ?? 'Tahun Sebelumnya', 'Selisih']">
+<x-table :thead="['Kelompok Mata Anggaran', 'Mata Anggaran', 'Sub Mata Anggaran', 'Anggaran',  'Realisasi '.(int)app('request')->input('year'), 'Realisasi '.((int)app('request')->input('year') - 1), 'Selisih']">
     @foreach ($incomes as $income)
         @if ($income['name'] == 'Pendapatan')
         <?php

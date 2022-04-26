@@ -99,7 +99,7 @@
                     </form>
                 </div>
             </div>
-            <x-table :thead="['Data Laba/Rugi', 'Anggaran',  'Realisasi '. request('year') ?? '', 'Realisasi '. request('year') - 1 ?? 'Tahun Sebelumnya', 'Selisih']">
+            <x-table :thead="['Data Laba / Rugi', 'Anggaran',  'Realisasi '.(int)app('request')->input('year'), 'Realisasi '.((int)app('request')->input('year') - 1), 'Selisih']">
                 @foreach ($incomes as $income)
                     @if ($income['name'] == 'Pendapatan')
                     <?php
@@ -165,7 +165,7 @@
                             ?>
                             <td><h5 class="text-primary">Rp. {{ number_format((float)$anggaranLabaKotor, 2) }}</h5></td>
                             <td><h5 class="text-primary">Rp. {{ number_format((float)$labaKotor, 2) }}</h5></td>
-                            <td><h5 class="text-primary">Rp. {{ number_format((float)$labaKotorBefore,2) }}</h5></td>
+                            <td><h5 class="text-primary">Rp. {{ number_format((float)$labaKotorBefore, 2) }}</h5></td>
                             <td><h5 class="text-primary">Rp. {{ number_format((float)$selisihLabaKotor, 2) }}</h5></td>
                         </tr>
                     @endif

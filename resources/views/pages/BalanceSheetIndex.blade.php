@@ -97,7 +97,7 @@
                     </div>
                 </div>
 
-                <x-table :thead="['Data Neraca', 'Anggaran',  'Realisasi '.request('year') ?? 'Tahun', 'Realisasi '.request('year') - 1 ?? 'Tahun Sebelumnya', 'Selisih']">
+                <x-table :thead="['Data Neraca', 'Anggaran',  'Realisasi '.(int)app('request')->input('year'), 'Realisasi '.((int)app('request')->input('year') - 1), 'Selisih']">
                     @foreach ($balances as $balance)
                         <tr>
                             <td></td>
@@ -163,7 +163,6 @@
                 if (branchId == '') {
                     selectProject.empty();
                     selectProject.append('<option value="">Pilih Proyek</option>');
-
                     return;
                 }
 
@@ -200,5 +199,3 @@
         });
 </script>
 @endpush
-
-
