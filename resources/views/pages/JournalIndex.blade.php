@@ -23,49 +23,49 @@ $breadcrumbList = [
 @section('content')
 <x-content>
     <x-row>
-        <x-card-collapsible 
-            :title="'Pencarian'" 
+        <x-card-collapsible
+            :title="'Pencarian'"
             :collapse="false">
 
             <form style="width: 100%">
 
                 <x-row>
 
-                    <x-in-select 
-                        :label="'Cabang'" 
-                        :placeholder="'Pilih Cabang'" 
-                        :col="6" 
+                    <x-in-select
+                        :label="'Cabang'"
+                        :placeholder="'Pilih Cabang'"
+                        :col="6"
                         :name="'branch_id'"
-                        :options="$options['branches']" 
+                        :options="$options['branches']"
                         :value="app('request')->input('branch_id') ?? null"
                         :required="false">
                     </x-in-select>
 
-                    <x-in-select 
-                        :label="'Kategori'" 
-                        :placeholder="'Pilih Kategori'" 
-                        :col="6" 
+                    <x-in-select
+                        :label="'Kategori'"
+                        :placeholder="'Pilih Kategori'"
+                        :col="6"
                         :name="'category_id'"
-                        :required="false" 
+                        :required="false"
                         :options="$options['categories']">
                     </x-in-select>
 
-                    <x-in-text 
-                        :type="'date'" 
-                        :label="'Tanggal Mulai'" 
+                    <x-in-text
+                        :type="'date'"
+                        :label="'Tanggal Mulai'"
                         :col="6"
-                        :value="app('request')->input('date_start') ?? null" 
+                        :value="app('request')->input('date_start') ?? null"
                         :name="'date_start'">
                     </x-in-text>
 
-                    <x-in-text 
-                        :type="'date'" 
-                        :label="'Tanggal Selesai'" 
+                    <x-in-text
+                        :type="'date'"
+                        :label="'Tanggal Selesai'"
                         :col="6"
-                        :value="app('request')->input('date_finish') ?? null" 
+                        :value="app('request')->input('date_finish') ?? null"
                         :name="'date_finish'">
                     </x-in-text>
-                    
+
                     <x-col class="text-right">
                         <a type="button" class="btn btn-default" href="{{ route('journal.index') }}">reset</a>
                         <button type="submit" class="btn btn-primary">Cari</button>
@@ -79,7 +79,7 @@ $breadcrumbList = [
                 <x-col class="mb-3">
                     <a href="{{ route('add.journal') }}" class="btn btn-primary">Tambah</a>
                 </x-col>
-               
+
                 <x-col class="mb-3">
                     @if (session('success'))
                     <div class="alert alert-primary alert-dismissible fade show" role="alert">
@@ -91,7 +91,7 @@ $breadcrumbList = [
                     @endif
                 </x-col>
                 <x-col>
-                    <x-table :thead="['Tanggal', 'Cabang', 'Kategori', 'Referensi', 'Catatan', 'Dibuat Oleh', 'Selisih Debit dan Kredit', 'Aksi']">
+                    <x-table :thead="['Tanggal', 'Cabang', 'Kategori', 'Referensi', 'Catatan',  'Selisih', 'Aksi']">
 
                             @foreach ($datas as $journal)
                             <tr>
@@ -101,12 +101,12 @@ $breadcrumbList = [
                                 <td>{{ $journal->category->label }}</td>
                                 <td>{{ $journal->ref_no }}</td>
                                 <td>{{ $journal->notes }}</td>
-                                <td>{{ $journal->user->username}}</td>
-                                    <?php 
-                                        $totalSub = 0;    
+                                {{-- <td>{{ $journal->user->username}}</td> --}}
+                                    <?php
+                                        $totalSub = 0;
                                     ?>
                                     @foreach ($journal->subJournal as $sub)
-                                        <?php 
+                                        <?php
                                             if($sub->normal_balance_id == $kredit->id){
                                                 $totalSub -= $sub->amount;
                                             }else{
@@ -128,7 +128,7 @@ $breadcrumbList = [
                                 </td>
                             </tr>
                             @endforeach
-                        
+
                     </x-table>
                 </x-col>
                     <x-col class="d-flex justify-content-end">
