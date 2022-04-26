@@ -29,50 +29,50 @@ $breadcrumbList = [
         <x-card-collapsible :title="'Tambah Journal'" :collapse="false">
             <x-row>
                 <div class="row">
-                    <x-in-text 
-                        :type="'text'" 
-                        :label="'Cabang'" 
-                        :col="4" 
+                    <x-in-text
+                        :type="'text'"
+                        :label="'Cabang'"
+                        :col="4"
                         :readonly="'true'"
                         :value="$journal->branch->name">
                     </x-in-text>
 
-                    <x-in-text 
-                        :type="'text'" 
-                        :label="'Dibuat Oleh'" 
-                        :col="4" 
+                    <x-in-text
+                        :type="'text'"
+                        :label="'Dibuat Oleh'"
+                        :col="4"
                         :readonly="'true'"
                         :value="$journal->user->username">
                     </x-in-text>
 
-                    <x-in-text 
-                        :type="'text'" 
-                        :label="'Posisi'" 
-                        :col="4" 
+                    <x-in-text
+                        :type="'text'"
+                        :label="'Posisi'"
+                        :col="4"
                         :readonly="'true'"
                         :value="$journal->category->label">
                     </x-in-text>
 
-                    <x-in-text 
-                        :type="'text'" 
-                        :label="'Tanggal'" 
-                        :col="4" 
-                        :readonly="'true'" 
+                    <x-in-text
+                        :type="'text'"
+                        :label="'Tanggal'"
+                        :col="4"
+                        :readonly="'true'"
                         :value="$journal->created">
                     </x-in-text>
 
-                    <x-in-text 
-                        :type="'text'" 
-                        :label="'Nomor Referensi'" 
-                        :col="4" 
+                    <x-in-text
+                        :type="'text'"
+                        :label="'Nomor Referensi'"
+                        :col="4"
                         :readonly="'true'"
                         :value="$journal->ref_no">
                     </x-in-text>
 
-                    <x-in-text 
-                        :type="'text'" 
-                        :label="'Status'" 
-                        :col="4" 
+                    <x-in-text
+                        :type="'text'"
+                        :label="'Status'"
+                        :col="4"
                         :readonly="'true'"
                         :value="($journal->is_open == 0) ? 'Nonaktif' : 'Aktif'">
                     </x-in-text>
@@ -116,9 +116,9 @@ $breadcrumbList = [
                             <td>{{ $sub->category->label }}</td>
                             <td>{{ $sub->amount }}</td>
                             <td>
-                                <button 
-                                    class="btn btn-warning btn-edit-sub-journal" 
-                                    data-toggle="modal" 
+                                <button
+                                    class="btn btn-warning btn-edit-sub-journal"
+                                    data-toggle="modal"
                                     data-target="#edit-modal"
                                     data-sub-journal-id="{{ $sub->id }}"
                                     data-project-id="{{ $sub->project_id }}"
@@ -128,9 +128,9 @@ $breadcrumbList = [
                                     data-sub-category-id='{{ $sub->normal_balance_id }}'
                                     data-amount="{{ $sub->amount }}"><i class="fas fa-edit"></i>
                                 </button>
-                                <a 
+                                <a
                                     href="{{ route('delete-sub-journal', ['sub_id' => $sub->id, 'journal_id' => $journal->id]) }}"
-                                    class="btn btn-danger" 
+                                    class="btn btn-danger"
                                     onclick="return confirm('apakah anda yakin ?')">
                                     <i
                                         class="fas fa-trash">
@@ -172,56 +172,56 @@ $breadcrumbList = [
                             <input type="hidden" name="journal_id" value="{{ $journal->id }}">
                             <x-row>
 
-                                <x-in-select 
+                                <x-in-select
                                     :label="'Kelompok Mata Anggaran'"
-                                    :placeholder="'Pilih Kelompok Mata Anggaran'" 
+                                    :placeholder="'Pilih Kelompok Mata Anggaran'"
                                     :id="'select_budget_item_group'"
-                                    :name="'budget_item_group_id'" 
+                                    :name="'budget_item_group_id'"
                                     :options="$options['budgetItemGroups']"
                                     :required="true" :col="4">
                                 </x-in-select>
 
-                                <x-in-select 
-                                    :label="'Kelompok Mata Anggaran'" 
+                                <x-in-select
+                                    :label="'Kelompok Mata Anggaran'"
                                     :placeholder="'Pilih Mata Anggaran'"
-                                    :id="'select_budget_item'" 
-                                    :name="'budget_item_id'" 
-                                    :required="true" 
+                                    :id="'select_budget_item'"
+                                    :name="'budget_item_id'"
+                                    :required="true"
                                     :col="4">
                                 </x-in-select>
 
-                                <x-in-select 
+                                <x-in-select
                                     :label="'Kelompok Sub Mata Anggaran'"
-                                    :placeholder="'Pilih Sub Mata Anggaran'" 
+                                    :placeholder="'Pilih Sub Mata Anggaran'"
                                     :id="'select_sub_budget_item'"
-                                    :name="'sub_budget_item_id'" 
-                                    :required="true" 
+                                    :name="'sub_budget_item_id'"
+                                    :required="true"
                                     :col="4">
                                 </x-in-select>
 
-                                <x-in-select 
-                                    :label="'Proyek'" 
-                                    :placeholder="'Pilih Proyek'" 
+                                <x-in-select
+                                    :label="'Proyek'"
+                                    :placeholder="'Pilih Proyek'"
                                     :id="'project'"
-                                    :name="'project_id'" 
-                                    :required="true" 
+                                    :name="'project_id'"
+                                    :required="true"
                                     :col="4">
                                 </x-in-select>
 
-                                <x-in-select 
-                                    :label="'Saldo Normal'" 
+                                <x-in-select
+                                    :label="'Saldo Normal'"
                                     :placeholder="'Pilih Saldo Normal'"
-                                    :id="'normal_balance'" 
-                                    :name="'normal_balance_id'" 
-                                    :required="true" 
+                                    :id="'normal_balance'"
+                                    :name="'normal_balance_id'"
+                                    :required="true"
                                     :col="4">
                                 </x-in-select>
 
-                                <x-in-text 
-                                    :type="'text'" 
-                                    :label="'Jumlah'" 
-                                    :col="4" 
-                                    :name="'amount'" 
+                                <x-in-text
+                                    :type="'text'"
+                                    :label="'Jumlah'"
+                                    :col="4"
+                                    :name="'amount'"
                                     :required="true">
                                 </x-in-text>
 
@@ -254,60 +254,60 @@ $breadcrumbList = [
                                 <x-row>
                                     <input type="hidden" name="journal_id_edit" value="{{ $journal->id }}">
                                     <input type="hidden" name="id_sub_journal" id="field_input_id">
-                                    <x-in-select 
+                                    <x-in-select
                                         :label="'Kelompok Mata Anggaran'"
-                                        :placeholder="'Pilih Kelompok Mata Anggaran'" 
+                                        :placeholder="'Pilih Kelompok Mata Anggaran'"
                                         :id="'select_budget_item_group_edit'"
                                         :name="'budget_item_group_id'"
-                                        :required="true" 
+                                        :required="true"
                                         :col="4">
                                     </x-in-select>
-    
-                                    <x-in-select 
-                                        :label="'Kelompok Mata Anggaran'" 
+
+                                    <x-in-select
+                                        :label="'Kelompok Mata Anggaran'"
                                         :placeholder="'Pilih Mata Anggaran'"
-                                        :id="'select_budget_item_edit'" 
-                                        :name="'budget_item_id'" 
-                                        :required="true" 
+                                        :id="'select_budget_item_edit'"
+                                        :name="'budget_item_id'"
+                                        :required="true"
                                         :col="4">
                                     </x-in-select>
-    
-                                    <x-in-select 
+
+                                    <x-in-select
                                         :label="'Kelompok Sub Mata Anggaran'"
-                                        :placeholder="'Pilih Sub Mata Anggaran'" 
+                                        :placeholder="'Pilih Sub Mata Anggaran'"
                                         :id="'select_sub_budget_item_edit'"
-                                        :name="'sub_budget_item_id'" 
-                                        :required="true" 
+                                        :name="'sub_budget_item_id'"
+                                        :required="true"
                                         :col="4">
                                     </x-in-select>
-    
-                                    <x-in-select 
-                                        :label="'Proyek'" 
-                                        :placeholder="'Pilih Proyek'" 
+
+                                    <x-in-select
+                                        :label="'Proyek'"
+                                        :placeholder="'Pilih Proyek'"
                                         :id="'project_edit'"
-                                        :name="'project_id'" 
-                                        :required="true" 
+                                        :name="'project_id'"
+                                        :required="true"
                                         :col="4">
                                     </x-in-select>
-    
-                                    <x-in-select 
-                                        :label="'Saldo Normal'" 
+
+                                    <x-in-select
+                                        :label="'Saldo Normal'"
                                         :placeholder="'Pilih Saldo Normal'"
-                                        :id="'normal_balance_edit'" 
-                                        :name="'normal_balance_id'" 
-                                        :required="true" 
+                                        :id="'normal_balance_edit'"
+                                        :name="'normal_balance_id'"
+                                        :required="true"
                                         :col="4">
                                     </x-in-select>
-    
-                                    <x-in-text 
-                                        :type="'text'" 
-                                        :label="'Jumlah'" 
+
+                                    <x-in-text
+                                        :type="'text'"
+                                        :label="'Jumlah'"
                                         :col="4"
-                                        :id="'amount_edit'" 
-                                        :name="'amount'" 
+                                        :id="'amount_edit'"
+                                        :name="'amount'"
                                         :required="true">
                                     </x-in-text>
-    
+
                                 </x-row>
                                 <button type="submit" class="btn btn-primary float-right">Simpan</button>
                             </form>
@@ -382,7 +382,7 @@ $breadcrumbList = [
                 </tr>
             `);
         });
-        
+
         console.log(journalDetail, 'dari func delete');
     }
 
@@ -464,7 +464,7 @@ $breadcrumbList = [
         $('#add-sub-journal').on('click', function (){
             let data = $("#add-form-sub-journal").serialize().split("&");
 
-            
+
             let obj = {};
             let journalNote = $('meta[name="journal-note"]').attr('content');
 

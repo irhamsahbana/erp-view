@@ -21,7 +21,7 @@ class JournalController extends Controller
 {
     public function __construct()
     {
-        
+
     }
 
     public function index(Request $request)
@@ -104,9 +104,16 @@ class JournalController extends Controller
 
         DB::beginTransaction();
         try {
-            Journals::create($journal);
+            // Journals::create($journal);
+            $row->branch_id = $journal['branch_id'];
+            $row->journal_category_id = $journal['journal_category_id'];
+            $row->created = $journal['created'];
+            $row->notes = $journal['notes'];
+            $row->user_id = $journal['user_id'];
+            $row->ref_no = $journal['ref_no'];
+            $row->save();
             DB::commit();
-            return redirect()->route('journal.index')->with('success', 'Data berhasil ditambahkan');
+            return redirect()->route('detail.journal', $row->id)->with('success', 'Data berhasil ditambahkan');
         } catch (Error $e) {
             DB::rollBack();
             dd($e);
@@ -219,7 +226,7 @@ class JournalController extends Controller
     {
         $data = [
             'budget_item_group_id' => $request->budget_item_group_id,
-            'journal_id' => $request->journal_id, 
+            'journal_id' => $request->journal_id,
             'budget_item_id' => $request->budget_item_id,
             'sub_budget_item_id' => $request->sub_budget_item_id,
             'project_id' => $request->project_id,
@@ -267,7 +274,7 @@ class JournalController extends Controller
             SubJournal::where('id', $request->sub_id)->delete();
             DB::commit();
             return redirect()->route('detail.journal', ['journal' => $request->journal_id])->with('success', 'Data berhasil di hapus');
-            
+
         } catch (Error $e) {
             DB::rollBack();
             dd($e);
@@ -282,7 +289,7 @@ class JournalController extends Controller
             TemporarySubJurnal::where('id', $request->sub_temp_id)->delete();
             DB::commit();
             return redirect()->route('detail.journal', ['journal' => $request->journal_id])->with('success', 'Data berhasil di hapus');
-            
+
         } catch (Error $e) {
             DB::rollBack();
             dd($e);
@@ -324,7 +331,7 @@ class JournalController extends Controller
                 ];
             });
         }
-        
+
         $options = [
             'branches' => $branches,
             'categories' => $category,
