@@ -150,7 +150,7 @@ $optionsAuth['roles'] = [
 
       <li class="nav-header">AKUNTANSI</li>
 
-      {{-- <x-nav-item :icon="'fas fa-book'" :text="'Entri Jurnal'" href="{{ route('journal.index') }}" /> --}}
+      <x-nav-item :icon="'fas fa-book'" :text="'Entri Jurnal'" href="{{ route('journal.index') }}" />
       <x-nav-item :icon="'fas fa-book'" :text="'Neraca'" href="{{ route('balance.index') }}" />
       <x-nav-item :icon="'fas fa-book'" :text="'Laba Rugi'" href="{{ route('income.statement.index') }}" />
       <x-nav-item :icon="'fas fa-book'" :text="'Buku Besar'" href="{{ route('general.ledger.index') }}" />
