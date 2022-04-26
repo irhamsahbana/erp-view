@@ -180,4 +180,8 @@ class FuelController extends Controller
         $pdf = PDF::loadView('pdf.invoice-fuel', compact('data'));
         return $pdf->stream();
     }
+    public function fuelReport()
+    {
+        
+    }
 }

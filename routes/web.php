@@ -147,6 +147,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/get-budget-item-group', [AjaxController::class, 'getBudgetItemGroup'])->name('get-budget-item-group');
         Route::get('/get-normal-balances', [AjaxController::class, 'getNormalBalance'])->name('get-normal-balance');
     });
+    
     Route::group(['prefix' => 'neraca'], function() {
         Route::get('/', [ReportController::class, 'balancesheet'])->name('balance.index');
         Route::get('/export-data-balance', [ReportController::class, 'exportBalance'])->name('export.balance');
@@ -210,6 +211,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('mutasi-hutang-ritase/ubah-status/{id}', [RitMutationController::class, 'changeIsOpen'])->name('rit-mutation.change-status');
         Route::put('mutasi-hutang-ritase/ubah-status-bayar/{id}', [RitMutationController::class, 'changeIsPaid'])->name('rit-mutation.change-status-paid');
         Route::get('mutasi-hutang-ritase/cetak/{id}', [RitMutationController::class, 'print'])->name('rit-mutation.print');
+    });
+
+    Route::group(['prefix' => 'laporan'], function() {
+        Route::get('laporan-solar', [FuelController::class, 'fuelReport'])->name('fuel.report');
     });
     Route::group(['prefix' => 'transaksi-pembelian'], function () {
         Route::get('/', function () {
