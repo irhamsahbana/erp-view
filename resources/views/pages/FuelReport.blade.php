@@ -75,7 +75,7 @@
 
             <x-card-collapsible>
                 <x-row>
-                    @if (app('request')->input('month'))  
+                    @if (app('request')->input('month') && app('request')->input('year'))  
                         <x-col>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-sm">

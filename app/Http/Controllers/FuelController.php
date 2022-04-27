@@ -182,17 +182,16 @@ class FuelController extends Controller
     }
     public function fuelReport(Request $request)
     {
-        if ($request->month) {
+        if ($request->month && $request->year) {
             $query = Model::select('*')
                                 ->leftJoin('branches', 'branches.id', '=', 'fuels.branch_id')
                                 ->leftJoin('vehicles', 'vehicles.id', '=', 'fuels.vehicle_id');
             if($request->branch_id)
                 $query->where('branches.id', $request->branch_id);
             
-            if($request->year)
-                $query->whereYear('created', $request->year);
-            
+            $query->whereYear('created', $request->year);
             $query->whereMonth('created', $request->month);
+            
             $fuels = $query->orderBy('created', 'asc')->paginate(40)->withQueryString();
         }
         else
