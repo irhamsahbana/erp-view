@@ -180,8 +180,55 @@ class FuelController extends Controller
         $pdf = PDF::loadView('pdf.invoice-fuel', compact('data'));
         return $pdf->stream();
     }
-    public function fuelReport()
+    public function fuelReport(Request $request)
     {
-        
+        if ($request->month) {
+            $query = Model::select('*')
+                                ->leftJoin('branches', 'branches.id', '=', 'fuels.branch_id')
+                                ->leftJoin('vehicles', 'vehicles.id', '=', 'fuels.vehicle_id');
+            if($request->branch_id)
+                $query->where('branches.id', $request->branch_id);
+    
+            $query->whereMonth('created', $request->month);
+            $fuels = $query->orderBy('created', 'asc')->paginate(40)->withQueryString();
+        }
+        else
+        {
+            $fuels = [];
+        }
+
+        $options = self::staticOptions();
+        return view('pages/FuelReport', compact('options', 'fuels'));
+    }
+    public static function staticOptions()
+    {
+        $branches = Branch::all();
+        $month = [];
+
+        if (!in_array(Auth::user()->role, self::$fullAccess))
+            $branches = $branches->where('id', Auth::user()->branch_id);
+
+        if ($branches->isNotEmpty()) {
+            $branches = $branches->map(function ($branch) {
+                return [
+                    'text' => $branch->name,
+                    'value' => $branch->id,
+                ];
+            });
+        }
+
+        for($i = 1; $i<=12; $i++){
+            $month[] = [
+                'text' => date('F', mktime(0,0,0,$i)),
+                'value' => $i,
+            ];
+        }
+
+        $options = [
+            'branches' => $branches,
+            'month' => $month,
+        ];
+
+        return $options;
     }
 }

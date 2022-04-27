@@ -61,7 +61,7 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}" />
 
       <li class="nav-header">LAPORAN</li>
-      <x-nav-item :icon="'fas fa-receipt'" :text="'Laporan Solar'" href="{{ route('fuel.report') }}" />
+      <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
 
       <li class="nav-header">AKUNTANSI</li>
       <x-nav-item :icon="'fas fa-book'" :text="'Entri Jurnal'" href="{{ route('journal.index') }}" />

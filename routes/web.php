@@ -214,7 +214,7 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['prefix' => 'laporan'], function() {
-        Route::get('laporan-solar', [FuelController::class, 'fuelReport'])->name('fuel.report');
+        Route::get('penggunaan-solar', [FuelController::class, 'fuelReport'])->name('fuel.report');
     });
     Route::group(['prefix' => 'transaksi-pembelian'], function () {
         Route::get('/', function () {
