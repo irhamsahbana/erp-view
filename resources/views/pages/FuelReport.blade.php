@@ -12,6 +12,14 @@
     ];
     $year = date('Y');
     $dayCount = cal_days_in_month(CAL_GREGORIAN, app('request')->input('month') ?? 1, $year);
+    $page = app('request')->input('page') ?? 1;
+
+    for($i = $year + 5; $i>= 1980; $i--){
+        $yearOption[] = [
+            'text' => $i,
+            'value' => $i,
+        ];
+    }
 @endphp
 
 @push('css')
@@ -34,7 +42,7 @@
                         <x-in-select
                             :label="'Cabang'"
                             :placeholder="'Pilih Cabang'"
-                            :col="6"
+                            :col="4"
                             :name="'branch_id'"
                             :options="$options['branches']"
                             :value="app('request')->input('branch_id') ?? null"
@@ -42,11 +50,20 @@
                         <x-in-select
                             :label="'Bulan'"
                             :placeholder="'Pilih Bulan'"
-                            :col="6"
+                            :col="4"
                             :required="true"
                             :name="'month'"
                             :options="$options['month']"
                             :value="app('request')->input('month') ?? null">
+                        </x-in-select>
+                        <x-in-select
+                            :label="'Tahun'"
+                            :placeholder="'Pilih Tahun'"
+                            :col="4"
+                            :name="'year'"
+                            :options="$yearOption"
+                            :value="app('request')->input('year') ?? null"
+                            :required="true">
                         </x-in-select>
                         <x-col class="text-right">
                             <a type="button" class="btn btn-default" href="{{ route('fuel.report') }}">reset</a>
@@ -64,6 +81,7 @@
                                 <table class="table table-bordered table-sm">
                                     <thead>
                                         <tr>
+                                            <th rowspan="2">#</th>
                                             <th rowspan="2" class="my-auto">Cabang</th>
                                             <th rowspan="2" class="my-auto">No Kendaraan</th>
                                             <th colspan="{{ $dayCount }}"><center>Tanggal</center></th>
@@ -77,6 +95,7 @@
                                     <tbody>
                                         @foreach ($fuels as $item)
                                             <tr>
+                                                <td>{{ $loop->iteration + 40 * ((int)$page - 1) }}</td>
                                                 <td>{{ $item->name }}</td>
                                                 <td>{{ $item->license_plate }}</td>
                                                 <?php for($n = 1; $n<=$dayCount; $n++) {?>
