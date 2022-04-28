@@ -42,7 +42,7 @@ class JournalController extends Controller
             $query->whereDate('created', '>=', new \DateTime($request->date_start));
 
         if ($request->date_finish)
-            $query->whereDate('cretaed', '<=', new \DateTime($request->date_finish));
+            $query->whereDate('created', '<=', new \DateTime($request->date_finish));
 
         $query->orderBy('created', 'desc');
 
