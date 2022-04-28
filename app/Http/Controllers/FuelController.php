@@ -13,7 +13,7 @@ class FuelController extends Controller
 {
     public function index(Request $request)
     {
-        $fullAccess = ['owner', 'admin'];
+        $fullAccess = ['owner', 'admin', 'accountant'];
 
         $query = Model::select('*');
 
@@ -188,10 +188,10 @@ class FuelController extends Controller
                                 ->leftJoin('vehicles', 'vehicles.id', '=', 'fuels.vehicle_id');
             if($request->branch_id)
                 $query->where('branches.id', $request->branch_id);
-            
+
             $query->whereYear('created', $request->year);
             $query->whereMonth('created', $request->month);
-            
+
             $fuels = $query->orderBy('created', 'asc')->paginate(40)->withQueryString();
         }
         else
