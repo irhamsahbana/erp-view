@@ -51,6 +51,7 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-receipt'" :text="'Voucher'" :href="route('voucher.index')" />
       <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')" />
       <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'" />
+      <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
       <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}" />
       <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}" />
       <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'"
@@ -60,8 +61,7 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}" />
       <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}" />
 
-      <li class="nav-header">LAPORAN</li>
-      <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
+
 
       <li class="nav-header">AKUNTANSI</li>
       <x-nav-item :icon="'fas fa-book'" :text="'Entri Jurnal'" href="{{ route('journal.index') }}" />
