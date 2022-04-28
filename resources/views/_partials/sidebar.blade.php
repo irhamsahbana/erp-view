@@ -121,6 +121,7 @@ $optionsAuth['roles'] = [
       @if (Auth::user()->role == 'material')
       <li class="nav-header">TRANSAKSI</li>
       <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'" />
+      <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
       <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'"
         href="{{ route('rit-mutation.index') }}" />
       <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'"
