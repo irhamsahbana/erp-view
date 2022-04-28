@@ -13,7 +13,7 @@ class FuelController extends Controller
 {
     public function index(Request $request)
     {
-        $fullAccess = ['owner', 'admin', 'accountant'];
+        $fullAccess = ['owner', 'admin'];
 
         $query = Model::select('*');
 
