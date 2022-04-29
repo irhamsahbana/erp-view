@@ -44,7 +44,7 @@ class JournalController extends Controller
         if ($request->date_finish)
             $query->whereDate('created', '<=', new \DateTime($request->date_finish));
 
-        $query->orderBy('created', 'desc');
+        $query->orderBy('created', 'desc', 'id','desc');
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
