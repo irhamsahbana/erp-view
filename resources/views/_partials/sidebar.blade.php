@@ -161,6 +161,9 @@ $optionsAuth['roles'] = [
 
       <li class="nav-header">ANGGARAN</li>
       <x-nav-item :icon="'fas fa-calculator'" :text="'Anggaran'" :href="route('budget.index')" />
+      <li class="nav-header">MASTER DATA</li>
+
+      <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" href="{{ route('project.index') }}" />
 
       @endif
 
