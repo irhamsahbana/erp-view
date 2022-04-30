@@ -32,7 +32,16 @@ class GeneralLedgerController extends Controller
 
 
             // get Firstt Saldo
-            foreach ($allJournals->whereDate('journals.created', '<', new \DateTime($request->date_start))->where('journals.branch_id', $request->branch_id)->where('sub_budget_items.id', $request->sub_budget_item_id)->get() as $data ) {
+
+            if($request->project_id)
+            {
+                $dataFirstSaldo = $allJournals->whereDate('journals.created', '<', new \DateTime($request->date_start))->where('journals.branch_id', $request->branch_id)->where('projects.id', $request->project_id)->where('sub_budget_items.id', $request->sub_budget_item_id)->get();
+            }
+            else
+            {
+                $dataFirstSaldo = $allJournals->whereDate('journals.created', '<', new \DateTime($request->date_start))->where('journals.branch_id', $request->branch_id)->where('sub_budget_items.id', $request->sub_budget_item_id)->get();
+            }
+            foreach ($dataFirstSaldo as $data ) {
                 if($data->sub_journal_balance_id == $data->sub_budget_item_balance_id){
                     $firstDebitCount += $data->amount;
                 }else{
@@ -135,7 +144,7 @@ class GeneralLedgerController extends Controller
     }
     public static function filters($request, $query)
     {
-         if($request->branch_id)      
+        if($request->branch_id)      
             $query->where('journals.branch_id', $request->branch_id);
             
         if($request->project_id)
