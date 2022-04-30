@@ -105,7 +105,7 @@
     </div>
 
     <div class="sign-box yellow">
-        <table cellpadding="0" cellspacing="0" style="margin-b">
+        <table cellpadding="0" cellspacing="0" >
             <tr class="top">
                 <td colspan="2">
                     <table>
@@ -121,6 +121,67 @@
                             <td>
                                 Staff Akuntansi
                             </td>
+                            <td>
+                                Mengetahui
+                            </td>
+                        </tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                            <td>
+                               (.................)
+                            </td>
+                            <td>
+                               (.................)
+                            </td>
+                            <td>
+                               (.................)
+                            </td>
+                            <td>
+                               (.................)
+                            </td>
+
                         </tr>
                     </table>
                 </td>

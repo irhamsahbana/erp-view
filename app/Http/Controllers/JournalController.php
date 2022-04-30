@@ -39,12 +39,12 @@ class JournalController extends Controller
             $query->where('journal_category_id', $request->category_id);
 
         if ($request->date_start)
-            $query->whereDate('date', '>=', new \DateTime($request->date_start));
+            $query->whereDate('created', '>=', new \DateTime($request->date_start));
 
         if ($request->date_finish)
-            $query->whereDate('date', '<=', new \DateTime($request->date_finish));
+            $query->whereDate('created', '<=', new \DateTime($request->date_finish));
 
-        $query->orderBy('created', 'desc');
+        $query->orderBy('created', 'desc', 'id','desc');
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);

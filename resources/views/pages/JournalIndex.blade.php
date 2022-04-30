@@ -75,10 +75,13 @@ $breadcrumbList = [
         </x-card-collapsible>
 
         <x-card-collapsible>
+
             <x-row>
+                @if (Auth::user()->role == 'accountant')
                 <x-col class="mb-3">
                     <a href="{{ route('add.journal') }}" class="btn btn-primary">Tambah</a>
                 </x-col>
+                @endif
 
                 <x-col class="mb-3">
                     @if (session('success'))
