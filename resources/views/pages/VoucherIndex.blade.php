@@ -91,8 +91,9 @@
                         <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Jenis Voucher', 'Jumlah', 'Keterangan', 'Status Voucher', 'Status', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
+
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $data->created }}</td>
+                                    <td>{{ date("d-m-Y", strtotime($data->created)) }}</td>
                                     <td>{{ $data->ref_no }}</td>
                                     <td>{{ $data->branch->name }}</td>
                                     <td>

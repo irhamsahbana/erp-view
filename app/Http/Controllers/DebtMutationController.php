@@ -19,7 +19,7 @@ class DebtMutationController extends Controller
     {
         $this->middleware('has.access:owner,admin,branch_head,cashier', ['only' => ['index']]);
         $this->middleware('has.access:owner,admin,cashier', ['only' => ['store']]);
-        $this->middleware('has.access:owner,admin', ['only' => ['destroy']]);
+        $this->middleware('has.access:owner,admin,cashier', ['only' => ['destroy']]);
         $this->middleware('has.access:owner', ['only' => ['changeIsOpen']]);
     }
 

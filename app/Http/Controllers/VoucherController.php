@@ -152,6 +152,15 @@ class VoucherController extends Controller
         return $pdf->stream();
     }
 
+    public function closeVoucer() {
+        $row = Model::where("is_open",true)->get();
+        foreach($row as $data) {
+            $data->is_open = false;
+            $data->save();
+        };
+
+    }
+
     public static function staticOptions()
     {
         $branches = Branch::all();
