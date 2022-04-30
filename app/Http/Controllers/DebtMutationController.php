@@ -218,6 +218,8 @@ class DebtMutationController extends Controller
 
         if ($request->vendor_id)
             $query->where('vendor_id', $request->vendor_id);
+        if ($request->type)
+            $query->where('debt_type_id', $request->type);
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
