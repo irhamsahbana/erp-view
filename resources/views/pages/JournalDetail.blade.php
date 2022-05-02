@@ -114,7 +114,7 @@ $breadcrumbList = [
                             <td>{{ $sub->subBudgetItem->name }}</td>
                             <td>{{ $journal->notes }}</td>
                             <td>{{ $sub->category->label }}</td>
-                            <td>{{ $sub->amount }}</td>
+                            <td class="text-right">{{ number_format($sub->amount) }}</td>
                             <td>
                                 <button
                                     class="btn btn-warning btn-edit-sub-journal"
@@ -143,8 +143,8 @@ $breadcrumbList = [
                             <td colspan="7">
                                 <h5>Total Selisih Debit dan Kredit</h5>
                             </td>
-                            <td>
-                                {{ $totalSub }}
+                            <td class="text-right">
+                                {{ number_format($totalSub) }}
                             </td>
                             <td>
 

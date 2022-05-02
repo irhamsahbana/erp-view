@@ -117,8 +117,8 @@ $breadcrumbList = [
                                             }
                                         ?>
                                     @endforeach
-                                <td>
-                                    {{ $totalSub }}
+                                <td class="text-right">
+                                    {{ number_format($totalSub) }}
                                 </td>
                                 <td nowrap="nowrap">
                                     <a href="{{ route('edit.journal', ['journal' => $journal->id]) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>

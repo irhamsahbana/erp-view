@@ -31,82 +31,82 @@ $breadcrumbList = [
 
             <form style="width: 100%">
                 <x-row>
-                    <x-in-select 
-                        :label="'Cabang'" 
-                        :placeholder="'Pilih Cabang'" 
+                    <x-in-select
+                        :label="'Cabang'"
+                        :placeholder="'Pilih Cabang'"
                         :id="'select_branch'"
-                        :name="'branch_id'" 
+                        :name="'branch_id'"
                         :options="$options['branches']"
-                        :value="app('request')->input('branch_id') ?? null" 
+                        :value="app('request')->input('branch_id') ?? null"
                         :required="true"></x-in-select>
                 </x-row>
                 <x-row>
-                    <x-in-select 
-                        :label="'Proyek'" 
-                        :placeholder="'Pilih Proyek'" 
-                        :col="3" 
+                    <x-in-select
+                        :label="'Proyek'"
+                        :placeholder="'Pilih Proyek'"
+                        :col="3"
                         :id="'select_project'"
-                        :name="'project_id'" 
-                        :required="false" 
+                        :name="'project_id'"
+                        :required="false"
                         :value="app('request')->input('project_id') ?? null">
                     </x-in-select>
 
-                    <x-in-select 
-                        :label="'Kelompok Mata Angggaran'" 
+                    <x-in-select
+                        :label="'Kelompok Mata Angggaran'"
                         :placeholder="'Pilih Kelompok Mata Anggaran'"
-                        :col="3" :id="'select_budget_item_group'" 
+                        :col="3" :id="'select_budget_item_group'"
                         :name="'budget_item_group_id'"
-                        :options="$options['budgetItemGroups']" 
+                        :options="$options['budgetItemGroups']"
                         :required="true"
                         :value="app('request')->input('budget_item_group_id') ?? null">
                     </x-in-select>
 
-                    <x-in-select 
-                        :label="'Mata Anggaran'" 
-                        :placeholder="'Pilih Mata Anggaran'" 
+                    <x-in-select
+                        :label="'Mata Anggaran'"
+                        :placeholder="'Pilih Mata Anggaran'"
                         :col="3"
-                        :id="'select_budget_item'" 
-                        :name="'budget_item_id'" 
-                        :value="app('request')->input('budget_item_id') ?? null" 
+                        :id="'select_budget_item'"
+                        :name="'budget_item_id'"
+                        :value="app('request')->input('budget_item_id') ?? null"
                         :required="true">
                     </x-in-select>
 
-                    <x-in-select 
-                        :label="'Sub Mata Anggaran'" 
-                        :placeholder="'Pilih Sub Mata Anggaran'" 
+                    <x-in-select
+                        :label="'Sub Mata Anggaran'"
+                        :placeholder="'Pilih Sub Mata Anggaran'"
                         :col="3"
-                        :id="'select_sub_budget_item'" 
-                        :name="'sub_budget_item_id'" 
-                        :required="true" 
+                        :id="'select_sub_budget_item'"
+                        :name="'sub_budget_item_id'"
+                        :required="true"
                         :value="app('request')->input('sub_budget_item_id') ?? null">
                     </x-in-select>
                 </x-row>
 
                 <x-row>
 
-                    <x-in-text 
-                        :type="'date'" 
-                        :label="'Tanggal Mulai'" 
-                        :col="6" 
-                        :name="'date_start'" 
+                    <x-in-text
+                        :type="'date'"
+                        :label="'Tanggal Mulai'"
+                        :col="6"
+                        :name="'date_start'"
                         :required="true"
                         :value="app('request')->input('date_start') ?? null">
                     </x-in-text>
 
-                    <x-in-text 
-                        :type="'date'" 
-                        :label="'Tanggal Akhir'" 
-                        :col="6" 
-                        :name="'date_finish'" 
+                    <x-in-text
+                        :type="'date'"
+                        :label="'Tanggal Akhir'"
+                        :col="6"
+                        :name="'date_finish'"
                         :required="true"
                         :value="app('request')->input('date_finish') ?? null">
                     </x-in-text>
                 </x-row>
 
                 <x-col class="text-right">
-                    <a 
-                        type="button" 
-                        class="btn btn-default" 
+                    <a
+                        type="button"
+                        class="btn btn-default"
                         href="{{ route('general.ledger.index') }}">reset
                     </a>
                     <button type="submit" class="btn btn-primary">Cari</button>
@@ -114,15 +114,15 @@ $breadcrumbList = [
             </form>
 
         </x-card-collapsible>
-        <x-card-collapsible 
-            :title="'Sub Jurnal'" 
+        <x-card-collapsible
+            :title="'Sub Jurnal'"
             :collapse="false">
             <x-row>
-                
+
                 <x-col>
                     @if (session('success'))
-                    <div 
-                        class="alert alert-primary alert-dismissible fade show" 
+                    <div
+                        class="alert alert-primary alert-dismissible fade show"
                         role="alert">
                         {{session('success') }}
                         <button type="button" class="close" data-dismiss="alert"
@@ -134,13 +134,13 @@ $breadcrumbList = [
                 </x-col>
 
                 <div class="table-responsive">
-                    <x-table 
+                    <x-table
                         :thead="['Tanggal', 'No, Jurnal', 'Proyek', 'Kelompok MA', 'MA', 'Sub MA', 'Catatan', 'Posisi', 'Jumlah']">
                         <tr>
                             <td colspan="9">
                                 <h5>Saldo Awal</h5>
                             </td>
-                            <td>{{ $firstSaldo }}</td>
+                            <td class="text-right">{{ number_format($firstSaldo) }}</td>
                         </tr>
                         @foreach ($subJournal as $sub)
                         <tr>
@@ -153,18 +153,18 @@ $breadcrumbList = [
                             <td>{{ $sub->sub_budget_item_name }}</td>
                             <td>{{ $sub->notes }}</td>
                             <td>{{ $sub->category_name }}</td>
-                            <td>{{ $sub->amount }}</td>
+                            <td class="text-right">{{ number_format($sub->amount) }}</td>
                         </tr>
                         @endforeach
                         <tr>
                             <td colspan="9">
                                 <h5>Saldo Akhir</h5>
                             </td>
-                            <td>{{ $lastSaldo }}</td>
+                            <td class="text-right"> {{ number_format($lastSaldo) }}</td>
                         </tr>
                     </x-table>
                 </div>
-                
+
             </x-row>
         </x-card-collapsible>
     </x-row>
@@ -288,7 +288,7 @@ $breadcrumbList = [
         selectBudgetItem.on('change', function() {
             let budgetItemId = $(this).val();
             let url = $('meta[name="url-sub-budget-item"]').attr('content');
-            
+
             if(budgetItemId == "")
                 return;
 

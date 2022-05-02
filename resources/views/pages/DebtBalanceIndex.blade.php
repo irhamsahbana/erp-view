@@ -76,7 +76,7 @@
                                     <td>{{ $data->project->name }}</td>
                                     <td>{{ $data->vendor->name }}</td>
                                     <td>{{ $data->debtType->label }}</td>
-                                    <td>{{ 'Rp. ' . number_format($data->total, 2) }}</td>
+                                    <td class="text-right">{{  number_format($data->total) }}</td>
                                 </tr>
                             @endforeach
                         </x-table>

@@ -101,32 +101,32 @@
                     @foreach ($balances as $balance)
                         <tr>
                             <td></td>
-                            <td class="pl-1"><h6>{{ $balance['name'] }}</h6></td>
-                            <td>Rp. {{ number_format($balance['total_budget'], 2) }}</td>
-                            <td><h6>Rp. {{ number_format($balance['total'], 2) }}</h6></td>
-                            <td><h6>Rp. {{ number_format($balance['total_before'], 2) }}</h6></td>
+                            <td class="pl-1 text-left" ><h6>{{ $balance['name'] }}</h6></td>
+                            <td> {{ number_format($balance['total_budget'], 0) }}</td>
+                            <td><h6> {{ number_format($balance['total'], 0) }}</h6></td>
+                            <td><h6> {{ number_format($balance['total_before'], 0) }}</h6></td>
                             <?php $selisihBalance = $balance['total_budget'] - $balance['total']; ?>
-                            <td>Rp. {{ number_format((float)$selisihBalance, 2) }}</td>
+                            <td> {{ number_format((float)$selisihBalance, 0) }}</td>
                         </tr>
                         @foreach ($balance['budget_items'] as $budgetItem)
                             <tr>
                                 <td></td>
-                                <td class="pl-3"><h6>{{ $budgetItem['name'] }}</h6></td>
-                                <td>Rp. {{ number_format($budgetItem['total_budget'], 2) }}</td>
-                                <td><h6>Rp. {{ number_format($budgetItem['total'], 2) }}</h6></td>
-                                <td><h6>Rp. {{ number_format($budgetItem['total_before'], 2) }}</h6></td>
+                                <td class="pl-3 text-left"><h6>{{ $budgetItem['name'] }}</h6></td>
+                                <td> {{ number_format($budgetItem['total_budget'], 0) }}</td>
+                                <td><h6> {{ number_format($budgetItem['total'], 0) }}</h6></td>
+                                <td><h6> {{ number_format($budgetItem['total_before'], 0) }}</h6></td>
                                 <?php $selisihBudgetItem = $budgetItem['total_budget'] - $budgetItem['total']; ?>
-                                <td>Rp. {{ number_format((float)$selisihBudgetItem, 2) }}</td>
+                                <td> {{ number_format((float)$selisihBudgetItem, 0) }}</td>
                             </tr>
                             @foreach ($budgetItem['sub_budget_items'] as $subBudgetItem)
                                 <tr>
                                     <td></td>
-                                    <td class="pl-5"><h6>{{ $subBudgetItem['name'] }}</h6></td>
-                                    <td>Rp. {{ number_format($subBudgetItem['total_budget'], 2) }}</td>
-                                    <td><h6>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h6></td>
-                                    <td><h6>Rp. {{ number_format($subBudgetItem['total_before'], 2) }}</h6></td>
+                                    <td class="pl-5 text-left"><h6>{{ $subBudgetItem['name'] }}</h6></td>
+                                    <td> {{ number_format($subBudgetItem['total_budget'], 0) }}</td>
+                                    <td><h6> {{ number_format($subBudgetItem['total'], 0) }}</h6></td>
+                                    <td><h6> {{ number_format($subBudgetItem['total_before'], 0) }}</h6></td>
                                     <?php $selisihSubBudgetItem = $subBudgetItem['total_budget'] - $subBudgetItem['total']; ?>
-                                    <td>Rp. {{ number_format((float)$selisihSubBudgetItem, 2) }}</td>
+                                    <td> {{ number_format((float)$selisihSubBudgetItem, 0) }}</td>
                                 </tr>
                             @endforeach
                         @endforeach
@@ -199,3 +199,9 @@
         });
 </script>
 @endpush
+
+<style>
+td {
+    text-align: right
+}
+</style>

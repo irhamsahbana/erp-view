@@ -124,65 +124,65 @@
                     @endif
                     <tr>
                         <td></td>
-                        <td class="pl-1"><h6>{{ $income['name'] }}</h6></td>
-                        <td>Rp. {{ number_format($income['total_budget'], 2) }}</td>
-                        <td><h6>Rp. {{ number_format($income['total'], 2) }}</h6></td>
-                        <td><h6>Rp. {{ number_format($income['total_before'], 2) }}</h6></td>
+                        <td class="pl-1 text-left"><h6>{{ $income['name'] }}</h6></td>
+                        <td> {{ number_format($income['total_budget']) }}</td>
+                        <td><h6> {{ number_format($income['total']) }}</h6></td>
+                        <td><h6> {{ number_format($income['total_before']) }}</h6></td>
                         <?php $selisihIncome = $income['total_budget'] - $income['total'] ?>
-                        <td>Rp. {{ number_format((float)$selisihIncome, 2) }}</td>
+                        <td> {{ number_format((float)$selisihIncome) }}</td>
                     </tr>
                     @foreach ($income['budget_items'] as $budgetItem)
                         <tr>
                             <td></td>
-                            <td class="pl-3"><h6>{{ $budgetItem['name'] }}</h6></td>
-                            <td>Rp. {{ number_format($budgetItem['total_budget'], 2) }}</td>
-                            <td><h6>Rp. {{ number_format($budgetItem['total'], 2) }}</h6></td>
-                            <td><h6>Rp. {{ number_format($budgetItem['total_before'], 2) }}</h6></td>
+                            <td class="pl-3 text-left"><h6>{{ $budgetItem['name'] }}</h6></td>
+                            <td> {{ number_format($budgetItem['total_budget']) }}</td>
+                            <td><h6> {{ number_format($budgetItem['total']) }}</h6></td>
+                            <td><h6> {{ number_format($budgetItem['total_before']) }}</h6></td>
                             <?php $selisihBudgetItem = $budgetItem['total_budget'] - $budgetItem['total'] ?>
-                            <td>Rp. {{ number_format((float)$selisihBudgetItem, 2) }}</td>
+                            <td> {{ number_format((float)$selisihBudgetItem) }}</td>
                         </tr>
                         @foreach ($budgetItem['sub_budget_items'] as $subBudgetItem)
                             <tr>
                                 <td></td>
-                                <td class="pl-5"><h6>{{ $subBudgetItem['name'] }}</h6></td>
-                                <td>Rp. {{ number_format($subBudgetItem['total_budget'], 2) }}</td>
-                                <td><h6>Rp. {{ number_format($subBudgetItem['total'], 2) }}</h6></td>
-                                <td><h6>Rp. {{ number_format($subBudgetItem['total_before'], 2) }}</h6></td>
+                                <td class="pl-5 text-left"><h6>{{ $subBudgetItem['name'] }}</h6></td>
+                                <td> {{ number_format($subBudgetItem['total_budget']) }}</td>
+                                <td><h6> {{ number_format($subBudgetItem['total']) }}</h6></td>
+                                <td><h6> {{ number_format($subBudgetItem['total_before']) }}</h6></td>
                                 <?php $selisihSubBudgetItem = $subBudgetItem['total_budget'] - $subBudgetItem['total'] ?>
-                                <td>Rp. {{ number_format((float)$selisihSubBudgetItem, 2) }}</td>
+                                <td> {{ number_format((float)$selisihSubBudgetItem) }}</td>
                             </tr>
                         @endforeach
                     @endforeach
                     @if ($income['name'] == 'HPP')
                         <tr>
                             <td></td>
-                            <td><h4 class="text-primary">Laba Kotor</h4></td>
-                            <?php 
+                            <td><h4 class="text-primary text-left">Laba Kotor</h4></td>
+                            <?php
                                 $labaKotor = $PendapatanTotal - $HPPTotal;
                                 $labaKotorBefore = $PendapatanTotalBefore - $HPPTotalBefore;
                                 $anggaranLabaKotor= $anggaranPendapatanTotal - $anggaranHPPTotal;
                                 $selisihLabaKotor = $anggaranLabaKotor - $labaKotor;
                             ?>
-                            <td><h5 class="text-primary">Rp. {{ number_format((float)$anggaranLabaKotor, 2) }}</h5></td>
-                            <td><h5 class="text-primary">Rp. {{ number_format((float)$labaKotor, 2) }}</h5></td>
-                            <td><h5 class="text-primary">Rp. {{ number_format((float)$labaKotorBefore, 2) }}</h5></td>
-                            <td><h5 class="text-primary">Rp. {{ number_format((float)$selisihLabaKotor, 2) }}</h5></td>
+                            <td><h5 class="text-primary"> {{ number_format((float)$anggaranLabaKotor) }}</h5></td>
+                            <td><h5 class="text-primary"> {{ number_format((float)$labaKotor) }}</h5></td>
+                            <td><h5 class="text-primary"> {{ number_format((float)$labaKotorBefore) }}</h5></td>
+                            <td><h5 class="text-primary"> {{ number_format((float)$selisihLabaKotor) }}</h5></td>
                         </tr>
                     @endif
                     @if ($income['name'] == 'Biaya')
                         <tr>
                             <td></td>
-                            <td><h4 class="text-primary">Laba Bersih</h4></td>
-                            <?php 
+                            <td><h4 class="text-primary text-left">Laba Bersih</h4></td>
+                            <?php
                                 $labaBersih = $PendapatanTotal - $HPPTotal - $biayaTotal;
                                 $labaBersihBefore = $PendapatanTotalBefore - $HPPTotalBefore - $biayaTotalBefore;
                                 $anggaranLabaBersih = $anggaranPendapatanTotal - $anggaranHPPTotal - $anggaranBiayaTotal;
                                 $selisihLabaBersih = $anggaranLabaBersih - $labaBersih;
                             ?>
-                            <td><h5 class="text-primary">Rp. {{ number_format((float)$anggaranLabaBersih, 2) }}</h5></td>
-                            <td><h5 class="text-primary">Rp. {{ number_format((float)$labaBersih, 2) }}</h5></td>
-                            <td><h5 class="text-primary">Rp. {{ number_format((float)$labaBersihBefore, 2) }}</h5></td>
-                            <td><h5 class="text-primary">Rp. {{ number_format((float)$selisihLabaBersih, 2) }}</h5></td>
+                            <td><h5 class="text-primary"> {{ number_format((float)$anggaranLabaBersih) }}</h5></td>
+                            <td><h5 class="text-primary"> {{ number_format((float)$labaBersih) }}</h5></td>
+                            <td><h5 class="text-primary"> {{ number_format((float)$labaBersihBefore) }}</h5></td>
+                            <td><h5 class="text-primary"> {{ number_format((float)$selisihLabaBersih) }}</h5></td>
                         </tr>
                     @endif
                 @endforeach
@@ -260,3 +260,8 @@
         });
 </script>
 @endpush
+<style>
+    td {
+        text-align: right
+    }
+</style>

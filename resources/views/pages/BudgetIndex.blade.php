@@ -82,7 +82,7 @@
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->project->name }}</td>
                                     <td>{{ $data->subBudgetItem->name }}</td>
-                                    <td>{{ 'Rp. ' . number_format($data->amount, 2) }}</td>
+                                    <td class="text-right">{{  number_format($data->amount) }}</td>
                                     <td>
                                         @if($data->is_open)
                                             <span class="badge badge-success">Open</span>

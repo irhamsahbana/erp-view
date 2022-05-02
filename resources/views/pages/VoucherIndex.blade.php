@@ -88,7 +88,7 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Jenis Voucher', 'Jumlah', 'Keterangan', 'Status Voucher', 'Status', 'Aksi']">
+                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Jenis Voucher', 'Jumlah', 'Keterangan', 'Status Voucher',  'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
 
@@ -103,7 +103,7 @@
                                             Pengeluaran
                                         @endif
                                     </td>
-                                    <td>{{ 'Rp. ' . number_format($data->amount, 2) }}</td>
+                                    <td class="text-right">{{number_format($data->amount) }}</td>
                                     <td>{{ $data->notes }}</td>
                                     <td>
                                         @if($data->status == '1')
@@ -112,13 +112,13 @@
                                             By Planning
                                         @endif
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         @if($data->is_open)
                                             <span class="badge badge-success">Open</span>
                                         @else
                                             <span class="badge badge-danger">Close</span>
                                         @endif
-                                    </td>
+                                    </td> --}}
                                     <td>
                                         @if ($data->is_open)
                                             <a
