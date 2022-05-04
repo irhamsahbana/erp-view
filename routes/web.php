@@ -23,6 +23,7 @@ use App\Http\Controllers\{
     PurchaseDetailController,
     VendorController,
     VoucherController,
+    ReceivableController,
 
     //journal
     BudgetItemGroupController,
@@ -147,10 +148,13 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/get-budget-item-group', [AjaxController::class, 'getBudgetItemGroup'])->name('get-budget-item-group');
         Route::get('/get-normal-balances', [AjaxController::class, 'getNormalBalance'])->name('get-normal-balance');
     });
-    
+
     Route::group(['prefix' => 'neraca'], function() {
         Route::get('/', [ReportController::class, 'balancesheet'])->name('balance.index');
         Route::get('/export-data-balance', [ReportController::class, 'exportBalance'])->name('export.balance');
+    });
+    Route::group(['prefix' => 'tagihan'], function () {
+        Route::get('/', [ReceivableController::class, 'index'])->name('receivable-index');
     });
     Route::group(['prefix' => 'laba-rugi'], function() {
         Route::get('/', [ReportController::class, 'incomeStatement'])->name('income.statement.index');
@@ -243,8 +247,11 @@ Route::group(['middleware' => ['auth']], function(){
     });
 });
 
-
+Route::group(['prefix' => 'tagihan'], function () {
+    Route::get('/', [ReceivableController::class, 'index'])->name('receivable-index');
+});
 Route::get('/test', [TestController::class, 'test']);
+
 
 Route::get('/delete-debt', function() {
     $debtBalance = DebtBalance::all();
