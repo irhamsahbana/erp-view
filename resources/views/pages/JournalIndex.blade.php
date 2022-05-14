@@ -53,7 +53,7 @@ $breadcrumbList = [
                     <x-in-text
                         :type="'date'"
                         :label="'Tanggal Mulai'"
-                        :col="6"
+                        :col="3"
                         :value="app('request')->input('date_start') ?? null"
                         :name="'date_start'">
                     </x-in-text>
@@ -61,11 +61,15 @@ $breadcrumbList = [
                     <x-in-text
                         :type="'date'"
                         :label="'Tanggal Selesai'"
-                        :col="6"
+                        :col="3"
                         :value="app('request')->input('date_finish') ?? null"
                         :name="'date_finish'">
                     </x-in-text>
-
+                    <x-in-text
+                    :label="'Keyword'"
+                    :col="6"
+                    :value="app('request')->input('keyword') ?? null"
+                    :name="'keyword'"></x-in-text>
                     <x-col class="text-right">
                         <a type="button" class="btn btn-default" href="{{ route('journal.index') }}">reset</a>
                         <button type="submit" class="btn btn-primary">Cari</button>

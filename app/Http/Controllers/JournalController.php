@@ -46,6 +46,20 @@ class JournalController extends Controller
 
         $query->orderBy('created', 'desc', 'id','desc');
 
+        if($request->keyword) {
+            $list = explode(' ', $request->keyword);
+            $list = array_map('trim', $list);
+
+            $query->where(function($query) use ($list) {
+                foreach($list as $x) {
+                    $pattern = '%' . $x . '%';
+                    $query->orWhere('notes', 'like', $pattern);
+                    $query->orWhere('amount', 'like', $pattern);
+
+                }
+            });
+           }
+
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 

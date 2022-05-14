@@ -87,6 +87,8 @@
                     </x-col>
                 </x-row>
             </x-card-collapsible>
+-{{$datas}}-
+            {{$total_balance}}
         </x-row>
     </x-content>
 @endsection

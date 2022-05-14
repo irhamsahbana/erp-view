@@ -209,25 +209,31 @@ class DebtMutationController extends Controller
     public function balance(Request $request)
     {
         $query = DebtBalance::select('*');
+        $total_balance = 0;
 
         if ($request->branch_id)
-            $query->where('branch_id', $request->branch_id);
+        $query->where('branch_id', $request->branch_id);
 
         if ($request->project_id)
-            $query->where('project_id', $request->project_id);
+        $query->where('project_id', $request->project_id);
 
         if ($request->vendor_id)
-            $query->where('vendor_id', $request->vendor_id);
+        $query->where('vendor_id', $request->vendor_id);
         if ($request->type)
-            $query->where('debt_type_id', $request->type);
+        $query->where('debt_type_id', $request->type);
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
-            $query->where('branch_id', Auth::user()->branch_id);
-
+        $query->where('branch_id', Auth::user()->branch_id);
+        // dd($query);
         $datas = $query->paginate(40)->withQueryString();
+        foreach ( $query as $data ) {
+
+        // dd($data);
+        $total_balance += $data->total;
+}
         $options = self::staticOptions();
 
-        return view('pages.DebtBalanceIndex', compact('datas', 'options'));
+        return view('pages.DebtBalanceIndex', compact('total_balance','datas', 'options'));
     }
 
     public function print($id)

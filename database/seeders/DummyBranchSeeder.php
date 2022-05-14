@@ -15,6 +15,15 @@ class DummyBranchSeeder extends Seeder
      */
     public function run()
     {
-        Branch::factory()->count(2)->create();
+        $data = [
+            ['id' => 1, 'name' => "Kurnia Jaya Karya"],
+            ['id' => 2, 'name' => "PT. Delta"],
+            ['id' => 3, 'name' => "Kurnia Makmur Karya"],
+
+        ];
+        foreach ($data as $item) {
+            Branch::create($item);
+        }
+        // Branch::factory()->count(2)->create();
     }
 }

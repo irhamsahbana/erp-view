@@ -142,7 +142,7 @@ class RitMutationController extends Controller
         if ($balance->total < 0)
             return redirect()->back()->withErrors(['messages' => 'Saldo hutang ritase kurang dari yang tersedia.']);
 
-        $row->save();
+        // $row->save();
         $balance->save();
 
         return redirect()->route('rit-mutation.index')->with('f-msg', 'Mutasi hutang ritase berhasil disimpan.');

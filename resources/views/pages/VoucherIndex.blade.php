@@ -64,15 +64,20 @@
                         <x-in-text
                             :type="'date'"
                             :label="'Tanggal Mulai'"
-                            :col="6"
+                            :col="3"
                             :value="app('request')->input('date_start') ?? null"
                             :name="'date_start'"></x-in-text>
                         <x-in-text
                             :type="'date'"
                             :label="'Tanggal Selesai'"
-                            :col="6"
+                            :col="3"
                             :value="app('request')->input('date_finish') ?? null"
                             :name="'date_finish'"></x-in-text>
+                        <x-in-text
+                            :label="'Keyword'"
+                            :col="6"
+                            :value="app('request')->input('keyword') ?? null"
+                            :name="'keyword'"></x-in-text>
                         <x-col class="text-right">
                             <a type="button" class="btn btn-default" href="{{ route('voucher.index') }}">reset</a>
                             <button type="submit" class="btn btn-primary">Cari</button>
@@ -88,7 +93,7 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'Ref', 'Cabang', 'Jenis Voucher', 'Jumlah', 'Keterangan', 'Status Voucher',  'Aksi']">
+                        <x-table :thead="['Tanggal', 'No. Ref', 'Cabang', 'Jenis', 'Status ', 'Keterangan','Jumlah',    'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
 
@@ -103,8 +108,6 @@
                                             Pengeluaran
                                         @endif
                                     </td>
-                                    <td class="text-right">{{number_format($data->amount) }}</td>
-                                    <td>{{ $data->notes }}</td>
                                     <td>
                                         @if($data->status == '1')
                                             Urgent
@@ -112,13 +115,9 @@
                                             By Planning
                                         @endif
                                     </td>
-                                    {{-- <td>
-                                        @if($data->is_open)
-                                            <span class="badge badge-success">Open</span>
-                                        @else
-                                            <span class="badge badge-danger">Close</span>
-                                        @endif
-                                    </td> --}}
+                                    <td>{{ $data->notes }}</td>
+                                    <td class="text-right">{{number_format($data->amount) }}</td>
+
                                     <td>
                                         @if ($data->is_open)
                                             <a
@@ -439,3 +438,8 @@
         });
     </script>
 @endpush
+<style>
+    th {
+      text-align: center;
+    }
+</style>

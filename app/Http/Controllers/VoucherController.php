@@ -52,6 +52,19 @@ class VoucherController extends Controller
         if ($request->date_finish)
             $query->whereDate('created', '<=', new \DateTime($request->date_finish));
 
+        if($request->keyword) {
+         $list = explode(' ', $request->keyword);
+         $list = array_map('trim', $list);
+
+         $query->where(function($query) use ($list) {
+             foreach($list as $x) {
+                 $pattern = '%' . $x . '%';
+                 $query->orWhere('notes', 'like', $pattern);
+                 $query->orWhere('amount', 'like', $pattern);
+
+             }
+         });
+        }
         $query->orderBy('created', 'desc');
 
         if (!in_array(Auth::user()->role, self::$fullAccess))

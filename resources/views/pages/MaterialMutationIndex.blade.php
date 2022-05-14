@@ -50,14 +50,6 @@
                             :name="'material_id'"
                             :required="false"></x-in-select>
                         <x-in-select
-                            :label="'Status'"
-                            :placeholder="'Pilih Status'"
-                            :col="6"
-                            :name="'is_open'"
-                            :options="$options['status']"
-                            :value="app('request')->input('is_open') ?? null"
-                            :required="false"></x-in-select>
-                        <x-in-select
                             :label="'Jenis Mutasi'"
                             :placeholder="'Pilih Jenis Mutasi'"
                             :col="6"

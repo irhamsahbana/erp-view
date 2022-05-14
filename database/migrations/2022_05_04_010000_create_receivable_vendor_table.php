@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReceivableBalanceTable extends Migration
+class CreateReceivableVendorTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,12 @@ class CreateReceivableBalanceTable extends Migration
      */
     public function up()
     {
-        //
-        Schema::create('receivable_balances', function (Blueprint $table) {
+        Schema::create('receivable_vendor', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('branch_id');
-            $table->unsignedBigInteger('receivable_vendor_id');
-            $table->unsignedBigInteger('project_id');
-            $table->float('amount', 15,2);
+            $table->string('name');
         });
-
     }
 
     /**
@@ -32,6 +28,6 @@ class CreateReceivableBalanceTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('receivable_vendor');
     }
 }

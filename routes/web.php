@@ -248,7 +248,19 @@ Route::group(['middleware' => ['auth']], function(){
 });
 
 Route::group(['prefix' => 'tagihan'], function () {
-    Route::get('/', [ReceivableController::class, 'index'])->name('receivable-index');
+    // tagihan
+    Route::get('/', [ReceivableController::class, 'index'])->name('receivable.index');
+    Route::delete('/{id}', [ReceivableController::class, 'destroy'])->name('receivable.delete');
+    Route::post('/', [ReceivableController::class, 'addReceivable'])->name('receivable.add');
+    Route::post('/status/{id}', [ReceivableController::class, 'changeIsPaid'])->name('receivable-statuspaid.post');
+
+    // saldo
+    // vendor
+    Route::get('/vendor', [ReceivableController::class, 'vendorReceivable'])->name('receivable-vendor.index');
+    Route::get('/vendor/{id}', [ReceivableController::class, 'showVendor'])->name('receivable-vendor.detail');
+    Route::delete('/vendor/{id}', [ReceivableController::class, 'deleteVendor'])->name('receivable-vendor.destroy');
+    Route::post('/vendor', [ReceivableController::class, 'VendorStore'])->name('receivable-vendor.store');
+
 });
 Route::get('/test', [TestController::class, 'test']);
 

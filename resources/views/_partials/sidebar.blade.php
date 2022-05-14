@@ -69,6 +69,10 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-book'" :text="'Laba Rugi'" href="{{ route('income.statement.index') }}" />
       <x-nav-item :icon="'fas fa-book'" :text="'Buku Besar'" href="{{ route('general.ledger.index') }}" />
 
+      <li class="nav-header">PIUTANG USAHA</li>
+      <x-nav-item :icon="'fas fa-calculator'" :text="'Tagihan'" :href="route('receivable.index')" />
+      <x-nav-item :icon="'fas fa-industry'" :text="'Vendor Piutang Usaha'" href="{{ route('receivable-vendor.index') }}" />
+
       <li class="nav-header">TRANSAKSI PEMBELIAN</li>
       <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchase'" :href="route('purchasing.index')" />
 
@@ -166,7 +170,12 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" href="{{ route('project.index') }}" />
 
       @endif
+      @if (Auth::user()->role == 'accountreceivable')
+      <li class="nav-header">PIUTANG USAHA</li>
+      <x-nav-item :icon="'fas fa-calculator'" :text="'Tagihan'" :href="route('receivable.index')" />
+      <x-nav-item :icon="'fas fa-industry'" :text="'Vendor Piutang Usaha'" href="{{ route('vendor.index') }}" />
 
+      @endif
     </ul>
   </nav>
   <!-- /.sidebar-menu -->

@@ -13,12 +13,13 @@ class CreateReceivableTable extends Migration
      */
     public function up()
     {
-        Schema::create('receivable', function (Blueprint $table) {
+        Schema::create('receivables', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('ref_no')->unique();
             $table->unsignedBigInteger('branch_id');
-            $table->unsignedBigInteger('vendor_id');
+            $table->unsignedBigInteger('receivable_vendor_id');
+            $table->unsignedBigInteger('project_id');
             $table->float('amount', 15,2);
             $table->date('send_date');
             $table->date('pay_date')->nullable();
@@ -34,6 +35,6 @@ class CreateReceivableTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('receivable');
+        Schema::dropIfExists('receivables');
     }
 }

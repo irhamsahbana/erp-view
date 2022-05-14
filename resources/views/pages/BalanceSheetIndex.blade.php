@@ -143,7 +143,7 @@
 <script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>
 
 <meta name="search-branch" content="{{ app('request')->input('branch_id') ?? null }}">
-<meta name="search-project" content="{{ app('request')->input('project_id') ?? null }}">
+<input hidden id="search-project" value="{{ app('request')->input('project_id') ?? null }}">
 <meta name="search-date-start" content="{{ app('request')->input('date_start') ?? null }}">
 <meta name="search-date-finish" content="{{ app('request')->input('date_finish') ?? null }}">
 
@@ -158,7 +158,7 @@
 
             selectBranch.on('change', function () {
                 let branchId = $(this).val();
-                let searchProject = $('meta[name="search-project"]').attr('content');
+                let searchProject = $('#search-project').val();
 
                 if (branchId == '') {
                     selectProject.empty();

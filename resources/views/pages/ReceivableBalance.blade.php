@@ -7,12 +7,12 @@
             'href' => '/'
         ],
         [
-            'name' => 'Piutang Usaha'
+            'name' => 'Receivable Balance'
         ],
     ];
 @endphp
 
-@section('content-header', 'Account Receivable')
+@section('content-header', 'Account Receivable Balance')
 
 @section('breadcrumb')
     <x-breadcrumb :list="$breadcrumbList"/>
@@ -87,45 +87,37 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Cabang', 'Proyek','Tanggal Kirim','Tanggal Bayar' , 'Ref',  'Vendor', 'Keterangan', 'Jumlah' ,'Status Bayar','Aksi']">
+                        <x-table :thead="['Tanggal Kirim','Tanggal Bayar' , 'Ref', 'Cabang', 'Proyek', 'Vendor', 'Keterangan', 'Jumlah' ,'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $data->branch->name }}</td>
-                                    <td>{{ $data->project->name }}</td>
-                                    <td>{{ date("d-m-Y", strtotime($data->send_date)) }}</td>
-                                    <td>
-                                        @if($data->pay_date)
-
-                                            {{ date("d-m-Y", strtotime($data->pay_date)) }}
-                                        @endif
-                                        </td>
+                                    <td>{{ $data->created }}</td>
                                     <td>{{ $data->ref_no }}</td>
-                                    <td>{{ $data->receivable_vendor_id }}</td>
+                                    <td>{{ $data->branch->name }}</td>
+                                    <td class="text-right">{{  number_format($data->amount) }}</td>
                                     <td>{{ $data->notes }}</td>
-                                    <td class="text-right">{{ number_format($data->amount) }}</td>
                                     <td>
-                                        @if ( $data->is_paid)
-                                            <form action="{{ route('receivable-statuspaid.post', $data->id) }}" style="display:inline!important;" method="POST">
-                                                @method('POST')
-                                                @csrf
-                                            <button
-                                            type="submit"
-                                            class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
-                                                onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
-                                                title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
-                                        </form>
-                                         @else
-                                            <button
-                                            class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
-                                            onclick="changeStatus({{$data->id}})"
-                                                title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
-
-
+                                        @if($data->status == '1')
+                                            Waiting
+                                        @elseif($data->status == '2')
+                                            Accepted
+                                        @elseif($data->status == '3')
+                                            Rejected
+                                        @elseif($data->status == '4')
+                                            Hold
                                         @endif
                                     </td>
-                                    {{-- <td>{{ $data->pay_date }}</td> --}}
+                                    <td>
+                                        @if($data->is_open)
+                                            <span class="badge badge-success">Open</span>
+                                        @else
+                                            <span class="badge badge-danger">Close</span>
+                                        @endif
+                                    </td>
+                                    <td>
 
+
+                                    </td>
                                 </tr>
                             @endforeach
                         </x-table>
@@ -139,88 +131,12 @@
         </x-row>
     </x-content>
 
-    <x-modal :title="'Tambah Data'" :id="'add-modal'">
-        <form style="width: 100%" action="{{ route('receivable.add') }}" method="POST">
-            @csrf
-            @method('POST')
-
-            <x-row>
-                <x-in-select
-                            :label="'Cabang'"
-                            :placeholder="'Pilih Cabang'"
-                            :col="4"
-                            :name="'new_branch_id'"
-                            {{-- :id="'branch_id'" --}}
-                            :options="$options['branches']"
-                            {{-- name = 'idBranch' --}}
-                            :value="app('request')->input('branch_id') ?? null"
-                            :required="true"></x-in-select>
-                        <x-in-select
-                            :label="'Project'"
-                            :placeholder="'Pilih Project'"
-                            :col="4"
-                            :name="'new_project_id'"
-                            :value="app('request')->input('project_id') ?? null"
-                            :required="true"></x-in-select>
-                        <x-in-select
-                            :label="'Vendor'"
-                            :placeholder="'Pilih Vendor'"
-                            :col="4"
-                            :name="'new_receivable_vendor_id'"
-                            :value="app('request')->input('receivable_vendor_id') ?? null"
-                            :required="true"></x-in-select>
-                        <x-in-text
-                            :type="'date'"
-                            :label="'Tanggal Kirim'"
-                            :name="'new_send_date'"
-                            :col="6"
-                            ></x-in-text>
-                        <x-in-text
-                            :type="'number'"
-                            :label="'Jumlah'"
-                            :name="'new_amount'"
-                            :col="6"
-                            ></x-in-text>
-                        <x-in-text
-                            :type="'text'"
-                            :label="'Keterangan'"
-                            :name="'new_notes'"
-                            :col="12"
-                            ></x-in-text>
-
-                <x-col class="text-right">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </x-col>
-            </x-row>
-        </form>
-    </x-modal>
-
-    <x-modal :title="'Change Pay Status'" :id="'modal-change-status'" :size="'md'">
-        <form style="width: 100%" action="" method="POST" id="form-status-change">
-            @csrf
-            @method('POST')
-
-            <x-row>
-                <input type="hidden" name="id" id="order_id" value="">
-                <x-in-text
-                    :type="'date'"
-                    :label="'Tanggal'"
-                    :name="'pay_date'"
-                    :required="true"
-                    ></x-in-text>
-                <x-col class="text-right">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah anda yakin ingin mengubah status order data ini?')">Simpan</button>
-                </x-col>
-            </x-row>
-        </form>
-    </x-modal>
 @endsection
 
 @push('js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="url-order-show" content="{{ route('order.show', 'dummy-id') }}">
+    <meta name="url-order-change-status" content="{{ route('order.change-order-status', 'dummy-id') }}">
 
     <input hidden id="search-project" value="{{app('request')->input('project_id') ?? null }}">
    <input hidden id='url-project' value="{{route('project.index')}}">
@@ -228,12 +144,11 @@
    <input hidden id='search-vendor' value="{{app('request')->input('receivable_vendor_id') ?? null }}">
    <input hidden id='url-vendor' value="{{route('receivable-vendor.index')}}">
 {{-- Modal --}}
-   <input hidden id="new_search-project" value="{{app('request')->input('project_id') ?? null }}">
-   <input hidden id='new_url-project' value="{{route('project.index')}}">
+   <input hidden id="modal_search-project" value="{{app('request')->input('project_id') ?? null }}">
+   <input hidden id='modal_url-project' value="{{route('project.index')}}">
 
-   <input hidden id='new_search-vendor' value="{{app('request')->input('receivable_vendor_id') ?? null }}">
-   <input hidden id='new_url-vendor' value="{{route('receivable-vendor.index')}}">
-   <meta name="url-order-change-status" content="{{ route('receivable-statuspaid.post', 'dummy-id') }}">
+   <input hidden id='modal_search-vendor' value="{{app('request')->input('receivable_vendor_id') ?? null }}">
+   <input hidden id='modal_url-vendor' value="{{route('receivable-vendor.index')}}">
 
    <script>
         function changeStatus(id) {
@@ -249,7 +164,12 @@
                 dataType: 'json',
                 cache: false,
                 success: function(data) {
-                    $('#pay_date').val(data.pay_date);
+                    $('#order_id').val(data.id);
+                    $('#in_status').val(data.status);
+                    $('#info_branch').val(data.branch_id);
+                    $('#info_user').val(data.username);
+                    $('#info_amount').val(data.amount);
+                    $('#info_created').val(data.created);
 
                     //change form action
                     let url = $('meta[name="url-order-change-status"]').attr('content');
@@ -332,12 +252,12 @@
         // modal
 
         $(function() {
-            let selectProject =  $('#new_project_id')
-            let selectBranch = $('#new_branch_id');
+            let selectProject =  $('#modal_project_id')
+            let selectBranch = $('#modal_branch_id');
 
             selectBranch.on('change', function () {
                 let branchId = $(this).val();
-                let searchProject = $('#new_search-project').val();
+                let searchProject = $('#modal_search-project').val();
 
                 if (branchId == '') {
                     selectProject.empty();
@@ -345,7 +265,7 @@
                     return;
                 }
             $.ajax({
-                url: $('#new_url-project').val(),
+                url: $('#modal_url-project').val(),
                 type: 'GET',
                 data: {
                     branch_id : branchId,
@@ -365,12 +285,12 @@
             })
         });
         $(function() {
-            let selectVendor =  $('#new_receivable_vendor_id')
-            let selectBranch = $('#new_branch_id');
+            let selectVendor =  $('#modal_receivable_vendor_id')
+            let selectBranch = $('#modal_branch_id');
 
             selectBranch.on('change', function () {
                 let branchId = $(this).val();
-                let searchVendor = $('#new_search-vendor').val();
+                let searchVendor = $('#modal_search-vendor').val();
 
                 if (branchId == '') {
                     selectVendor.empty();
@@ -378,7 +298,7 @@
                     return;
                 }
             $.ajax({
-                url: $('#new_url-vendor').val(),
+                url: $('#modal_url-vendor').val(),
                 type: 'GET',
                 data: {
                     branch_id : branchId,
@@ -398,10 +318,4 @@
             })
         });
     </script>
-<style>
-    th {
-        text-align: center
-    }
-</style>
 @endpush
-
