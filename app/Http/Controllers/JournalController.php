@@ -54,7 +54,6 @@ class JournalController extends Controller
                 foreach($list as $x) {
                     $pattern = '%' . $x . '%';
                     $query->orWhere('notes', 'like', $pattern);
-                    $query->orWhere('amount', 'like', $pattern);
 
                 }
             });
