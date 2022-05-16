@@ -162,7 +162,7 @@ $saldo = $firstSaldo;
                                         $saldo = $saldo + $sub->amount
                                     @endphp
                                     {{ $saldo }}
-                                @endphp
+
                                 @else
                                     @php
                                         $saldo = $saldo - $sub->amount

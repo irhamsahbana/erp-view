@@ -34,13 +34,13 @@ class GeneralLedgerController extends Controller
             $posisi = '';
 
             $sma = SubBudgetItem::find($request->sub_budget_item_id);
-            // dd($sma);
+
             $normal = Category::find($sma->normal_balance_id);
 
             $posisi = ($normal->label);
             // get Firstt Saldo
             // dd($posisi);
-
+            // echo($sma);
             if($request->project_id)
             {
                 $dataFirstSaldo = $allJournals->whereDate('journals.created', '<', new \DateTime($request->date_start))->where('journals.branch_id', $request->branch_id)->where('projects.id', $request->project_id)->where('sub_budget_items.id', $request->sub_budget_item_id)->get();
@@ -75,6 +75,7 @@ class GeneralLedgerController extends Controller
             $subJournal = [];
             $firstSaldo = 0;
             $lastSaldo = 0;
+            $posisi = '';
         }
 
         $data = [
@@ -83,8 +84,10 @@ class GeneralLedgerController extends Controller
             'firstSaldo' => $firstSaldo,
             'lastSaldo' => $lastSaldo,
             'options' => self::staticOptions(),
-            'posisi' => $posisi,
+            'posisi' => $posisi
+
         ];
+        // dd($data);
         return view('pages.GeneralLedgerIndex', $data);
     }
     public static function staticOptions()
