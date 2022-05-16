@@ -31,12 +31,15 @@ class GeneralLedgerController extends Controller
             $firstCreditCount = 0;
             $lastDebitCount = 0;
             $lastCreditCount = 0;
+            $posisi = '';
 
             $sma = SubBudgetItem::find($request->sub_budget_item_id);
+            // dd($sma);
             $normal = Category::find($sma->normal_balance_id);
 
             $posisi = ($normal->label);
             // get Firstt Saldo
+            // dd($posisi);
 
             if($request->project_id)
             {
@@ -80,7 +83,7 @@ class GeneralLedgerController extends Controller
             'firstSaldo' => $firstSaldo,
             'lastSaldo' => $lastSaldo,
             'options' => self::staticOptions(),
-            'posisi' => $posisi
+            'posisi' => $posisi,
         ];
         return view('pages.GeneralLedgerIndex', $data);
     }

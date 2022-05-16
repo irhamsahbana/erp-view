@@ -2,14 +2,16 @@
 
 @php
 $breadcrumbList = [
-[
-'name' => 'Home',
-'href' => '/'
-],
-[
-'name' => 'Buku Besar'
-],
+    [
+        'name' => 'Home',
+        'href' => '/'
+    ],
+    [
+        'name' => 'Buku Besar'
+    ],
 ];
+
+$saldo = $firstSaldo;
 
 @endphp
 
@@ -154,11 +156,20 @@ $breadcrumbList = [
                             <td>{{ $sub->notes }}</td>
                             <td>{{ $sub->category_name }}</td>
                             <td class="text-right">{{ number_format($sub->amount) }}</td>
-                            @if($index != 0)
-                                <td class="text-right">{{ number_format($sub->amount) }}</td>
-                            @else
-
-                            @endif
+                            <td>
+                                @if ($posisi == $sub->category_name)
+                                    @php
+                                        $saldo = $saldo + $sub->amount
+                                    @endphp
+                                    {{ $saldo }}
+                                @endphp
+                                @else
+                                    @php
+                                        $saldo = $saldo - $sub->amount
+                                    @endphp
+                                    {{ $saldo }}
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
                         <tr>
