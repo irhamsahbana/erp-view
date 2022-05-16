@@ -46,13 +46,21 @@ class ReceivableController extends Controller
 
             if ($request->pay_date_finish)
                 $query->whereDate('pay_date', '<=', new \DateTime($request->pay_date_finish));
+            if ($request->due_date_start)
+            $query->whereDate('due_date', '>=', new \DateTime($request->due_date_start));
 
+            if ($request->due_date_finish)
+                $query->whereDate('due_date', '<=', new \DateTime($request->due_date_finish));
+
+            $total = $query->sum('amount');
+
+            // dd($total);
 
             $datas = $query->paginate(40)->withQueryString();
             $query->orderBy('send_date', 'desc');
             $options = self::staticOptions();
 
-        return view('pages.Receivable', compact('datas', 'options'));
+        return view('pages.Receivable', compact('datas', 'options',));
     }
 
     public function store(Request $request) {
@@ -107,17 +115,23 @@ class ReceivableController extends Controller
             // 'new_amount' => ['required', 'numeric'],
             'new_notes' => ['required', 'string', 'max:255'],
             'new_send_date' => ['required', 'date'],
+            'new_send_date' => ['required', 'date'],
             'new_branch_id' => ['required', 'exists:branches,id'],
             'new_project_id' => ['required', 'exists:projects,id'],
             'new_receivable_vendor_id' => ['required', 'exists:receivable_vendor,id'],
 
         ]);
-        $balance = ReceivableBalance::firstOrNew(['branch_id' => $request->new_branch_id,
-                    'project_id'=> $request->new_project_id,
-                    'receivable_vendor_id'=> $request->new_receivable_vendor_id]);
 
-        $balance->branch_id = $request->new_branch_id;
-        $balance->project_id = $request->new_project_id;
+        $balance = ReceivableBalance::firstOrNew([
+                    'branch_id' => $request->new_branch_id,
+                    'project_id'=> $request->new_project_id,
+                    'receivable_vendor_id'=> $request->new_receivable_vendor_id
+                ]);
+
+        // dd($balance);
+
+        // $balance->branch_id = $request->new_branch_id;
+        // $balance->project_id = $request->new_project_id;
         $balance->receivable_vendor_id = $request->new_receivable_vendor_id;
 
         $row = Model::findOrNew($request->id);
@@ -126,6 +140,7 @@ class ReceivableController extends Controller
         $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
         $row->amount = $request->new_amount;
         $row->send_date = $request->new_send_date;
+        $row->due_date = $request->new_due_date;
         $row->notes = $request->new_notes;
         $row->receivable_vendor_id = $request->new_receivable_vendor_id;
         $row->branch_id = $request->new_branch_id;
@@ -138,7 +153,6 @@ class ReceivableController extends Controller
 
     }
 
-
     public function destroy($id) {
         $row = Model::findOrFail($id);
         $balance = ReceivableBalance::where('branch_id',$row->branch_id)
@@ -146,16 +160,15 @@ class ReceivableController extends Controller
                                     ->where('receivable_vendor_id', $row->receivable_vendor_id)
                                     ->first();
 
-        if($row->is_paid) {
+
+        if(!$row->is_paid) {
             $balance->amount -= $row->amount;
         }
 
-        $row->destroy();
+        $row->delete();
         $balance->save();
-        return view('pages.Receivable', compact('datas', 'options'));
+        return redirect()->back()->with('f-msg', 'Data berhasil dihapus.');
     }
-
-
     public function changeIsPaid(Request $request, $id) {
 
         $row = Model::findOrFail($id);
@@ -206,6 +219,11 @@ class ReceivableController extends Controller
         if($request->receivable_vendor_id) {
             $query->where('receivable_vendor_id', $request->receivable_vendor_id);
         }
+
+        $options = self::staticOptions();
+        $datas = $query->paginate(40)->withQueryString();
+
+        return view('pages.ReceivableBalance', compact('datas', 'options'));
 
     }
 

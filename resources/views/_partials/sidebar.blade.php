@@ -69,18 +69,19 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-book'" :text="'Laba Rugi'" href="{{ route('income.statement.index') }}" />
       <x-nav-item :icon="'fas fa-book'" :text="'Buku Besar'" href="{{ route('general.ledger.index') }}" />
 
-      {{-- <li class="nav-header">PIUTANG USAHA</li>
+      <li class="nav-header">PIUTANG USAHA</li>
       <x-nav-item :icon="'fas fa-calculator'" :text="'Tagihan'" :href="route('receivable.index')" />
-      <x-nav-item :icon="'fas fa-industry'" :text="'Vendor Piutang Usaha'" href="{{ route('receivable-vendor.index') }}" /> --}}
-{{--
+      <x-nav-item :icon="'fas fa-industry'" :text="'Saldo Piutang Usaha'" href="{{ route('receivable-balance.index') }}" />
+      <x-nav-item :icon="'fas fa-industry'" :text="'Vendor Piutang Usaha'" href="{{ route('receivable-vendor.index') }}" />
+
       <li class="nav-header">TRANSAKSI PEMBELIAN</li>
       <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchase'" :href="route('purchasing.index')" />
 
       <li class="nav-header">ANGGARAN</li>
-      <x-nav-item :icon="'fas fa-calculator'" :text="'Anggaran'" :href="route('budget.index')" /> --}}
+      <x-nav-item :icon="'fas fa-calculator'" :text="'Anggaran'" :href="route('budget.index')" />
 
-      {{-- <li class="nav-header">LAPORAN</li>
-      <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="route('purchasing.index')" /> --}}
+      <li class="nav-header">LAPORAN</li>
+      <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="route('purchasing.index')" />
 
       <li class="nav-header">MASTER DATA</li>
       <x-nav-item :icon="'fas fa-list'" :text="'List Kategori'" href="{{ route('category.list') }}" />

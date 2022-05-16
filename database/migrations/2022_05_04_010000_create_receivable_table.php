@@ -22,6 +22,7 @@ class CreateReceivableTable extends Migration
             $table->unsignedBigInteger('project_id');
             $table->float('amount', 15,2);
             $table->date('send_date');
+            $table->date('due_date');
             $table->date('pay_date')->nullable();
             $table->boolean('is_paid')->default(false);
             $table->text('notes');

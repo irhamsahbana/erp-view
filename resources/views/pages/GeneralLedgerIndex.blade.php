@@ -135,14 +135,14 @@ $breadcrumbList = [
 
                 <div class="table-responsive">
                     <x-table
-                        :thead="['Tanggal', 'No, Jurnal', 'Proyek', 'Kelompok MA', 'MA', 'Sub MA', 'Catatan', 'Posisi', 'Jumlah']">
+                        :thead="['Tanggal', 'No, Jurnal', 'Proyek', 'Kelompok MA', 'MA', 'Sub MA', 'Catatan', 'Posisi', 'Jumlah', 'Saldo']">
                         <tr>
                             <td colspan="9">
                                 <h5>Saldo Awal</h5>
                             </td>
                             <td class="text-right">{{ number_format($firstSaldo) }}</td>
                         </tr>
-                        @foreach ($subJournal as $sub)
+                        @foreach ($subJournal as $index => $sub)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $sub->created }}</td>
@@ -154,6 +154,11 @@ $breadcrumbList = [
                             <td>{{ $sub->notes }}</td>
                             <td>{{ $sub->category_name }}</td>
                             <td class="text-right">{{ number_format($sub->amount) }}</td>
+                            @if($index != 0)
+                                <td class="text-right">{{ number_format($sub->amount) }}</td>
+                            @else
+
+                            @endif
                         </tr>
                         @endforeach
                         <tr>

@@ -10,6 +10,11 @@
             'name' => 'Piutang Usaha'
         ],
     ];
+
+    function abcd()
+    {
+
+    }
 @endphp
 
 @section('content-header', 'Account Receivable')
@@ -87,21 +92,23 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Cabang', 'Proyek','Tanggal Kirim','Tanggal Bayar' , 'Ref',  'Vendor', 'Keterangan', 'Jumlah' ,'Status Bayar','Aksi']">
+                        <x-table :thead="['Cabang', 'Proyek','Tanggal Kirim', 'Batas Waktu','Tanggal Bayar' ,  'Ref',  'Vendor', 'Keterangan', 'Jumlah' ,'Status Bayar','Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $data->branch->name }}</td>
                                     <td>{{ $data->project->name }}</td>
                                     <td>{{ date("d-m-Y", strtotime($data->send_date)) }}</td>
+                                    <td>{{ date("d-m-Y", strtotime($data->due_date)) }}</td>
                                     <td>
+                                        {{abcd()}}
                                         @if($data->pay_date)
-
                                             {{ date("d-m-Y", strtotime($data->pay_date)) }}
+
                                         @endif
                                         </td>
                                     <td>{{ $data->ref_no }}</td>
-                                    <td>{{ $data->receivable_vendor_id }}</td>
+                                    <td>{{ $data->receivable_vendor->name }}</td>
                                     <td>{{ $data->notes }}</td>
                                     <td class="text-right">{{ number_format($data->amount) }}</td>
                                     <td>
@@ -123,6 +130,19 @@
 
 
                                         @endif
+                                        <form
+                                        style=" display:inline!important;"
+                                        method="POST"
+                                        action="{{ route('receivable.delete', $data->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-danger"
+                                            onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+                                            title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
                                     </td>
                                     {{-- <td>{{ $data->pay_date }}</td> --}}
 
@@ -173,19 +193,29 @@
                             :type="'date'"
                             :label="'Tanggal Kirim'"
                             :name="'new_send_date'"
-                            :col="6"
+                            :col="4"
+                            :required="true"
+                            ></x-in-text>
+                        <x-in-text
+                            :type="'date'"
+                            :label="'Batas Waktu'"
+                            :name="'new_due_date'"
+                            :col="4"
+                            :required="true"
                             ></x-in-text>
                         <x-in-text
                             :type="'number'"
                             :label="'Jumlah'"
                             :name="'new_amount'"
-                            :col="6"
+                            :col="4"
+                            :required="true"
                             ></x-in-text>
                         <x-in-text
                             :type="'text'"
                             :label="'Keterangan'"
                             :name="'new_notes'"
                             :col="12"
+                            :required="true"
                             ></x-in-text>
 
                 <x-col class="text-right">

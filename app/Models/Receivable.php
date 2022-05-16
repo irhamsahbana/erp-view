@@ -18,7 +18,7 @@ class Receivable extends Model
     public function project() {
         return $this->belongsTo(Project::class,'project_id');
     }
-    public function receivableVendor() {
+    public function receivable_vendor() {
         return $this->belongsTo(ReceivableVendor::class,'receivable_vendor_id');
     }
 

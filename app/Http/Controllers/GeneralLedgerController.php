@@ -7,6 +7,8 @@ use App\Models\Journals;
 use App\Models\SubJournal;
 use Illuminate\Http\Request;
 use App\Models\BudgetItemGroup;
+use App\Models\Category;
+use App\Models\SubBudgetItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,7 +32,10 @@ class GeneralLedgerController extends Controller
             $lastDebitCount = 0;
             $lastCreditCount = 0;
 
+            $sma = SubBudgetItem::find($request->sub_budget_item_id);
+            $normal = Category::find($sma->normal_balance_id);
 
+            $posisi = ($normal->label);
             // get Firstt Saldo
 
             if($request->project_id)
@@ -49,7 +54,7 @@ class GeneralLedgerController extends Controller
                 }
                 $firstSaldo = $firstDebitCount - $firstCreditCount;
             }
-            
+
 
             // get Saldo
             foreach ($query->get() as $data2) {
@@ -61,7 +66,7 @@ class GeneralLedgerController extends Controller
                 $saldo = $lastDebitCount - $lastCreditCount;
             }
 
-            //Last Saldo 
+            //Last Saldo
             $lastSaldo = $firstSaldo + $saldo;
         }else{
             $subJournal = [];
@@ -75,6 +80,7 @@ class GeneralLedgerController extends Controller
             'firstSaldo' => $firstSaldo,
             'lastSaldo' => $lastSaldo,
             'options' => self::staticOptions(),
+            'posisi' => $posisi
         ];
         return view('pages.GeneralLedgerIndex', $data);
     }
@@ -128,7 +134,7 @@ class GeneralLedgerController extends Controller
             'budget_items.name as budget_item_name',
             'budget_items.id',
             'sub_budget_items.name as sub_budget_item_name',
-            'sub_budget_items.id', 
+            'sub_budget_items.id',
             'sub_budget_items.normal_balance_id as sub_budget_item_balance_id',
             'categories.label as category_name',
             )
@@ -144,15 +150,15 @@ class GeneralLedgerController extends Controller
     }
     public static function filters($request, $query)
     {
-        if($request->branch_id)      
+        if($request->branch_id)
             $query->where('journals.branch_id', $request->branch_id);
-            
+
         if($request->project_id)
             $query->where('projects.id', $request->project_id);
 
         if($request->budget_item_group_id)
             $query->where('budget_item_groups.id', $request->budget_item_group_id);
-        
+
         if($request->budget_item_id)
             $query->where('budget_items.id', $request->budget_item_id);
 
@@ -164,5 +170,5 @@ class GeneralLedgerController extends Controller
 
         if($request->date_finish)
             $query->whereDate('journals.created', '<=', new \DateTime($request->date_finish));
-    } 
+    }
 }

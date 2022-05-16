@@ -255,6 +255,7 @@ Route::group(['prefix' => 'tagihan'], function () {
     Route::post('/status/{id}', [ReceivableController::class, 'changeIsPaid'])->name('receivable-statuspaid.post');
 
     // saldo
+    Route::get('/saldo', [ReceivableController::class, 'balanceIndex'])->name('receivable-balance.index');
     // vendor
     Route::get('/vendor', [ReceivableController::class, 'vendorReceivable'])->name('receivable-vendor.index');
     Route::get('/vendor/{id}', [ReceivableController::class, 'showVendor'])->name('receivable-vendor.detail');
