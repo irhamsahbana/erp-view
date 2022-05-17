@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 
 use App\Models\ReceivableVendor;
 use App\Models\ReceivableBalance;
@@ -21,6 +22,22 @@ class ReceivableController extends Controller
 
     public function index(Request $request) {
         $query = Model::select('*');
+        $date = Carbon::now();
+        if (!in_array(Auth::user()->role, self::$fullAccess))
+        $query->where('branch_id', Auth::user()->branch_id);
+
+
+        $query2 = Model::select('*');
+        if (!in_array(Auth::user()->role, self::$fullAccess))
+        $query2->where('branch_id', Auth::user()->branch_id);
+
+        $receivable = $query2->where('is_paid', 0)
+        // ->where('due_date', '<=', $date)
+        ->sum('amount');
+        $receivable_duedate = $query2->where('is_paid', 0)
+        ->where('due_date', '<=', $date)
+        ->sum('amount');
+
         if ($request->branch_id) {
             if (!in_array(Auth::user()->role, self::$fullAccess))
                 $query->where('branch_id', Auth::user()->branch_id);
@@ -60,7 +77,9 @@ class ReceivableController extends Controller
             $query->orderBy('send_date', 'desc');
             $options = self::staticOptions();
 
-        return view('pages.Receivable', compact('datas', 'options',));
+
+
+        return view('pages.Receivable', compact('datas', 'options', 'total', 'receivable', 'receivable_duedate'));
     }
 
     public function store(Request $request) {
@@ -129,10 +148,6 @@ class ReceivableController extends Controller
                     'receivable_vendor_id'=> $request->new_receivable_vendor_id
                 ]);
 
-        // dd($balance);
-
-        // $balance->branch_id = $request->new_branch_id;
-        // $balance->project_id = $request->new_project_id;
         $balance->receivable_vendor_id = $request->new_receivable_vendor_id;
 
         $row = Model::findOrNew($request->id);
@@ -253,7 +268,13 @@ class ReceivableController extends Controller
         }
 
         $datas = $query->paginate(40)->withQueryString();
+
         $branches = Branch::all();
+        if (!in_array(Auth::user()->role, self::$fullAccess))
+        $branches->where('branch_id', Auth::user()->branch_id);
+        else
+        $branches->where('branch_id', $request->branch_id);
+
         if ($branches->isNotEmpty()) {
             $branches = $branches->map(function ($branch) {
                 return [

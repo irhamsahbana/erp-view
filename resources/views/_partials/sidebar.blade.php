@@ -70,6 +70,7 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-book'" :text="'Buku Besar'" href="{{ route('general.ledger.index') }}" />
 
       <li class="nav-header">Penagihan</li>
+
       <x-nav-item :icon="'fas fa-calculator'" :text="'Tagihan'" :href="route('receivable.index')" />
       <x-nav-item :icon="'fas fa-industry'" :text="'Saldo Piutang Usaha'" href="{{ route('receivable-balance.index') }}" />
       <x-nav-item :icon="'fas fa-industry'" :text="'Vendor Piutang Usaha'" href="{{ route('receivable-vendor.index') }}" />
@@ -173,7 +174,7 @@ $optionsAuth['roles'] = [
       @endif
       @if (Auth::user()->role == 'Account Receivable')
       <li class="nav-header">Penagihan</li>
-      <x-nav-item :icon="'fas fa-calculator'" :text="'Tagihan'" :href="route('receivable.index')" />
+      <x-nav-item :icon="'fas fa-ballot'" :text="'Tagihan'" :href="route('receivable.index')" />
       <x-nav-item :icon="'fas fa-industry'" :text="'Saldo Piutang Usaha'" href="{{ route('receivable-balance.index') }}" />
       <x-nav-item :icon="'fas fa-industry'" :text="'Vendor Piutang Usaha'" href="{{ route('receivable-vendor.index') }}" />
 

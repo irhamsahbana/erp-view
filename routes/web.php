@@ -24,7 +24,6 @@ use App\Http\Controllers\{
     VendorController,
     VoucherController,
     ReceivableController,
-
     //journal
     BudgetItemGroupController,
     BudgetItemController,
@@ -34,6 +33,7 @@ use App\Http\Controllers\{
     ProfitLossController,
     ReportController,
     GeneralLedgerController,
+    DashboardController,
 };
 
 use App\Models\{
@@ -61,7 +61,7 @@ Route::group(['middleware' =>['guest']], function() {
     Route::view('/login', 'pages.Login')->name('login');
     Route::post('login', [AuthController::class, 'attempt'])->name('login.attempt');
 });
-
+Route::get('/dashboard', [DashboardController::class, 'testDashboard']) -> name('dashboard.view');
 Route::group(['middleware' => ['auth']], function(){
     Route::view('/', 'App')->name('app');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

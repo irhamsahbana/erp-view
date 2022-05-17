@@ -84,8 +84,47 @@
                     </x-row>
                 </form>
             </x-card-collapsible>
+            <x-card-collapsible :title="'Total Saldo'">
+                <div class="container-fluid">
+                    <!-- Small boxes (Stat box) -->
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <!-- small box -->
+                        {{-- Piutang --}}
+                        {{-- Total Piutang --}}
+                        <div class="small-box bg-info">
+                          <div class="inner">
+                              <p>Piutang Belum Terbayarkan</p>
+                            <h3 class="text-right"> {{number_format($receivable)}} </h3>
 
-            <x-card-collapsible>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <!-- ./col -->
+                      <div class="col-lg-6">
+                        <!-- small box -->
+                        <div class="small-box bg-danger">
+                          <div class="inner">
+
+                              <p>Piutang Lewat Batas Waktu</p>
+                              <h3 class="text-right"> {{number_format($receivable_duedate)}} </h3>
+
+                          </div>
+
+
+                        </div>
+                      </div>
+                      <!-- ./col -->
+                    </div>
+                    <!-- /.row -->
+                    <!-- Main row -->
+
+                    <!-- /.row (main row) -->
+                  </div><!-- /.container-fluid -->
+        </x-card-collapsible>
+            <x-card-collapsible :title="'Data Mutasi'">
                 <x-row>
                     <x-col class="mb-3">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-modal">Tambah</button>
@@ -130,6 +169,8 @@
 
 
                                         @endif
+                                    </td>
+                                    <td>
                                         <form
                                         style=" display:inline!important;"
                                         method="POST"
@@ -143,6 +184,7 @@
                                             onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
                                             title="Hapus"><i class="fas fa-trash-alt"></i></button>
                                     </form>
+
                                     </td>
                                     {{-- <td>{{ $data->pay_date }}</td> --}}
 
