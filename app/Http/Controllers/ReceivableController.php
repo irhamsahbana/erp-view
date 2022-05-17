@@ -109,6 +109,7 @@ class ReceivableController extends Controller
         return $options;
     }
     public function addReceivable(Request $request) {
+
         // dd($request);
         $request->validate([
             'id' => ['nullable'],

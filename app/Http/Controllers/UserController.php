@@ -24,7 +24,7 @@ class UserController extends Controller
         $request->validate([
             'id' => ['nullable', 'exists:users,id'],
             'branch_id' => ['required', 'exists:branches,id'],
-            'role' => ['required', 'string', 'max:255', 'in:owner,admin,branch_head,accountant,cashier,material,purchaser'],
+            'role' => ['required', 'string', 'max:255', 'in:owner,admin,branch_head,accountant,cashier,material,purchaser,Account Receivable'],
             'username' => ['required', 'string', 'max:255', 'unique:users,username,' . $request->id],
             'password' => ['required_without:id', 'nullable', 'string', 'max:255'],
             'password_confirmation' => ['required_with:password', 'nullable', 'string', 'max:255', 'same:password'],
@@ -114,6 +114,7 @@ class UserController extends Controller
             ['text' => 'Akutansi', 'value' => 'accountant'],
             ['text' => 'Kasir', 'value' => 'cashier'],
             ['text' => 'Material', 'value' => 'material'],
+            ['text' => 'Penagihan', 'value' => 'Account Receivable'],
             ['text' => 'Purchaser', 'value' => 'purchaser']
         ];
 

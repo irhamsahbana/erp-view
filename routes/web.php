@@ -44,6 +44,7 @@ use App\Models\{
     MaterialBalance,
     PurchaseDetail
 };
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -246,23 +247,25 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('anggaran/{id}', [BudgetController::class, 'destroy'])->name('budget.destroy');
     });
 });
+// if (Auth::user()->role == 'Account Receivable' || Auth::user()->role == 'owner' || Auth::user()->role == 'admin') {
 
-Route::group(['prefix' => 'tagihan'], function () {
-    // tagihan
-    Route::get('/', [ReceivableController::class, 'index'])->name('receivable.index');
-    Route::delete('/{id}', [ReceivableController::class, 'destroy'])->name('receivable.delete');
-    Route::post('/', [ReceivableController::class, 'addReceivable'])->name('receivable.add');
-    Route::post('/status/{id}', [ReceivableController::class, 'changeIsPaid'])->name('receivable-statuspaid.post');
+    Route::group(['prefix' => 'tagihan'], function () {
+        // tagihan
+        Route::get('/', [ReceivableController::class, 'index'])->name('receivable.index');
+        Route::delete('/{id}', [ReceivableController::class, 'destroy'])->name('receivable.delete');
+        Route::post('/', [ReceivableController::class, 'addReceivable'])->name('receivable.add');
+        Route::post('/status/{id}', [ReceivableController::class, 'changeIsPaid'])->name('receivable-statuspaid.post');
 
-    // saldo
-    Route::get('/saldo', [ReceivableController::class, 'balanceIndex'])->name('receivable-balance.index');
-    // vendor
-    Route::get('/vendor', [ReceivableController::class, 'vendorReceivable'])->name('receivable-vendor.index');
-    Route::get('/vendor/{id}', [ReceivableController::class, 'showVendor'])->name('receivable-vendor.detail');
-    Route::delete('/vendor/{id}', [ReceivableController::class, 'deleteVendor'])->name('receivable-vendor.destroy');
-    Route::post('/vendor', [ReceivableController::class, 'VendorStore'])->name('receivable-vendor.store');
+        // saldo
+        Route::get('/saldo', [ReceivableController::class, 'balanceIndex'])->name('receivable-balance.index');
+        // vendor
+        Route::get('/vendor', [ReceivableController::class, 'vendorReceivable'])->name('receivable-vendor.index');
+        Route::get('/vendor/{id}', [ReceivableController::class, 'showVendor'])->name('receivable-vendor.detail');
+        Route::delete('/vendor/{id}', [ReceivableController::class, 'deleteVendor'])->name('receivable-vendor.destroy');
+        Route::post('/vendor', [ReceivableController::class, 'VendorStore'])->name('receivable-vendor.store');
 
-});
+    });
+// }
 Route::get('/test', [TestController::class, 'test']);
 
 
