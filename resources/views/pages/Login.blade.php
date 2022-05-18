@@ -14,15 +14,16 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('assets') }}/dist/css/adminlte.min.css">
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page" >
 <div class="login-box">
   <!-- /.login-logo -->
   <div class="card card-outline card-primary">
     <div class="card-header text-center">
-      <a href="#" class="h1"><b>{{ env('APP_NAME') }}</b></a>
+        <img src="{{ asset('assets') }}/dist/img/icon/kurniajayakarya.png"  alt="User Image">
+      {{-- <a href="#" class="h1"><b>{{ env('APP_NAME') }}</b></a> --}}
     </div>
     <div class="card-body">
-      <p class="login-box-msg">Masukkan Nama dan Password anda</p>
+      {{-- <p class="login-box-msg">Masukkan Nama dan Password anda</p> --}}
 
       <form action="{{ route('login.attempt') }}" method="post">
         @csrf
@@ -69,3 +70,13 @@
 @include('_partials.toast')
 </body>
 </html>
+
+<style>
+.card-header img {
+    max-width: 200px;
+}
+
+.card-header  {
+ padding: 0
+}
+</style>

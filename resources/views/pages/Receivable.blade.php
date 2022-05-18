@@ -150,7 +150,7 @@
                                     <td>{{ $data->receivable_vendor->name }}</td>
                                     <td>{{ $data->notes }}</td>
                                     <td class="text-right">{{ number_format($data->amount) }}</td>
-                                    <td>
+                                    <td class="text-center">
                                         @if ( $data->is_paid)
                                             <form action="{{ route('receivable-statuspaid.post', $data->id) }}" style="display:inline!important;" method="POST">
                                                 @method('POST')

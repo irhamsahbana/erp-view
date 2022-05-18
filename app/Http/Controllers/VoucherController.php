@@ -19,6 +19,8 @@ class VoucherController extends Controller
 
     public function index(Request $request)
     {
+
+
         $query = Model::select('*');
 
         if ($request->branch_id) {
