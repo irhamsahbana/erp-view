@@ -17,9 +17,9 @@
 <body class="hold-transition login-page" >
 <div class="login-box">
   <!-- /.login-logo -->
-  <div class="card card-outline card-primary">
+  <div class="card card-outline card-warning">
     <div class="card-header text-center">
-        <img src="{{ asset('assets') }}/dist/img/icon/kurniajayakarya.png"  alt="User Image">
+        <img src="{{ asset('assets') }}/dist/img/icon/2.png"  alt="User Image">
       {{-- <a href="#" class="h1"><b>{{ env('APP_NAME') }}</b></a> --}}
     </div>
     <div class="card-body">
@@ -45,7 +45,7 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            <button type="submit" class="btn btn-warning btn-block">Sign In</button>
           </div>
           <!-- /.col -->
         </div>
@@ -73,7 +73,7 @@
 
 <style>
 .card-header img {
-    max-width: 200px;
+    max-width: 300px;
 }
 
 .card-header  {
