@@ -31,7 +31,7 @@ class ReceivableController extends Controller
                 $query->where('branch_id', Auth::user()->branch_id);
             else
                 $query->where('branch_id', $request->branch_id);
-        }
+            }
 
             if($request->project_id) {
                 $query->where('project_id', $request->project_id);
@@ -47,10 +47,13 @@ class ReceivableController extends Controller
                 $query->whereDate('send_date', '<=', new \DateTime($request->send_date_finish));
 
             if ($request->pay_date_start)
-            $query->whereDate('pay_date', '>=', new \DateTime($request->pay_date_start));
+            $query->where('is_paid', true)->whereDate('pay_date', '>=', new \DateTime($request->pay_date_start));
 
             if ($request->pay_date_finish)
+            // dd("Tes");
+            // $query->where('is_paid', false);
                 $query->whereDate('pay_date', '<=', new \DateTime($request->pay_date_finish));
+
             if ($request->due_date_start)
             $query->whereDate('due_date', '>=', new \DateTime($request->due_date_start));
 
@@ -58,7 +61,7 @@ class ReceivableController extends Controller
                 $query->whereDate('due_date', '<=', new \DateTime($request->due_date_finish));
 
             $total = $query->sum('amount');
-
+            // echo($request->send_date_start);
             // dd($total);
 
             $datas = $query->paginate(40)->withQueryString();

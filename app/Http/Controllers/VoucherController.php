@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 
 use App\Models\Voucher as Model;
 use App\Models\Branch;
@@ -20,8 +21,26 @@ class VoucherController extends Controller
     public function index(Request $request)
     {
 
-
+        $totalCost = 0;
+        $totalIncome = 0;
         $query = Model::select('*');
+        $query2 = Model::select('*');
+        // $date = Carbon::now()->format('Y');
+        // dd($date);
+
+        // $baba = "2022-03-06";
+        // $ba = $baba->format('Y');
+
+        // $ba = $ba->format('Y');
+
+        // if($query2->status = 1) {
+        //     $totalIncome += $query2->amount;
+        // }  else if ( $query2->status = 2) {
+        //     $totalCost += $query2->amount;
+
+        // }
+        // dd($totalCost);
+
 
         if ($request->branch_id) {
             if (!in_array(Auth::user()->role, self::$fullAccess))
@@ -75,7 +94,7 @@ class VoucherController extends Controller
         $datas = $query->paginate(40)->withQueryString();
         $options = self::staticOptions();
 
-        return view('pages.VoucherIndex', compact('datas', 'options'));
+        return view('pages.VoucherIndex', compact('datas', 'options', 'totalIncome', 'totalCost'));
     }
 
     public function store(Request $request)

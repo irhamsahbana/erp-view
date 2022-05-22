@@ -33,11 +33,10 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
-      {{-- <img
-      src="{{ asset('assets') }}/dist/img/icon/2.png"
-        alt="AdminLTE Logo" class="brand-image"
-        > --}}
-      <span class="brand-text font-weight-light">Tes</span>
+        <img
+        src="{{ asset('assets') }}/dist/img/icon/3.png"
+           class="brand-image"
+          > .</span>
     </a>
 
     @include('_partials.sidebar')

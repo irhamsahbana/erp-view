@@ -58,25 +58,37 @@
                             :label="'Tanggal Kirim dari'"
                             :col="6"
                             :value="app('request')->input('send_date_start') ?? null"
-                            :name="'date_start'"></x-in-text>
+                            :name="'send_date_start'"></x-in-text>
                         <x-in-text
                             :type="'date'"
                             :label="'Tanggal Kirim sampai:'"
                             :col="6"
                             :value="app('request')->input('send_date_finish') ?? null"
-                            :name="'date_finish'"></x-in-text>
+                            :name="'send_date_finish'"></x-in-text>
                         <x-in-text
                             :type="'date'"
                             :label="'Tanggal Bayar Dari:'"
                             :col="6"
                             :value="app('request')->input('pay_date_start') ?? null"
-                            :name="'date_finish'"></x-in-text>
+                            :name="'pay_date_finish'"></x-in-text>
                         <x-in-text
                             :type="'date'"
                             :label="'Tanggal Bayar sampai:'"
                             :col="6"
                             :value="app('request')->input('pay_date_finish') ?? null"
-                            :name="'date_finish'"></x-in-text>
+                            :name="'pay_date_finish'"></x-in-text>
+                        <x-in-text
+                            :type="'date'"
+                            :label="'Batas Waktu Dari:'"
+                            :col="6"
+                            :value="app('request')->input('due_date_start') ?? null"
+                            :name="'due_date_start'"></x-in-text>
+                        <x-in-text
+                            :type="'date'"
+                            :label="'Batas Waktu sampai:'"
+                            :col="6"
+                            :value="app('request')->input('due_date_finish') ?? null"
+                            :name="'due_date_finish'"></x-in-text>
                         <x-col class="text-right">
                             <a type="button" class="btn btn-default" href="{{ route('receivable.index') }}">reset</a>
                             <button type="submit" class="btn btn-primary">Cari</button>
@@ -89,9 +101,6 @@
                     <!-- Small boxes (Stat box) -->
                     <div class="row">
                       <div class="col-lg-6">
-                        <!-- small box -->
-                        {{-- Piutang --}}
-                        {{-- Total Piutang --}}
                         <div class="small-box bg-info">
                           <div class="inner">
                               <p>Piutang Belum Terbayarkan</p>
@@ -118,10 +127,7 @@
                       </div>
                       <!-- ./col -->
                     </div>
-                    <!-- /.row -->
-                    <!-- Main row -->
 
-                    <!-- /.row (main row) -->
                   </div><!-- /.container-fluid -->
         </x-card-collapsible>
             <x-card-collapsible :title="'Data Mutasi'">

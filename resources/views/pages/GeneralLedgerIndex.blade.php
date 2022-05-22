@@ -167,7 +167,7 @@ $saldo = $firstSaldo;
                                     @php
                                         $saldo = $saldo - $sub->amount
                                     @endphp
-                                    {{ $saldo }}
+                                    {{ number_format($saldo) }}
                                 @endif
                             </td>
                         </tr>

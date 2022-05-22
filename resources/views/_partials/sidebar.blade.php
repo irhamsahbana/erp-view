@@ -54,12 +54,12 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
       <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}" />
       <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}" />
-      <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'"
+      {{-- <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'"
         href="{{ route('rit-mutation.index') }}" />
       <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'"
-        href="{{ route('rit-mutation.balance') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}" />
+        href="{{ route('rit-mutation.balance') }}" /> --}}
+      {{-- <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}" /> --}}
+      {{-- <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}" /> --}}
 
 
 
