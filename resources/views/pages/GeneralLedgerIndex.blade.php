@@ -156,12 +156,12 @@ $saldo = $firstSaldo;
                             <td>{{ $sub->notes }}</td>
                             <td>{{ $sub->category_name }}</td>
                             <td class="text-right">{{ number_format($sub->amount) }}</td>
-                            <td>
+                            <td  class="text-right">
                                 @if ($posisi == $sub->category_name)
                                     @php
                                         $saldo = $saldo + $sub->amount
                                     @endphp
-                                    {{ $saldo }}
+                                    {{ number_format($saldo) }}
 
                                 @else
                                     @php

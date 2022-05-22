@@ -68,7 +68,7 @@ class VoucherController extends Controller
          });
         }
         $query->orderBy('created', 'desc');
-
+        // dd($query);
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $query->where('branch_id', Auth::user()->branch_id);
 

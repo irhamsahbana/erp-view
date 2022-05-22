@@ -26,18 +26,6 @@ class ReceivableController extends Controller
         if (!in_array(Auth::user()->role, self::$fullAccess))
         $query->where('branch_id', Auth::user()->branch_id);
 
-
-        // $query2 = Model::select('*');
-        // if (!in_array(Auth::user()->role, self::$fullAccess))
-        // $query2->where('branch_id', Auth::user()->branch_id);
-
-        // $receivable = $query2->where('is_paid', 0)
-        // // ->where('due_date', '<=', $date)
-        // ->sum('amount');
-        // $receivable_duedate = $query2->where('is_paid', 0)
-        // ->where('due_date', '<=', $date)
-        // ->sum('amount');
-
         if ($request->branch_id) {
             if (!in_array(Auth::user()->role, self::$fullAccess))
                 $query->where('branch_id', Auth::user()->branch_id);
@@ -125,7 +113,7 @@ class ReceivableController extends Controller
                 ];
             });
         }
-//   $is_paid= ;
+
 
         $options = [
             'branches' => $branches,
@@ -232,6 +220,9 @@ class ReceivableController extends Controller
     // Balance
     public function balanceIndex(Request $request) {
         $query = ReceivableBalance::select('*');
+        if (!in_array(Auth::user()->role, self::$fullAccess))
+        $query->where('branch_id', Auth::user()->branch_id);
+
         if($request->branch_id) {
             $query->where('branch_id', $request->branch_id);
         }
@@ -258,7 +249,6 @@ class ReceivableController extends Controller
             else
                 $query->where('branch_id', $request->branch_id);
         }
-
 
         if($request->receivable_vendor_id) {
             $query->where('receivable_vendor_id', $request->receivable_vendor_id);
@@ -290,11 +280,7 @@ class ReceivableController extends Controller
             });
         }
 
-        $options = [
-            'branches' => $branches,
-
-
-        ];
+        $options = self::staticOptions();
 
         return view('pages.ReceivableVendorIndex', compact('datas', 'options'));
 
