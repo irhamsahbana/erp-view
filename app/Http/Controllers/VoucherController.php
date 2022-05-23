@@ -26,7 +26,12 @@ class VoucherController extends Controller
         $query = Model::select('*');
         $query2 = Model::select('*')->get();
         // dd(Carbon::createFromFormat('Y-m-d', $item->created)->month);
-
+        if ($request->branch_id) {
+            if (!in_array(Auth::user()->role, self::$fullAccess))
+                $query2->where('branch_id', Auth::user()->branch_id);
+            else
+                $query2->where('branch_id', $request->branch_id);
+        }
         foreach($query2 as $item) {
             if($item->type == 1) {
 
