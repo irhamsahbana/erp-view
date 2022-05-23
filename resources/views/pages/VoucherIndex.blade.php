@@ -25,7 +25,7 @@
 
 @section('content')
     <x-content>
-        <x-row>
+
             <x-card-collapsible :title="'Total Saldo'">
                 <div class="container-fluid">
                     <!-- Small boxes (Stat box) -->
@@ -61,20 +61,15 @@
                         <!-- small box -->
                         <div class="small-box bg-Success">
                           <div class="inner">
-
                               <p>Total Kas Tersedia</p>
                               <h3 class="text-right"> {{number_format($totalCash)}} </h3>
 
                           </div>
-
-
                         </div>
-                      </div>
+                    </div>
+                </div>
+            </x-card-collapsible>
 
-
-                  </div><!-- /.container-fluid -->
-        </x-card-collapsible>
-        </x-row>
         <x-row>
             <x-card-collapsible :title="'Pencarian'">
                 <form style="width: 100%">
