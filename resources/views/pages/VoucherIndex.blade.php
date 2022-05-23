@@ -26,6 +26,56 @@
 @section('content')
     <x-content>
         <x-row>
+            <x-card-collapsible :title="'Total Saldo'">
+                <div class="container-fluid">
+                    <!-- Small boxes (Stat box) -->
+                    <div class="row">
+                      <div class="col-lg-4">
+                        <div class="small-box bg-info">
+                          <div class="inner">
+                              <p>Total Dana Masuk</p>
+                            <h3 class="text-right"> {{number_format($totalIncome)}} </h3>
+
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <!-- ./col -->
+                      <div class="col-lg-4">
+                        <!-- small box -->
+                        <div class="small-box bg-danger">
+                          <div class="inner">
+
+                              <p>Total Dana Keluar</p>
+                              <h3 class="text-right"> {{number_format($totalCost)}} </h3>
+
+                          </div>
+
+
+                        </div>
+                      </div>
+                      <!-- ./col -->
+
+                      <div class="col-lg-4">
+                        <!-- small box -->
+                        <div class="small-box bg-Success">
+                          <div class="inner">
+
+                              <p>Total Kas Tersedia</p>
+                              <h3 class="text-right"> {{number_format($totalCash)}} </h3>
+
+                          </div>
+
+
+                        </div>
+                      </div>
+
+
+                  </div><!-- /.container-fluid -->
+        </x-card-collapsible>
+        </x-row>
+        <x-row>
             <x-card-collapsible :title="'Pencarian'">
                 <form style="width: 100%">
                     <x-row>
@@ -169,6 +219,7 @@
                 </x-row>
             </x-card-collapsible>
         </x-row>
+
     </x-content>
 
     <x-modal :title="'Tambah Data'" :id="'add-modal'">

@@ -24,22 +24,19 @@ class VoucherController extends Controller
         $totalCost = 0;
         $totalIncome = 0;
         $query = Model::select('*');
-        $query2 = Model::select('*');
-        // $date = Carbon::now()->format('Y');
-        // dd($date);
+        $query2 = Model::select('*')->get();
+        // dd(Carbon::createFromFormat('Y-m-d', $item->created)->month);
 
-        // $baba = "2022-03-06";
-        // $ba = $baba->format('Y');
+        foreach($query2 as $item) {
+            if($item->type == 1) {
 
-        // $ba = $ba->format('Y');
+            $totalIncome += $item->amount;
 
-        // if($query2->status = 1) {
-        //     $totalIncome += $query2->amount;
-        // }  else if ( $query2->status = 2) {
-        //     $totalCost += $query2->amount;
-
-        // }
-        // dd($totalCost);
+            }  else if ($item->type == 2) {
+                $totalCost += $item->amount;
+             }
+        }
+        $totalCash = $totalIncome - $totalCost;
 
 
         if ($request->branch_id) {
@@ -94,7 +91,7 @@ class VoucherController extends Controller
         $datas = $query->paginate(40)->withQueryString();
         $options = self::staticOptions();
 
-        return view('pages.VoucherIndex', compact('datas', 'options', 'totalIncome', 'totalCost'));
+        return view('pages.VoucherIndex', compact('datas', 'options', 'totalIncome', 'totalCost', 'totalCash'));
     }
 
     public function store(Request $request)
