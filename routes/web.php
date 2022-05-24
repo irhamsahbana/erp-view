@@ -255,6 +255,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('/{id}', [ReceivableController::class, 'destroy'])->name('receivable.delete');
         Route::post('/', [ReceivableController::class, 'addReceivable'])->name('receivable.add');
         Route::post('/status/{id}', [ReceivableController::class, 'changeIsPaid'])->name('receivable-statuspaid.post');
+        Route::get('receivable/print/{id}', [ReceivableController::class, 'print'])->name('receivable.print');
 
         // saldo
         Route::get('/saldo', [ReceivableController::class, 'balanceIndex'])->name('receivable-balance.index');

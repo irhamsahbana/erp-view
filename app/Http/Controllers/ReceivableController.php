@@ -219,7 +219,12 @@ class ReceivableController extends Controller
         $row->save();
         return redirect()->back()->with('f-msg', 'Status order berhasil diubah.');
     }
+    public function print($id) {
+        $data = Model::findOrFail($id);
 
+        $pdf = PDF::loadView('pdf.invoice-voucher', compact('data'));
+        return $pdf->stream();
+    }
     // Balance
     public function balanceIndex(Request $request) {
         $query = ReceivableBalance::select('*');
@@ -318,6 +323,7 @@ class ReceivableController extends Controller
 
         return redirect()->route('receivable-vendor.index')->with('f-msg', 'Vendor berhasil disimpan.');
     }
+
     public function showVendor($id)
     {
         $data = ReceivableVendor::findOrFail($id);

@@ -225,12 +225,8 @@ class DebtMutationController extends Controller
         if (!in_array(Auth::user()->role, self::$fullAccess))
         $query->where('branch_id', Auth::user()->branch_id);
         // dd($query);
+        $total_balance = $query->sum('total');
         $datas = $query->paginate(40)->withQueryString();
-        foreach ( $query as $data ) {
-
-        // dd($data);
-        $total_balance += $data->total;
-}
         $options = self::staticOptions();
 
         return view('pages.DebtBalanceIndex', compact('total_balance','datas', 'options'));

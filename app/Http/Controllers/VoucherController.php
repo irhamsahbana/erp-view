@@ -188,7 +188,7 @@ $query2 = $query2->get();
 
         $data = Model::findOrFail($id);
 
-        $pdf = PDF::loadView('pdf.invoice-voucher', compact('data'));
+        $pdf = PDF::loadView('pdf.receivable-voucher', compact('data'));
         return $pdf->stream();
     }
 

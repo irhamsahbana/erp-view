@@ -68,8 +68,9 @@ $breadcrumbList = [
 
                 <x-col>
                     <x-table
-                        :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Vendor', 'Jenis', 'Jenis Transaksi', 'Jumlah', 'Status', 'Aksi']">
+                        :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Vendor', 'Jenis', 'Jenis Transaksi', 'Jumlah',  'Aksi']">
                         @foreach($datas as $data)
+
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $data->created }}</td>
@@ -86,13 +87,7 @@ $breadcrumbList = [
                                 @endif
                             </td>
                             <td class="text-right">{{  number_format($data->amount) }}</td>
-                            <td>
-                                @if($data->is_open)
-                                <span class="badge badge-success">Open</span>
-                                @else
-                                <span class="badge badge-danger">Close</span>
-                                @endif
-                            </td>
+
                             <td>
                                 @if ($data->is_open)
                                 <a href="{{ route('debt-mutation.show', $data->id) }}" class="btn btn-warning"
@@ -184,7 +179,7 @@ $breadcrumbList = [
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="user-branch" content="{{ Auth::user()->branch_id ?? null }}">
 
-<meta name="search-branch" content="{{ app('request')->input('branch_id') ?? null }}">
+<meta name="search-branch" content="{0{ app('request')->input('branch_id') ?? null }}">
 <meta name="search-project" content="{{ app('request')->input('project_id') ?? null }}">
 <meta name="search-vendor" content="{{ app('request')->input('vendor_id') ?? null }}">
 <meta name="search-date-start" content="{{ app('request')->input('date_start') ?? null }}">

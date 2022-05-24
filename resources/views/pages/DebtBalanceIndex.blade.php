@@ -70,14 +70,17 @@
                     <x-col>
                         <x-table :thead="['Cabang', 'proyek', 'Vendor', 'Jenis', 'Saldo']">
                             @foreach($datas as $data)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $data->branch->name }}</td>
-                                    <td>{{ $data->project->name }}</td>
-                                    <td>{{ $data->vendor->name }}</td>
-                                    <td>{{ $data->debtType->label }}</td>
-                                    <td class="text-right">{{  number_format($data->total) }}</td>
-                                </tr>
+                            @if ($data->total > 0)
+
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $data->branch->name }}</td>
+                                <td>{{ $data->project->name }}</td>
+                                <td>{{ $data->vendor->name }}</td>
+                                <td>{{ $data->debtType->label }}</td>
+                                <td class="text-right">{{  number_format($data->total) }}</td>
+                            </tr>
+                            @endif
                             @endforeach
                         </x-table>
                     </x-col>
