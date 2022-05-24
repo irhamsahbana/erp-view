@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 @endpush
 
-@section('content-header', 'Saldo Hutang')
+@section('content-header', 'Saldo Piutang')
 
 @section('breadcrumb')
     <x-breadcrumb :list="$breadcrumbList"/>
@@ -25,6 +25,7 @@
 
 @section('content')
     <x-content>
+
         <x-row>
             <x-card-collapsible :title="'Pencarian'" :collapse="false">
                 <form style="width: 100%">
@@ -65,10 +66,21 @@
                 </form>
             </x-card-collapsible>
 
+                <div class="col-lg-6">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <p>Saldo Piutang</p>
+                            <h3 class="text-right"> {{number_format($total_balance)}} </h3>
+
+                        </div>
+
+                    </div>
+                </div>
+
             <x-card-collapsible>
                 <x-row>
                     <x-col>
-                        <x-table :thead="['Cabang', 'proyek', 'Vendor', 'Jenis', 'Saldo']">
+                        <x-table :thead="['Cabang', 'proyek', 'Vendor','Jenis', 'Saldo']">
                             @foreach($datas as $data)
                             @if ($data->total > 0)
 
@@ -90,8 +102,7 @@
                     </x-col>
                 </x-row>
             </x-card-collapsible>
--{{$datas}}-
-            {{$total_balance}}
+
         </x-row>
     </x-content>
 @endsection

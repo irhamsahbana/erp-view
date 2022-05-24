@@ -68,7 +68,7 @@ $breadcrumbList = [
 
                 <x-col>
                     <x-table
-                        :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Vendor', 'Jenis', 'Jenis Transaksi', 'Jumlah',  'Aksi']">
+                        :thead="['Tanggal', 'Ref', 'Cabang', 'proyek', 'Vendor','Ket', 'Jenis', 'Jenis Transaksi', 'Jumlah',  'Aksi']">
                         @foreach($datas as $data)
 
                         <tr>
@@ -78,6 +78,7 @@ $breadcrumbList = [
                             <td>{{ $data->branch->name }}</td>
                             <td>{{ $data->project->name }}</td>
                             <td>{{ $data->vendor->name }}</td>
+                                <td>{{ $data->notes }}</td>
                             <td>{{ $data->debtType->label }}</td>
                             <td>
                                 @if($data->transaction_type == 1)

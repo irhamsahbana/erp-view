@@ -50,7 +50,10 @@
           <!-- /.col -->
         </div>
       </form>
+      <div class="foot_box">
+          <p><em>Seek the LORD and His strength; seek His presence continually!(1 Chronicles 16:11) </em></p>
 
+      </div>
     </div>
     <!-- /.card-body -->
   </div>
@@ -73,10 +76,17 @@
 
 <style>
 .card-header img {
-    max-width: 300px;
+    max-width: 200px;
 }
 
 .card-header  {
  padding: 0
+}
+.foot_box {
+
+    text-align: center;
+}
+em {
+    color:cadetblue
 }
 </style>
