@@ -51,7 +51,9 @@
         </div>
       </form>
       <div class="foot_box">
-          <p><em>Seek the LORD and His strength; seek His presence continually!(1 Chronicles 16:11) </em></p>
+          <p><em>Seek the LORD and His strength; seek His presence continually!
+              <br>
+            (1 Chronicles 16:11) </em></p>
 
       </div>
     </div>
@@ -87,6 +89,7 @@
     text-align: center;
 }
 em {
+    font-size: 12px;
     color:cadetblue
 }
 </style>
