@@ -50,6 +50,9 @@
           <!-- /.col -->
         </div>
       </form>
+      <div class="img-logo">
+        <img src="" alt="">
+      </div>
       <div class="foot_box">
           <p><em>Seek the LORD and His strength; seek His presence continually!
               <br>
