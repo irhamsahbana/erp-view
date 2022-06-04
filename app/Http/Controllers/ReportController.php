@@ -78,7 +78,7 @@ class ReportController extends Controller
                         $total -= $subJournal->amount;
                     }
                 }
-                    
+
                 // Get total before this request year
                 $subJournalBefore = $subJournalBefore1->where('sub_budget_item_id', $subBudgetItem->id);
                 foreach ($subJournalBefore as $subJournalBefore) {

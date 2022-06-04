@@ -138,7 +138,7 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Tanggal', 'No. Ref', 'Cabang', 'Jenis', 'Status ', 'Keterangan','Jumlah',    'Aksi']">
+                        <x-table :thead="['Tanggal', 'No. Reff', 'Cabang', 'Jenis', 'Status ', 'Keterangan','Jumlah',    'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
 
@@ -486,6 +486,6 @@
 @endpush
 <style>
     th {
-      text-align: center;
+        text-align: center;
     }
 </style>

@@ -44,7 +44,7 @@ class JournalController extends Controller
         if ($request->date_finish)
             $query->whereDate('created', '<=', new \DateTime($request->date_finish));
 
-        $query->orderBy('created', 'desc', 'id','desc');
+        $query->orderBy('created', 'desc')->orderBy('id','desc');
 
         if($request->keyword) {
             $list = explode(' ', $request->keyword);

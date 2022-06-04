@@ -34,6 +34,8 @@ use App\Http\Controllers\{
     ReportController,
     GeneralLedgerController,
     DashboardController,
+    MailController,
+    BillController
 };
 
 use App\Models\{
@@ -266,6 +268,26 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('/vendor', [ReceivableController::class, 'VendorStore'])->name('receivable-vendor.store');
 
     });
+    Route::group(['prefix' => 'bill'], function () {
+        Route::get('/', [BillController::class, 'indexBill'])->name('bill.index');
+
+
+        // Vendor
+        Route::get('/vendor', [BillController::class, 'indexVendor'])->name('vendor.index');
+
+
+        // item
+        Route::get('/item', [BillController::class, 'indexItem'])->name('item.index');
+        Route::post('/item', [BillController::class, 'addItem'])->name('bill-item.add');
+
+
+
+        // Balance
+        Route::get('/balance', [BillController::class, 'indexBalance'])->name('balance.index');
+    });
+
+
+    Route::get('send-email-all',[MailController::class, 'index'])->name('email-idex');
 // }
 Route::get('/test', [TestController::class, 'test']);
 

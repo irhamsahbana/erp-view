@@ -95,7 +95,7 @@ class ReceivableController extends Controller
         //     'receivable_vendor_id' => ['required', 'exists:receivable_vendor,id'],
 
         // ]);
-        dd($request);
+        // dd($request);
         $row=Model::findOrNew($request->id);
         $row->branch_id = $request->modal_branch_id;
         $row->amount = $request->amount;
@@ -270,7 +270,7 @@ class ReceivableController extends Controller
                 'datas' => $datas,
             ]);
         }
-
+        $query->orderBy('send_date', 'desc')->orderBy('id','desc');
         $datas = $query->paginate(40)->withQueryString();
 
         $branches = Branch::all();
