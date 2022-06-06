@@ -375,8 +375,8 @@
             })
         });
         $(function() {
-            let selectVendor =  $('#receivable_vendor_id')
             let selectBranch = $('#branch_id');
+            let selectVendor =  $('#receivable_vendor_id')
 
             selectBranch.on('change', function () {
                 let branchId = $(this).val();

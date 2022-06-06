@@ -279,14 +279,14 @@ Route::group(['middleware' => ['auth']], function(){
         Route::delete('/vendor/{id}', [BillController::class, 'deleteVendor'])->name('bill-vendor.destroy');
 
         // item
-        Route::get('/item', [BillController::class, 'indexItem'])->name('item.index');
+        Route::get('/item', [BillController::class, 'indexItem'])->name('bill-item.index');
         Route::post('/item', [BillController::class, 'addItem'])->name('bill-item.add');
         Route::delete('/item/{id}', [BillController::class, 'deleteItem'])->name('bill-item.destroy');
 
 
 
         // Balance
-        Route::get('/balance', [BillController::class, 'indexBalance'])->name('balance.index');
+        Route::get('/balance', [BillController::class, 'indexBalance'])->name('bill-balance.index');
     });
 
 

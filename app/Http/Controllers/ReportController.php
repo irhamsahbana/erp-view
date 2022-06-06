@@ -20,6 +20,7 @@ class ReportController extends Controller
 {
     public function balanceSheet(Request $request)
     {
+        // dd("Tesss");
         if($request->branch_id||$request->journal_category_id||$request->year){
             $query = self::getSubJournals();
 
