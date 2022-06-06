@@ -9,6 +9,11 @@ class BillBalance extends Model
 {
     use HasFactory;
 
+    protected $table = 'bill_balances';
+    protected $fillable = [
+        'branch_id',
+        ];
+
     public function branch() {
         return $this->belongsTo(Branch::class,'branch_id');
     }

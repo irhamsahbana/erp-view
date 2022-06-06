@@ -7,12 +7,12 @@
             'href' => '/'
         ],
         [
-            'name' => 'Item Pembelian'
+            'name' => 'Piutang Usaha'
         ],
     ];
 @endphp
 
-@section('content-header', 'Item Pembelian')
+@section('content-header', 'Vendor Pembelian')
 
 @section('breadcrumb')
     <x-breadcrumb :list="$breadcrumbList"/>
@@ -20,12 +20,12 @@
 
 @section('content')
     <x-content>
-        <x-row class="justify-content-md-center">
+        <x-row>
             <x-col class="mb-3">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-modal">Tambah</button>
             </x-col>
-                    <x-col class="col-lg-12">
-                        <x-table :thead="['Nama Item','Action']">
+                    <x-col>
+                        <x-table :thead="['Nama Vendor','Action']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
@@ -35,12 +35,14 @@
                                         <form
                                             style=" display:inline!important;"
                                             method="POST"
-                                            action="{{ route('bill-item.destroy', $data->id) }}">
+                                            action="{{ route('bill-vendor.destroy', $data->id) }}">
                                                 @csrf
                                                 @method('DELETE')
                                         <button type="submit" class="btn btn-danger"  onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"> <i class="fas fa-trash-alt"></i></button>
                                     </form>
                                     </td>
+
+
                                 </tr>
                             @endforeach
                         </x-table>
@@ -52,7 +54,7 @@
         </x-row>
     </x-content>
     <x-modal :title="'Tambah Data'" :id="'add-modal'">
-        <form style="width: 100%" action="{{ route('bill-item.add') }}" method="POST">
+        <form style="width: 100%" action="{{ route('bill-vendor.add') }}" method="POST">
             @csrf
             @method('POST')
 

@@ -10,7 +10,7 @@ class Bill extends Model
     use HasFactory;
 
     public function bill_vendor() {
-        return $this->belongsTo(Bill::class,'bill_vendor_id');
+        return $this->belongsTo(BillVendor::class,'bill_vendor_id');
     }
     public function branch() {
         return $this->belongsTo(Branch::class,'branch_id');

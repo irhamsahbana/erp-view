@@ -146,7 +146,7 @@
                                     <td>{{ date("d-m-Y", strtotime($data->send_date)) }}</td>
                                     <td>{{ date("d-m-Y", strtotime($data->due_date)) }}</td>
                                     <td>
-                                        {{abcd()}}
+
                                         @if($data->pay_date)
                                             {{ date("d-m-Y", strtotime($data->pay_date)) }}
 

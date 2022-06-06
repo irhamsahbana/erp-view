@@ -45,10 +45,14 @@ $optionsAuth['roles'] = [
   <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       {{-- <li class="nav-header">LAPORAN</li>
+
       <x-nav-item :icon="'fas fa-gas-pump'" :text="'Frekuensi Penggunaan Solar'" :href="'/transaksi/solar'" /> --}}
+      <i class="far fa-alarm-clock"></i> Tes
+
+      <i class="far fa-address-card"></i>
       @if (Auth::user()->role == 'admin' || Auth::user()->role == 'owner')
       <li class="nav-header">TRANSAKSI</li>
-      <x-nav-item :icon="'fas fa-receipt'" :text="'Voucher'" :href="route('voucher.index')" />
+      <x-nav-item :icon="'far fa-address-card'" :text="'Voucher'" :href="route('voucher.index')" />
       <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')" />
       <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'" />
       <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
@@ -101,7 +105,10 @@ $optionsAuth['roles'] = [
 
       @if (Auth::user()->role == 'purchaser' )
       <li class="nav-header">TRANSAKSI PEMBELIAN</li>
-      <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchasing'" :href="route('purchasing.index')" />
+      {{-- <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchasing'" :href="route('purchasing.index')" /> --}}
+      <x-nav-item :icon="'fas fa-credit-card'" :text="'Tagihan'" :href="route('bill.index')" />
+      <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}" />
+      <x-nav-item :icon="'fas fa-industry'" :text="'item'" href="{{ route('item.index') }}" />
       @endif
 
       @if (Auth::user()->role == 'branch_head')

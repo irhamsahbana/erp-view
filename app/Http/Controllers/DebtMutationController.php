@@ -8,6 +8,8 @@ use Illuminate\Validation\Rule;
 
 use App\Models\DebtMutation as Model;
 use App\Models\Branch;
+use App\Models\Vendor;
+
 use App\Models\Category;
 use App\Models\DebtBalance;
 use App\View\Components\Modal;
@@ -26,7 +28,8 @@ class DebtMutationController extends Controller
     public function index(Request $request)
     {
         $query = Model::select('*');
-
+        // $vendor = Vendor::all();
+        // dd($vendor);
         if ($request->branch_id)
             $query->where('branch_id', $request->branch_id);
 
@@ -243,7 +246,14 @@ class DebtMutationController extends Controller
     public static function staticOptions()
     {
         $branches = Branch::all();
+        $vendors = Vendor::all();
 
+        $vendor = $vendors->map(function($type) {
+            return [
+                'text' => $type->name,
+                'value' => $type->id,
+            ];
+        });
         if (!in_array(Auth::user()->role, self::$fullAccess))
             $branches = $branches->where('id', Auth::user()->branch_id);
 
@@ -274,6 +284,7 @@ class DebtMutationController extends Controller
 
         $options = [
             'branches' => $branches,
+            'vendor' => $vendor,
             'status' => $status,
             'types' => $types,
             'transactionTypes' => $transactionTypes

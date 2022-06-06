@@ -22,6 +22,7 @@ class ReceivableController extends Controller
 
     public function index(Request $request) {
         $query = Model::select('*');
+    
         $date = Carbon::now();
         if (!in_array(Auth::user()->role, self::$fullAccess))
         $query->where('branch_id', Auth::user()->branch_id);
@@ -147,7 +148,7 @@ class ReceivableController extends Controller
 
         $balance->receivable_vendor_id = $request->new_receivable_vendor_id;
 
-        $row = Model::findOrNew($request->id);
+        $row = Model::new();
         $prefix = sprintf('%s/', $row->getTable());
         $postfix = sprintf('/%s.%s', date('m'), date('y'));
         $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);

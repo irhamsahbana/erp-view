@@ -152,8 +152,11 @@ $breadcrumbList = [
                 :id="'in_project_id'"
                 :name="'project_id'"
                 :required="true"></x-in-select>
-            <x-in-select :label="'Vendor'" :placeholder="'Pilih Vendor'" :col="4" :id="'in_vendor_id'"
-                :name="'vendor_id'" :required="true"></x-in-select>
+            <x-in-select :label="'Vendor'" :placeholder="'Pilih Vendor'"
+            :name="'vendor_id'"
+                            :value="app('request')->input('vendor_id') ?? null"
+            :col="4" :id="'in_vendor_id'"
+                :name="'vendor_id'" :required="true"> </x-in-select>
             <x-in-select :label="'Jenis Mutasi'" :placeholder="'Pilih Jenis Mutasi'" :col="6" :name="'type'"
                 :options="$options['types']" :value="old('type')" :required="true"></x-in-select>
             <x-in-select :label="'Jenis Transaksi'" :placeholder="'Pilih Jenis Transaksi'" :col="6"
@@ -180,7 +183,7 @@ $breadcrumbList = [
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="user-branch" content="{{ Auth::user()->branch_id ?? null }}">
 
-<meta name="search-branch" content="{0{ app('request')->input('branch_id') ?? null }}">
+<meta name="search-branch" content="{{ app('request')->input('branch_id') ?? null }}">
 <meta name="search-project" content="{{ app('request')->input('project_id') ?? null }}">
 <meta name="search-vendor" content="{{ app('request')->input('vendor_id') ?? null }}">
 <meta name="search-date-start" content="{{ app('request')->input('date_start') ?? null }}">
@@ -347,6 +350,7 @@ $breadcrumbList = [
                         selectVendorIn.append(`<option value="">Pilih Vendor</option>`);
 
                         data.datas.forEach(function(item) {
+                            // console.log(item);
                             selectVendorIn.append(`<option value="${item.id}">${item.name}</option>`);
                         });
 

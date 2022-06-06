@@ -270,15 +270,18 @@ Route::group(['middleware' => ['auth']], function(){
     });
     Route::group(['prefix' => 'bill'], function () {
         Route::get('/', [BillController::class, 'indexBill'])->name('bill.index');
+        Route::post('/', [BillController::class, 'addBill'])->name('bill.store');
 
 
         // Vendor
-        Route::get('/vendor', [BillController::class, 'indexVendor'])->name('vendor.index');
-
+        Route::get('/vendor', [BillController::class, 'indexVendor'])->name('bill-vendor.index');
+        Route::post('/vendor', [BillController::class, 'addVendor'])->name('bill-vendor.add');
+        Route::delete('/vendor/{id}', [BillController::class, 'deleteVendor'])->name('bill-vendor.destroy');
 
         // item
         Route::get('/item', [BillController::class, 'indexItem'])->name('item.index');
         Route::post('/item', [BillController::class, 'addItem'])->name('bill-item.add');
+        Route::delete('/item/{id}', [BillController::class, 'deleteItem'])->name('bill-item.destroy');
 
 
 

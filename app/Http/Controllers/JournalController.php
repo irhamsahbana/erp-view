@@ -26,9 +26,11 @@ class JournalController extends Controller
 
     public function index(Request $request)
     {
+        // dd(Auth::user()->branch_id);
         $query = Journals::select('*');
 
         if ($request->branch_id) {
+            dd($request->all());
             if (!in_array(Auth::user()->role, self::$fullAccess))
                 $query->where('branch_id', Auth::user()->branch_id);
             else
