@@ -57,24 +57,26 @@ class BillController extends Controller
 
         return view('pages.Bill', compact('datas', 'options'));
 
+    }
+    public function createBill() {
+        // dd("Cek");
+        $options = self::staticOptionBill();
+
+        return view('pages.BillCreate', compact('options'));
 
     }
 
     public function addBill(Request $request) {
-        // dd($request->new_bill_vendor_id);
-        // dd($request);
-        $request->validate([
-            'name' => ['nullable'],
-        ]);
 
-        $balance = BillBalance::firstOrNew([
-            'branch_id' => Auth::user()->branch_id,
-            'bill_vendor_id'=> $request->new_bill_vendor_id
-        ]);
-        $balance->branch_id =  Auth::user()->branch_id;
-        $balance->bill_vendor_id = $request->new_bill_vendor_id;
+
+        // $balance = BillBalance::firstOrNew([
+        //     'branch_id' => Auth::user()->branch_id,
+        //     'bill_vendor_id'=> $request->new_bill_vendor_id
+        // ]);
+        // $balance->branch_id =  Auth::user()->branch_id;
+        // $balance->bill_vendor_id = $request->new_bill_vendor_id;
         $row = Bill::findOrNew($request->id);
-        $balance->total += $request->amount;
+        // $balance->total += $request->amount;
 
         if(!$request->id) {
             $prefix = sprintf('%s/', $row->getTable());
@@ -82,21 +84,30 @@ class BillController extends Controller
             $row->ref_no = $this->generateRefNo($row->getTable(), 4, $prefix, $postfix);
         }
 
-        $row->bill_vendor_id = $request->new_bill_vendor_id;
-        $row->recive_date = $request->new_recive_date;
+        $row->bill_vendor_id = $request->bill_vendor_id;
+        $row->recive_date = $request->recive_date;
         $row->branch_id = Auth::user()->branch_id;
-        $row->amount = $request->amount;
+        $row->amount = 0;
         $row->notes = $request->notes;
-        $row->due_date = $request->new_due_date;
+        $row->due_date = $request->due_date;
 
         $row->save();
-        $balance->save();
-        return redirect()->back()->with('f-msg', 'Data berhasil disimpan.');
+        // $balance->save();
+        return redirect()->route('bill.detail', $row->id)->with('success', 'Data berhasil ditambahkan');
     }
 
     public function deleteBill() {
 
     }
+
+    public function detailBill($id) {
+        $subBill = SubBill::select('*')->where('bill_id', $id);
+        $bill = Bill::find($id);
+
+        return view('pages.BillDetail', compact('subBill', 'bill'));
+    }
+
+
 
     public function staticOptionBill() {
         $branches = Branch::all();
@@ -127,10 +138,20 @@ class BillController extends Controller
             ];
         });
         }
+        $items = BillItem::all();
+        if ($items->isNotEmpty()) {
+        $items = $items->map(function ($item) {
+            return [
+                'text' => $item->name,
+                'value' => $item->id,
+            ];
+        });
+        }
 
         $options = [
             'branches' => $branches,
             'vendors' => $vendors,
+            'items' => $items,
             'status' => $status,
         ];
         return $options;

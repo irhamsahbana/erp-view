@@ -98,7 +98,7 @@
                             :value="app('request')->input('due_date_finish') ?? null"
                             :name="'due_date_finish'"></x-in-text>
                         <x-col class="text-right">
-                            <a type="button" class="btn btn-default" href="{{ route('receivable.index') }}">reset</a>
+                            <a type="button" class="btn btn-default" href="{{ route('bill.index') }}">reset</a>
                             <button type="submit" class="btn btn-primary">Cari</button>
                         </x-col>
                     </x-row>
@@ -108,7 +108,13 @@
             <x-card-collapsible :title="'Data Mutasi'">
                 <x-row>
                     <x-col class="mb-3">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-modal">Tambah</button>
+                        @if (Auth::user()->role == 'purchaser')
+
+                            <a href={{route("bill.create")}} class="btn btn-primary">
+                                Tambah
+                            </a>
+
+                        @endif
                     </x-col>
 
                     <x-col>
@@ -151,6 +157,7 @@
 
                                         @endif
                                     </td>
+
                                     {{-- <td>
                                         {{abcd()}}
                                         @if($data->pay_date)
@@ -212,7 +219,7 @@
         </x-row>
     </x-content>
 
-    <x-modal :title="'Tambah Data'" :id="'add-modal'">
+    {{-- <x-modal :title="'Tambah Data'" :id="'add-modal'">
         <form style="width: 100%" action="{{ route('bill.store') }}" method="POST">
             @csrf
             @method('POST')
@@ -262,7 +269,7 @@
                 </x-col>
             </x-row>
         </form>
-    </x-modal>
+    </x-modal> --}}
 
     <x-modal :title="'Change Pay Status'" :id="'modal-change-status'" :size="'md'">
         <form style="width: 100%" action="" method="POST" id="form-status-change">
