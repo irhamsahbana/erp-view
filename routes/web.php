@@ -272,7 +272,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/', [BillController::class, 'indexBill'])->name('bill.index');
         Route::get('/create', [BillController::class, 'createBill'])->name('bill.create');
         Route::post('/', [BillController::class, 'addBill'])->name('bill.store');
+        Route::post('/subbill', [BillController::class, 'addBill'])->name('bill.store');
         Route::get('/detail/{id}', [BillController::class, 'detailBill'])->name('bill.detail');
+
+        // Subbill
 
 
         // Vendor

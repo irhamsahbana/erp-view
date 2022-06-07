@@ -99,12 +99,20 @@ class BillController extends Controller
     public function deleteBill() {
 
     }
+    public function addSubBill(Request $request) {
+        $bill = "";
+
+        $row=SubBill::findOrNew($request->id);
+        $row = "";
+    }
 
     public function detailBill($id) {
         $subBill = SubBill::select('*')->where('bill_id', $id);
         $bill = Bill::find($id);
-
-        return view('pages.BillDetail', compact('subBill', 'bill'));
+        // $totalSub = 0;
+        // $totalSub = $subBill->sum('total');
+        $options = self::staticOptionBill();
+        return view('pages.BillDetail', compact('options','subBill', 'bill'));
     }
 
 

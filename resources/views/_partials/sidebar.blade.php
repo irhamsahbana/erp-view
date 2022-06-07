@@ -45,64 +45,9 @@ $optionsAuth['roles'] = [
   <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-      @if (Auth::user()->role == 'admin')
-      <li class="nav-header">TRANSAKSI</li>
-      <x-nav-item :icon="'fas fa-money-bill-alt'" :text="'Voucher'" :href="route('voucher.index')" />
-      <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')" />
-      <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'" />
-      <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
-      <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}" />
-      <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}" />
-      <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'"
-        href="{{ route('rit-mutation.index') }}" />
-      <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'"
-        href="{{ route('rit-mutation.balance') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}" />
 
 
-
-      <li class="nav-header">AKUNTANSI</li>
-      <x-nav-item :icon="'fas fa-book'" :text="'Entri Jurnal'" href="{{ route('journal.index') }}" />
-      <x-nav-item :icon="'fas fa-book'" :text="'Neraca'" href="{{ route('balance.index') }}" />
-      <x-nav-item :icon="'fas fa-book'" :text="'Laba Rugi'" href="{{ route('income.statement.index') }}" />
-      <x-nav-item :icon="'fas fa-book'" :text="'Buku Besar'" href="{{ route('general.ledger.index') }}" />
-
-      <li class="nav-header">Piutang</li>
-      <x-nav-item :icon="'fas fa-calculator'" :text="'Tagihan'" :href="route('receivable.index')" />
-      <x-nav-item :icon="'fas fa-industry'" :text="'Saldo Piutang Usaha'" href="{{ route('receivable-balance.index') }}" />
-      <x-nav-item :icon="'fas fa-industry'" :text="'Vendor Piutang Usaha'" href="{{ route('receivable-vendor.index') }}" />
-
-      <li class="nav-header">TRANSAKSI PEMBELIAN</li>
-      <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchase'" :href="route('purchasing.index')" />
-
-      <li class="nav-header">ANGGARAN</li>
-      <x-nav-item :icon="'fas fa-calculator'" :text="'Anggaran'" :href="route('budget.index')" />
-
-      <li class="nav-header">Hutang Usaha</li>
-      {{-- <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchasing'" :href="route('purchasing.index')" /> --}}
-      <x-nav-item :icon="'fas fa-credit-card'" :text="'Tagihan'" :href="route('bill.index')" />
-      <x-nav-item :icon="'fas fa-store'" :text="'Vendor'" href="{{ route('bill-vendor.index') }}" />
-      <x-nav-item :icon="'fas fa-industry'" :text="'item'" href="{{ route('bill-item.index') }}" />
-
-      <li class="nav-header">MASTER DATA</li>
-      {{-- <x-nav-item :icon="'fas fa-list'" :text="'List Kategori'" href="{{ route('category.list') }}" />
-      <x-nav-item :icon="'fas fa-sitemap'" :text="'Cabang'" href="{{ route('branch.index') }}" /> --}}
-      <x-nav-item :icon="'fas fa-users'" :text="'Pengguna'" href="{{ route('user.index') }}" />
-      <x-nav-item :icon="'fas fa-project-diagram'" :text="'Proyek'" href="{{ route('project.index') }}" />
-      {{-- <x-nav-item :icon="'fas fa-truck-moving'" :text="'Kendaraan'" href="{{ route('vehicle.index') }}" />
-      <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" href="{{ route('driver.index') }}" /> --}}
-      {{-- <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}" /> --}}
-      {{-- <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}" /> --}}
-
-      <x-nav-item :icon="'fas fa-list'" :text="'Kelompok Mata Anggaran'" href="{{ route('big.index') }}" />
-      <x-nav-item :icon="'fas fa-list'" :text="'Mata Anggaran'" href="{{ route('bi.index') }}" />
-      <x-nav-item :icon="'fas fa-list'" :text="'Sub-Mata Anggaran'" href="{{ route('sbi.index') }}" />
-
-
-      @endif
-
-      @if (Auth::user()->role == 'admin')
+      @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner')
       <li class="nav-header">TRANSAKSI</li>
       <x-nav-item :icon="'fas fa-money-bill-alt'" :text="'Voucher'" :href="route('voucher.index')" />
       <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')" />

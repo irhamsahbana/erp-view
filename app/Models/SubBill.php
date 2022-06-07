@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class SubBill extends Model
 {
     use HasFactory;
+    protected $table = 'sub_bills';
 
     public function bill() {
         return $this->belongsTo(Bill::class,'bill_id');

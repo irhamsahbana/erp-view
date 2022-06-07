@@ -36,16 +36,19 @@ $breadcrumbList = [
                         :readonly="'true'"
                         :value="$bill->branch->name">
                     </x-in-text>
-
-
-
-
                     <x-in-text
                         :type="'text'"
-                        :label="'Tanggal'"
+                        :label="'Tanggal Nota'"
                         :col="4"
                         :readonly="'true'"
-                        :value="$bill->created">
+                        :value="$bill->recive_date">
+                    </x-in-text>
+                    <x-in-text
+                        :type="'text'"
+                        :label="'Tanggal Bayar'"
+                        :col="4"
+                        :readonly="'true'"
+                        :value="$bill->recive_date">
                     </x-in-text>
 
                     <x-in-text
@@ -61,13 +64,13 @@ $breadcrumbList = [
                         :label="'Status'"
                         :col="4"
                         :readonly="'true'"
-                        :value="($bill->is_open == 0) ? 'Nonaktif' : 'Aktif'">
+                        :value="($bill->is_paid == 0) ? 'Belum Bayar' : 'Sudah'">
                     </x-in-text>
 
                     <div class="col-sm-12">
                         <label for="">Catatan</label>
                         <textarea class="form-control" name="" id="" cols="30" rows="5"
-                            readonly>{{ $journal->notes }}</textarea>
+                            readonly>{{ $bill->notes }}</textarea>
                     </div>
                 </div>
             </x-row>
@@ -91,47 +94,23 @@ $breadcrumbList = [
                     @endif
                 </x-col>
                 <div class="table-responsive">
-                    <x-table :thead="['Proyek', 'Kelompok MA', 'MA', 'Sub MA', 'Catatan', 'Posisi', 'Jumlah', 'Aksi']">
-                        @foreach ($subJournal as $sub)
+                    <x-table :thead="['Item', 'Quantity', 'Total']">
+
+                        @foreach ($subBill as $sub)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $sub->project->name }}</td>
-                            <td>{{ $sub->budgetItemGroup->name }}</td>
-                            <td>{{ $sub->budgetItem->name }}</td>
-                            <td>{{ $sub->subBudgetItem->name }}</td>
-                            <td>{{ $journal->notes }}</td>
-                            <td>{{ $sub->category->label }}</td>
-                            <td class="text-right">{{ number_format($sub->amount) }}</td>
-                            <td>
-                                <button
-                                    class="btn btn-warning btn-edit-sub-journal"
-                                    data-toggle="modal"
-                                    data-target="#edit-modal"
-                                    data-sub-journal-id="{{ $sub->id }}"
-                                    data-project-id="{{ $sub->project_id }}"
-                                    data-budget-item-group-id="{{ $sub->budget_item_group_id }}"
-                                    data-budget-item-id="{{ $sub->budget_item_id }}"
-                                    data-sub-budget-item-id="{{ $sub->sub_budget_item_id }}"
-                                    data-sub-category-id='{{ $sub->normal_balance_id }}'
-                                    data-amount="{{ $sub->amount }}"><i class="fas fa-edit"></i>
-                                </button>
-                                <a
-                                    href="{{ route('delete-sub-journal', ['sub_id' => $sub->id, 'journal_id' => $journal->id]) }}"
-                                    class="btn btn-danger"
-                                    onclick="return confirm('apakah anda yakin ?')">
-                                    <i
-                                        class="fas fa-trash">
-                                    </i>
-                                </a>
-                            </td>
+                            <td>{{ $sub->bill_item->name }}</td>
+                            <td>{{ $sub->quantity }}</td>
+                            <td>{{ $sub->total }}</td>
+
                         </tr>
                         @endforeach
                         <tr>
-                            <td colspan="7">
-                                <h5>Total Selisih Debit dan Kredit</h5>
+                            <td colspan="2" class="text-left">
+                                <h5>Total Tagihan / Nota</h5>
                             </td>
                             <td class="text-right">
-                                {{ number_format($totalSub) }}
+                                {{-- {{ number_format($totalSub) }} --}}
                             </td>
                             <td>
 
@@ -156,44 +135,36 @@ $breadcrumbList = [
                             method="post">
                             @csrf
                             @method('post')
-                            <input type="hidden" name="journal_id" value="{{ $journal->id }}">
+
+                            <input type="hidden" name="bill_id" value="{{ $bill->id }}">
                             <x-row>
 
                                 <x-in-select
-                                    :label="'Kelompok Mata Anggaran'"
-                                    :placeholder="'Pilih Kelompok Mata Anggaran'"
-                                    :id="'select_budget_item_group'"
-                                    :name="'budget_item_group_id'"
-                                    :options="$options['budgetItemGroups']"
+                                    :label="'Item'"
+                                    :placeholder="'Pilih Item'"
+                                    :name="'bill_item_id'"
+                                    :options="$options['items']"
                                     :required="true" :col="4">
                                 </x-in-select>
 
+
                                 <x-in-select
-                                    :label="'Kelompok Mata Anggaran'"
-                                    :placeholder="'Pilih Mata Anggaran'"
-                                    :id="'select_budget_item'"
-                                    :name="'budget_item_id'"
+                                    :type = "'number'"
+                                    :label="'quantity'"
+                                    :name="'quantity'"
                                     :required="true"
                                     :col="4">
                                 </x-in-select>
 
                                 <x-in-select
-                                    :label="'Kelompok Sub Mata Anggaran'"
-                                    :placeholder="'Pilih Sub Mata Anggaran'"
-                                    :id="'select_sub_budget_item'"
-                                    :name="'sub_budget_item_id'"
-                                    :required="true"
-                                    :col="4">
-                                </x-in-select>
-
-                                <x-in-select
-                                    :label="'Proyek'"
-                                    :placeholder="'Pilih Proyek'"
+                                    :label="'Total'"
+                                    :type="'total'"
                                     :id="'project'"
                                     :name="'project_id'"
                                     :required="true"
                                     :col="4">
                                 </x-in-select>
+
 
                                 <x-in-select
                                     :label="'Saldo Normal'"
@@ -234,7 +205,7 @@ $breadcrumbList = [
                     </div>
                     <div class="modal-body">
 
-                        <div id="formeditsubjournal">
+                        {{-- <div id="formeditsubjournal">
                             <form action="{{ route('edit.sub.journal') }}" class="" style="width: 100%" method="post">
                                 @csrf
                                 @method('post')
@@ -298,7 +269,7 @@ $breadcrumbList = [
                                 </x-row>
                                 <button type="submit" class="btn btn-primary float-right">Simpan</button>
                             </form>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -314,7 +285,7 @@ $breadcrumbList = [
 <script src="{{ asset('assets') }}/dist/js/collect.js"></script>
 {{-- <script src="{{ asset('assets') }}/dist/js/undescore.js"></script> --}}
 
-<meta name="url-branch" content="{{ route('branch.index') }}">
+{{-- <meta name="url-branch" content="{{ route('branch.index') }}">
 <meta name="url-project" content="{{ route('project.index') }}">
 <meta name="url-vendor" content="{{ route('vendor.index') }}">
 
@@ -326,9 +297,9 @@ $breadcrumbList = [
 <meta name='branch-id' content="{{ $journal->branch_id }}">
 <meta name="journal-note" content="{{ $journal->notes }}">
 <meta name="journal-id" content="{{ $journal->id }}">
-<meta name="url-budget-item-group" content="{{ route('get-budget-item-group') }}">
+<meta name="url-budget-item-group" content="{{ route('get-budget-item-group') }}"> --}}
 
-<script>
+{{-- <script>
     let journalDetail = [];
 
     const project = [];
@@ -745,5 +716,5 @@ $breadcrumbList = [
             $('#amount_edit').val(amount)
         })
     });
-</script>
+</script> --}}
 @endpush
