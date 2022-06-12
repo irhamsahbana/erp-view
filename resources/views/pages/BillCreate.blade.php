@@ -8,7 +8,7 @@ $breadcrumbList = [
 'href' => '/'
 ],
 [
-'name' => 'Jurnal'
+'name' => 'Nota Tagihan'
 ],
 ];
 
@@ -24,7 +24,7 @@ $is_open = [
 ];
 @endphp
 
-@section('content-header', 'Jurnal')
+@section('content-header', 'Nota Tagihan')
 
 @section('breadcrumb')
 <x-breadcrumb :list="$breadcrumbList" />
@@ -41,7 +41,7 @@ $is_open = [
 
                 <x-in-select
                     :label="'Vendor'"
-                    :placeholder="'Pilih Kategori'"
+                    :placeholder="'Pilih Vedor'"
                     :col="12"
                     :name="'bill_vendor_id'"
                     :options="$options['vendors']"
@@ -58,12 +58,12 @@ $is_open = [
                 <x-in-text
                     :type="'date'"
                     :label="'Tanggal Nota'"
-                    :name="'recive_date'">
+                    :name="'recive_date'" :required="true">
                 </x-in-text>
                 <x-in-text
                     :type="'date'"
                     :label="'Batas Waktu'"
-                    :name="'due_date'">
+                    :name="'due_date'" :required="true">
                 </x-in-text>
 
                 <div class="col-sm-12">

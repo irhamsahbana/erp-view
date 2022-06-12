@@ -63,9 +63,9 @@ Route::group(['middleware' =>['guest']], function() {
     Route::view('/login', 'pages.Login')->name('login');
     Route::post('login', [AuthController::class, 'attempt'])->name('login.attempt');
 });
-Route::get('/dashboard', [DashboardController::class, 'testDashboard']) -> name('dashboard.view');
+Route::get('/dashboard', [DashboardController::class, 'dashboard']) -> name('dashboard.view');
 Route::group(['middleware' => ['auth']], function(){
-    Route::view('/', 'App')->name('app');
+    Route::view('/', 'pages.Dashboard')->name('app');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::group(['prefix' => 'master-data'], function() {
@@ -255,8 +255,8 @@ Route::group(['middleware' => ['auth']], function(){
         // tagihan
         Route::get('/', [ReceivableController::class, 'index'])->name('receivable.index');
         Route::delete('/{id}', [ReceivableController::class, 'destroy'])->name('receivable.delete');
-        Route::post('/', [ReceivableController::class, 'addReceivable'])->name('receivable.add');
         Route::post('/status/{id}', [ReceivableController::class, 'changeIsPaid'])->name('receivable-statuspaid.post');
+        Route::post('/', [ReceivableController::class, 'addReceivable'])->name('receivable.add');
         Route::get('receivable/print/{id}', [ReceivableController::class, 'print'])->name('receivable.print');
 
         // saldo
@@ -272,10 +272,14 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/', [BillController::class, 'indexBill'])->name('bill.index');
         Route::get('/create', [BillController::class, 'createBill'])->name('bill.create');
         Route::post('/', [BillController::class, 'addBill'])->name('bill.store');
-        Route::post('/subbill', [BillController::class, 'addBill'])->name('bill.store');
+        Route::delete('/{id}', [BillController::class, 'deleteBill'])->name('bill.destroy');
         Route::get('/detail/{id}', [BillController::class, 'detailBill'])->name('bill.detail');
+        Route::post('/paid/{id}', [BillController::class, 'changeIsPaid'])->name('bill.change-status');
+
 
         // Subbill
+        Route::post('/subbill', [BillController::class, 'addSubBill'])->name('subbill.add');
+        Route::delete('/subbill/{id}', [BillController::class, 'deleteSubBill'])->name('subbill.delete');
 
 
         // Vendor

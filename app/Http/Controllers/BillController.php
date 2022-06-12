@@ -14,6 +14,7 @@ use App\Models\SubBill;
 use App\Models\BillVendor;
 use App\Models\Branch;
 
+use Illuminate\Support\Facades\DB;
 
 
 class BillController extends Controller
@@ -22,6 +23,7 @@ class BillController extends Controller
     public function indexBill(Request $request) {
 
         $query = Bill::select("*");
+        $date = Carbon::now()->format('Y-m-d');
 
         if ($request->branch_id) {
             if (!in_array(Auth::user()->role, self::$fullAccess))
@@ -33,8 +35,13 @@ class BillController extends Controller
         if($request->bill_vendor_id)
             $query->where('bill_vendor_id', $request->bill_vendor_id);
 
-        if($request->is_paid)
-            $query->where('is_paid', $request->is_paid);
+        if($request->is_paid) {
+            if($request->is_paid == 3) {
+                $query->where('is_paid', true);
+            }  else if ($request->is_paid == 2) {
+                $query->where('is_paid', false);
+                            }
+        }
 
 
         if ($request->recive_date_start)
@@ -50,12 +57,18 @@ class BillController extends Controller
             $query->whereDate('due_date', '<=', new \DateTime($request->due_date_finish));
     // dd($query->get());
 
-        $total = $query->where('is_paid', false)->sum('amount');
-        $options = self::staticOptionBill();
-        $datas = $query->paginate(40)->withQueryString();
+    $query->orderBy('recive_date', 'desc')->orderBy('id','desc');
+    $datas = $query->paginate(40)->withQueryString();
+    $total_bill = $query->sum('amount');
+    $total_balance = $query->where('is_paid', false)->sum('amount');
+    $total_paid = $query->where('is_paid', true)->sum('amount');
+    $total_due_date = $query->where('is_paid', false)->where('due_date', '<=', $date)->sum('amount');
+
+    $options = self::staticOptionBill();
+    // $total_is
         // dd($options["vendors"]);
 
-        return view('pages.Bill', compact('datas', 'options'));
+        return view('pages.Bill', compact('datas',"total_balance",'date','total_bill','total_due_date', 'options'));
 
     }
     public function createBill() {
@@ -69,14 +82,14 @@ class BillController extends Controller
     public function addBill(Request $request) {
 
 
-        // $balance = BillBalance::firstOrNew([
-        //     'branch_id' => Auth::user()->branch_id,
-        //     'bill_vendor_id'=> $request->new_bill_vendor_id
-        // ]);
-        // $balance->branch_id =  Auth::user()->branch_id;
-        // $balance->bill_vendor_id = $request->new_bill_vendor_id;
+        $balance = BillBalance::firstOrNew([
+            'branch_id' => Auth::user()->branch_id,
+            'bill_vendor_id'=> $request->bill_vendor_id
+        ]);
+        $balance->branch_id =  Auth::user()->branch_id;
+        $balance->bill_vendor_id = $request->bill_vendor_id;
         $row = Bill::findOrNew($request->id);
-        // $balance->total += $request->amount;
+        $balance->total += 0;
 
         if(!$request->id) {
             $prefix = sprintf('%s/', $row->getTable());
@@ -92,30 +105,126 @@ class BillController extends Controller
         $row->due_date = $request->due_date;
 
         $row->save();
-        // $balance->save();
+        $balance->save();
         return redirect()->route('bill.detail', $row->id)->with('success', 'Data berhasil ditambahkan');
     }
 
-    public function deleteBill() {
+    public function deleteBill($id) {
+        $row = Bill::findOrNew($id);
+        $balance = BillBalance::where('branch_id',$row->branch_id)
+                    ->where('bill_vendor_id', $row->bill_vendor_id)
+                    ->first();
+        $sub = SubBill::where('bill_id', $id);
 
+
+        DB::beginTransaction();
+        try {
+            $sub->delete();
+            if(!$row->is_paid) {
+                $balance->total -= $row->amount;
+            }
+            $balance->save();
+            $row->delete();
+            DB::commit();
+            return redirect()->back()->with('f-msg', 'Data Berhasil diHapus');
+        } catch(Error $e) {
+            DB::rollBack();
+            dd($e);
+        }
+
+        return redirect()->back()->with('f-msg', 'Data berhasil dihapus.');
     }
     public function addSubBill(Request $request) {
-        $bill = "";
+        // dd("yeess");
+        $balance = BillBalance::where('branch_id',$request->branch_id)
+                    ->where('bill_vendor_id', $request->bill_vendor_id)
+                    ->first();
+
+        $bill = Bill::where('id', $request->bill_id)->first();
+        $bill->amount += $request->total;
+        $balance->total += $request->total;
 
         $row=SubBill::findOrNew($request->id);
-        $row = "";
+        $row->bill_item_id = $request->bill_item_id;
+        $row->bill_id = $request->bill_id;
+        $row->bill_vendor_id = $request->bill_vendor_id;
+        $row->quantity = $request->quantity;
+        $row->total = $request->total;
+
+        $bill->save();
+        $row->save();
+        $balance->save();
+         return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
+
+    }
+
+    public function deleteSubBill($id) {
+        // dd("tes");
+        $row = SubBill::find($id);
+        // dd($row->id);
+        $bill = Bill::where('id', $row->bill_id)->first();
+
+        $balance = BillBalance::where('branch_id',$bill->branch_id)
+                    ->where('bill_vendor_id', $row->bill_vendor_id)
+                    ->first();
+        // dd($row);
+        // dd($row->branch_id, $row->bill_vendor_id);
+        DB::beginTransaction();
+        try {
+            if(!$bill->is_paid) {
+                $balance->total -= $row->total;
+            }
+            $bill->amount -= $row->total;
+            $bill->save();
+            $balance->save();
+            $row->delete();
+            DB::commit();
+            return redirect()->back()->with('f-msg', 'Data Berhasil diHapus');
+        } catch(Error $e) {
+            DB::rollBack();
+            dd($e);
+        }
+
+
     }
 
     public function detailBill($id) {
-        $subBill = SubBill::select('*')->where('bill_id', $id);
+        $subBill = SubBill::where('bill_id', $id)->get();
         $bill = Bill::find($id);
-        // $totalSub = 0;
-        // $totalSub = $subBill->sum('total');
+
         $options = self::staticOptionBill();
         return view('pages.BillDetail', compact('options','subBill', 'bill'));
     }
 
+    public function changeIsPaid(Request $request, $id) {
+        // dd("oiii");
 
+        $row = Bill::findOrFail($id);
+        // dd($row);
+        $balance = BillBalance::where('branch_id',$row->branch_id)
+        ->where('bill_vendor_id', $row->bill_vendor_id)
+        ->first();
+
+        // dd($balance);
+        $balance->branch_id = $row->branch_id;
+        $balance->bill_vendor_id = $row->bill_vendor_id;
+
+        if($row->is_paid) {
+            $row->is_paid = false;
+            $balance->total += $row->amount;
+            $row->pay_date=null;
+
+        } else if(!$row->is_paid) {
+            $row->is_paid = true;
+            $row->pay_date=$request->pay_date;
+            $balance->total -= $row->amount;
+
+        }
+
+        $balance->save();
+        $row->save();
+        return redirect()->back()->with('f-msg', 'Status berhasil diubah.');
+    }
 
     public function staticOptionBill() {
         $branches = Branch::all();
@@ -133,8 +242,8 @@ class BillController extends Controller
         }
 
         $status = [
-            ['text' => 'Sudah Bayar', 'value' => true],
-            ['text' => 'Belum Bayar', 'value' => false],
+            ['text' => 'Belum Bayar', 'value' => 2],
+            ['text' => 'Sudah Bayar', 'value' => 3],
         ];
 
         $vendors = BillVendor::all();

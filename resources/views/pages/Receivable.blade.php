@@ -158,7 +158,7 @@
                                     <td class="text-right">{{ number_format($data->amount) }}</td>
                                     <td class="text-center">
                                         @if ( $data->is_paid)
-                                            <form action="{{ route('receivable-statuspaid.post', $data->id) }}" style="display:inline!important;" method="POST">
+                                        <form action="{{ route('receivable-statuspaid.post', $data->id) }}" style="display:inline!important;" method="POST">
                                                 @method('POST')
                                                 @csrf
                                             <button
@@ -297,48 +297,35 @@
 @endsection
 
 @push('js')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="url-order-show" content="{{ route('order.show', 'dummy-id') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="url-order-show" content="{{ route('order.show', 'dummy-id') }}">
 
-    <input hidden id="search-project" value="{{app('request')->input('project_id') ?? null }}">
-   <input hidden id='url-project' value="{{route('project.index')}}">
+<input hidden id="search-project" value="{{app('request')->input('project_id') ?? null }}">
+<input hidden id='url-project' value="{{route('project.index')}}">
 
-   <input hidden id='search-vendor' value="{{app('request')->input('receivable_vendor_id') ?? null }}">
-   <input hidden id='url-vendor' value="{{route('receivable-vendor.index')}}">
+<input hidden id='search-vendor' value="{{app('request')->input('receivable_vendor_id') ?? null }}">
+<input hidden id='url-vendor' value="{{route('receivable-vendor.index')}}">
 {{-- Modal --}}
-   <input hidden id="new_search-project" value="{{app('request')->input('project_id') ?? null }}">
-   <input hidden id='new_url-project' value="{{route('project.index')}}">
+<input hidden id="new_search-project" value="{{app('request')->input('project_id') ?? null }}">
+<input hidden id='new_url-project' value="{{route('project.index')}}">
 
-   <input hidden id='new_search-vendor' value="{{app('request')->input('receivable_vendor_id') ?? null }}">
-   <input hidden id='new_url-vendor' value="{{route('receivable-vendor.index')}}">
-   <meta name="url-order-change-status" content="{{ route('receivable-statuspaid.post', 'dummy-id') }}">
+<input hidden id='new_search-vendor' value="{{app('request')->input('receivable_vendor_id') ?? null }}">
+<input hidden id='new_url-vendor' value="{{route('receivable-vendor.index')}}">
+<meta name="url-order-change-status" content="{{ route('receivable-statuspaid.post', 'dummy-id') }}">
 
    <script>
+
+
         function changeStatus(id) {
             $('#modal-change-status').modal('show');
+            $('#form-status-change').attr('action', '');
             $('#form-status-change').trigger('reset');
 
-            let url = $('meta[name="url-order-show"]').attr('content');
+            let url = $('meta[name="url-order-change-status"]').attr('content');
             url = url.replace('dummy-id', id);
 
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                cache: false,
-                success: function(data) {
-                    $('#pay_date').val(data.pay_date);
+            $('#form-status-change').attr('action', url);
 
-                    //change form action
-                    let url = $('meta[name="url-order-change-status"]').attr('content');
-                    url = url.replace('dummy-id', data.id);
-                    $('#form-status-change').attr('action', url);
-
-                },
-                error: function(data) {
-                    console.log(data);
-                }
-            });
         }
 
         $(function() {

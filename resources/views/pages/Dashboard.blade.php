@@ -14,15 +14,82 @@
         <section class="content">
           <div class="container-fluid">
             <!-- Small boxes (Stat box) -->
-            <div class="row">
-              <div class="col-lg-4">
-                <!-- small box -->
-                {{-- Piutang --}}
-                {{-- Total Piutang --}}
+
+              @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'cashier')
+            <x-card-collapsible :title="'Kas Hari Ini'">
+              <div class="row">
+                  {{-- Kas Awal --}}
+                <div class="col-lg-3">
+                  <div class="small-box bg-primary">
+                    <div class="inner">
+                        <p>Saldo Kas Awal</p>
+                      <h3 class="text-right"> {{number_format($set_balance)}} </h3>
+
+                    </div>
+                    <div class="icon">
+                      <i class="ion ion-bag"></i>
+                    </div>
+
+                  </div>
+                </div>
+                {{-- Kas Masuk --}}
+                <div class="col-lg-3">
+                  <div class="small-box bg-olive">
+                    <div class="inner">
+                        <p>Kas Masuk Hari Ini</p>
+                      <h3 class="text-right"> {{number_format($cash_in)}} </h3>
+
+                    </div>
+                    <div class="icon">
+                      <i class="ion ion-bag"></i>
+                    </div>
+
+                  </div>
+                </div>
+                {{-- Kas Keluar --}}
+                <div class="col-lg-3">
+                  <div class="small-box bg-warning">
+                    <div class="inner">
+                        <p>Kas Keluar Hari Ini</p>
+                      <h3 class="text-right"> {{number_format($cash_out)}} </h3>
+
+                    </div>
+                    <div class="icon">
+                      <i class="ion ion-bag"></i>
+                    </div>
+
+                  </div>
+                </div>
+                {{-- Kas Hari Ini --}}
+                <div class="col-lg-3">
+                  <div class="small-box bg-success">
+                    <div class="inner">
+                        <p>Total Saldo kas Hari ini</p>
+                      <h3 class="text-right"> {{number_format($total_cash)}} </h3>
+
+                    </div>
+                    <div class="icon">
+                      <i class="ion ion-bag"></i>
+                    </div>
+
+                  </div>
+                </div>
+                <!-- ./col -->
+              </div>
+            </x-card-collapsible>
+              @endif
+
+
+          {{-- Penagihan --}}
+          @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'Account Receivable')
+        <x-card-collapsible :title="'Piutang Usaha per hari ini'">
+          <div class="row">
+              <div class="col-lg-6">
+
                 <div class="small-box bg-info">
                   <div class="inner">
                       <p>Piutang Belum Terbayarkan</p>
-                    <h3 class="text-right"> {{number_format($receivable)}} </h3>
+                    <h3 class="text-right"> {{number_format($receivable_total)}} </h3>
 
                   </div>
                   <div class="icon">
@@ -31,38 +98,10 @@
                   <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
               </div>
-              <!-- ./col -->
-              {{-- <div class="col-lg-4">
-                <!-- small box -->
-                <div class="small-box bg-success">
-                  <div class="inner">
-                    <h3>53<sup style="font-size: 20px">%</sup></h3>
 
-                    <p>Bounce Rate</p>
-                  </div>
-                  <div class="icon">
-                    <i class="ion ion-stats-bars"></i>
-                  </div>
-                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div> --}}
-              <!-- ./col -->
-              <div class="col-lg-4">
-                <!-- small box -->
-                <div class="small-box bg-warning">
-                  <div class="inner">
-                    <h3>44</h3>
 
-                    <p>User Registrations</p>
-                  </div>
-                  <div class="icon">
-                    <i class="ion ion-person-add"></i>
-                  </div>
-                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div>
               <!-- ./col -->
-              <div class="col-lg-4">
+              <div class="col-lg-6">
                 <!-- small box -->
                 <div class="small-box bg-danger">
                   <div class="inner">
@@ -79,11 +118,12 @@
               </div>
               <!-- ./col -->
             </div>
-            <!-- /.row -->
-            <!-- Main row -->
+        </x-card-collapsible>
+            @endif
 
-            <!-- /.row (main row) -->
-          </div><!-- /.container-fluid -->
+
+        {{--  --}}
+          </div>
         </section>
         <!-- /.content -->
       </div>

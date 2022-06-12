@@ -26,6 +26,7 @@
 @section('content')
     <x-content>
         <x-row>
+
             <x-card-collapsible :title="'Pencarian'">
                 <form style="width: 100%">
                     <x-row class="justify-content-md-center">
@@ -104,17 +105,51 @@
                     </x-row>
                 </form>
             </x-card-collapsible>
+            <x-card-collapsible :title="'Total Saldo'">
+                <div class="container-fluid">
+                    <!-- Small boxes (Stat box) -->
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="small-box bg-info">
+                          <div class="inner">
+                              <p>Piutang Belum Terbayarkan</p>
+                            <h3 class="text-right"> {{number_format($total_balance)}} </h3>
 
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <!-- ./col -->
+                      <div class="col-lg-6">
+                        <!-- small box -->
+                        <div class="small-box bg-danger">
+                          <div class="inner">
+
+                              <p>Piutang Lewat Batas Waktu</p>
+                              <h3 class="text-right"> {{number_format($total_due_date)}} </h3>
+
+                          </div>
+
+
+                        </div>
+                      </div>
+                      <!-- ./col -->
+                    </div>
+
+                  </div><!-- /.container-fluid -->
+            </x-card-collapsible>
             <x-card-collapsible :title="'Data Mutasi'">
                 <x-row>
+
                     <x-col class="mb-3">
-                        @if (Auth::user()->role == 'purchaser')
+                        {{-- @if (Auth::user()->role == 'purchaser') --}}
 
                             <a href={{route("bill.create")}} class="btn btn-primary">
                                 Tambah
                             </a>
 
-                        @endif
+                        {{-- @endif --}}
                     </x-col>
 
                     <x-col>
@@ -139,60 +174,29 @@
                                     <td class="text-right">{{ number_format($data->amount) }}</td>
                                     <td class="text-center">
                                         @if ( $data->is_paid)
-                                            <form action="{{ route('receivable-statuspaid.post', $data->id) }}" style="display:inline!important;" method="POST">
-                                                @method('POST')
-                                                @csrf
-                                            <button
-                                            type="submit"
-                                            class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
-                                                onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
-                                                title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
-                                        </form>
-                                         @else
-                                            <button
-                                            class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
-                                            onclick="changeStatus({{$data->id}})"
-                                                title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
+                                        <form action="{{ route('bill.change-status', $data->id) }}" style="display:inline!important;" method="POST">
+                                            @method('POST')
+                                            @csrf
+                                        <button
+                                        type="submit"
+                                        class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
+                                            onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
+                                            title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
+                                    </form>
+                                     @else
+                                        <button
+                                        class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
+                                        onclick="changeStatus({{$data->id}})"
+                                            title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
 
 
-                                        @endif
-                                    </td>
-
-                                    {{-- <td>
-                                        {{abcd()}}
-                                        @if($data->pay_date)
-                                            {{ date("d-m-Y", strtotime($data->pay_date)) }}
-
-                                        @endif
-                                        </td> --}}
-                                    {{-- <td>{{ $data->receivable_vendor->name }}</td>
-                                    <td>{{ $data->notes }}</td>
-                                    <td class="text-right">{{ number_format($data->amount) }}</td>
-                                    <td class="text-center">
-                                        @if ( $data->is_paid)
-                                            <form action="{{ route('receivable-statuspaid.post', $data->id) }}" style="display:inline!important;" method="POST">
-                                                @method('POST')
-                                                @csrf
-                                            <button
-                                            type="submit"
-                                            class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
-                                                onclick="return confirm('Apakah anda ingin mengubah status pembayaran ini?')"
-                                                title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
-                                        </form>
-                                         @else
-                                            <button
-                                            class="btn btn-{{ $data->is_paid == false ? 'danger' : 'success' }}"
-                                            onclick="changeStatus({{$data->id}})"
-                                                title="ubah status"><i class="{{ $data->is_paid == false ? 'fas fa-times-circle' : 'fas fa-check-circle' }}"></i></button>
-
-
-                                        @endif
+                                    @endif
                                     </td>
                                     <td>
                                         <form
                                         style=" display:inline!important;"
                                         method="POST"
-                                        action="{{ route('receivable.delete', $data->id) }}">
+                                        action="{{ route('bill.destroy', $data->id) }}">
                                             @csrf
                                             @method('DELETE')
 
@@ -202,8 +206,15 @@
                                             onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
                                             title="Hapus"><i class="fas fa-trash-alt"></i></button>
                                     </form>
+                                    <a href="{{ route('bill.detail', $data->id) }}"
+                                        class="btn btn-primary"><i class="fas fa-stream"></i></a>
 
-                                    </td> --}}
+                                    <td>
+
+
+                                    </td>
+
+                                    {{-- </td --}}
                                     {{-- <td>{{ $data->pay_date }}</td> --}}
 
                                 </tr>
@@ -218,58 +229,6 @@
             </x-card-collapsible>
         </x-row>
     </x-content>
-
-    {{-- <x-modal :title="'Tambah Data'" :id="'add-modal'">
-        <form style="width: 100%" action="{{ route('bill.store') }}" method="POST">
-            @csrf
-            @method('POST')
-
-            <x-row>
-
-                        <x-in-select
-                            :label="'Vendor'"
-                            :placeholder="'Pilih Vendor'"
-                            :col="3"
-                            :name="'new_bill_vendor_id'"
-                            :options="$options['vendors']"
-                            :value="app('request')->input('new_bill_vendor_id') ?? null"
-                            :required="true"></x-in-select>
-                        <x-in-text
-                            :type="'date'"
-                            :label="'Tanggal Terima'"
-                            :name="'new_recive_date'"
-                            :col="3"
-                            :required="true"
-                            ></x-in-text>
-                        <x-in-text
-                            :type="'date'"
-                            :label="'Batas Waktu'"
-                            :name="'new_due_date'"
-                            :col="3"
-                            :required="true"
-                            ></x-in-text>
-                        <x-in-text
-                            :type="'number'"
-                            :label="'Jumlah'"
-                            :name="'amount'"
-                            :col="3"
-                            :required="true"
-                            ></x-in-text>
-                        <x-in-text
-                            :type="'text'"
-                            :label="'Keterangan'"
-                            :name="'notes'"
-                            :col="12"
-                            :required="true"
-                            ></x-in-text>
-
-                <x-col class="text-right">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </x-col>
-            </x-row>
-        </form>
-    </x-modal> --}}
 
     <x-modal :title="'Change Pay Status'" :id="'modal-change-status'" :size="'md'">
         <form style="width: 100%" action="" method="POST" id="form-status-change">
@@ -294,36 +253,35 @@
 @endsection
 
 @push('js')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="url-order-show" content="{{ route('order.show', 'dummy-id') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="url-order-show" content="{{ route('order.show', 'dummy-id') }}">
+
+<input hidden id="search-project" value="{{app('request')->input('project_id') ?? null }}">
+<input hidden id='url-project' value="{{route('project.index')}}">
+
+<input hidden id='search-vendor' value="{{app('request')->input('receivable_vendor_id') ?? null }}">
+<input hidden id='url-vendor' value="{{route('receivable-vendor.index')}}">
+{{-- Modal --}}
+<input hidden id="new_search-project" value="{{app('request')->input('project_id') ?? null }}">
+<input hidden id='new_url-project' value="{{route('project.index')}}">
+
+<input hidden id='new_search-vendor' value="{{app('request')->input('receivable_vendor_id') ?? null }}">
+<input hidden id='new_url-vendor' value="{{route('receivable-vendor.index')}}">
+<meta name="url-order-change-status" content="{{ route('bill.change-status', 'dummy-id') }}">
 
    <script>
-        // function changeStatus(id) {
-        //     $('#modal-change-status').modal('show');
-        //     $('#form-status-change').trigger('reset');
 
-        //     let url = $('meta[name="url-order-show"]').attr('content');
-        //     url = url.replace('dummy-id', id);
+      function changeStatus(id) {
+            $('#modal-change-status').modal('show');
+            $('#form-status-change').attr('action', '');
+            $('#form-status-change').trigger('reset');
 
-        //     $.ajax({
-        //         url: url,
-        //         type: 'GET',
-        //         dataType: 'json',
-        //         cache: false,
-        //         success: function(data) {
-        //             $('#pay_date').val(data.pay_date);
+            let url = $('meta[name="url-order-change-status"]').attr('content');
+            url = url.replace('dummy-id', id);
 
-        //             //change form action
-        //             let url = $('meta[name="url-order-change-status"]').attr('content');
-        //             url = url.replace('dummy-id', data.id);
-        //             $('#form-status-change').attr('action', url);
+            $('#form-status-change').attr('action', url);
 
-        //         },
-        //         error: function(data) {
-        //             console.log(data);
-        //         }
-        //     });
-        // }
+        }
 
 
 

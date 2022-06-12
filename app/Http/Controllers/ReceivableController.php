@@ -74,7 +74,6 @@ class ReceivableController extends Controller
 
 
             $receivable = $query->where('is_paid', 0)
-            // ->where('due_date', '<=', $date)
             ->sum('amount');
             $receivable_duedate = $query->where('is_paid', 0)
             ->where('due_date', '<=', $date)
@@ -96,7 +95,7 @@ class ReceivableController extends Controller
         //     'receivable_vendor_id' => ['required', 'exists:receivable_vendor,id'],
 
         // ]);
-        // dd($request);
+
         $row=Model::findOrNew($request->id);
         $row->branch_id = $request->modal_branch_id;
         $row->amount = $request->amount;
@@ -126,7 +125,7 @@ class ReceivableController extends Controller
         return $options;
     }
     public function addReceivable(Request $request) {
-
+        // dd("ok");
         // dd($request);
         $request->validate([
             'id' => ['nullable'],
@@ -164,8 +163,7 @@ class ReceivableController extends Controller
         $balance->save();
         $row->save();
         return redirect()->back()->with('f-msg', 'Data berhasil disimpan.');
-
-    }
+}
 
     public function destroy($id) {
         $row = Model::findOrFail($id);
@@ -184,18 +182,14 @@ class ReceivableController extends Controller
         return redirect()->back()->with('f-msg', 'Data berhasil dihapus.');
     }
     public function changeIsPaid(Request $request, $id) {
-
         $row = Model::findOrFail($id);
-        // $balance = ReceivableBalance::where('branch_id',$row->branch_id)
-        //                             ->where('project_id', $row->project_id)
-        //                             ->where('receivable_vendor_id', $row->receivable_vendor_id)
-        //                             ->first();
-        $balance = ReceivableBalance::firstOrNew([
-            'branch_id' => $row->branch_id,
-            'project_id' => $row->project_id,
-            'receivable_vendor_id' => $row->receivable_vendor_id,
-        ]);
-        $balance->branch_id = $row->branch_id;
+
+        $balance = ReceivableBalance::where('branch_id', $row->branch_id)
+                    ->where('project_id', $row->project_id)
+                    ->where('receivable_vendor_id', $row->receivable_vendor_id)->first();
+
+        // dd($balance);
+                    $balance->branch_id = $row->branch_id;
         $balance->project_id = $row->project_id;
         $balance->receivable_vendor_id = $row->receivable_vendor_id;
         if ($row->is_paid) {
@@ -208,7 +202,7 @@ class ReceivableController extends Controller
             $row->pay_date=null;
 
         }  else if (!$row->is_paid) {
-            // dd($row->amount);
+            // dd($row->amount, $balance->amount);
             $amount = $balance->amount - $row->amount;
             $balance->amount = $amount;
 
@@ -216,6 +210,8 @@ class ReceivableController extends Controller
             $row->pay_date=$request->pay_date;
         }
 
+
+        //  dd($balance);
         $balance->save();
         $row->save();
         return redirect()->back()->with('f-msg', 'Status order berhasil diubah.');
@@ -294,8 +290,7 @@ class ReceivableController extends Controller
 
     }
 
-    public function VendorStore(Request $request)
-    {
+    public function VendorStore(Request $request) {
         $request->validate([
             'id' => ['nullable', 'exists:vendors,id'],
             'branch_id' => ['required', 'exists:branches,id'],
@@ -324,8 +319,7 @@ class ReceivableController extends Controller
         return redirect()->route('receivable-vendor.index')->with('f-msg', 'Vendor berhasil disimpan.');
     }
 
-    public function showVendor($id)
-    {
+    public function showVendor($id)    {
         $data = ReceivableVendor::findOrFail($id);
 
         $branches = Branch::all();
