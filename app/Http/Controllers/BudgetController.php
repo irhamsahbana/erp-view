@@ -51,7 +51,7 @@ class BudgetController extends Controller
         }
 
         $datas = $query->paginate(40)->withQueryString();
-        $options = self::staticOptions()->withQueryString();
+        $options = self::staticOptions();
         return view('pages.BudgetIndex', compact('datas', 'options'));
     }
 
@@ -110,7 +110,7 @@ class BudgetController extends Controller
     public function show(Request $request, $id)
     {
         $data = Model::findOrFail($id);
-        $options = self::staticOptions()->withQueryString();
+        $options = self::staticOptions();
 
         return view('pages.BudgetDetail', compact('data', 'options'));
     }
