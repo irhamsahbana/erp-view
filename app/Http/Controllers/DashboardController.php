@@ -63,7 +63,7 @@ class DashboardController extends Controller
 
         $subJournal = SubJournal::select("*");
 
-        dd($set_balance);
+        // dd($set_balance);
 
         return view('pages.Dashboard', compact( 'receivable_total', 'receivable_duedate', 'set_balance', 'cash_out', 'cash_in', 'total_cash', 'bill_total', 'bill_due_date'));
     }
