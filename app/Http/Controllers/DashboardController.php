@@ -8,6 +8,7 @@ use App\Models\Receivable;
 use App\Models\Voucher;
 use App\Models\Bill;
 use App\Models\SubJournal;
+use App\Models\Branch;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -66,5 +67,28 @@ class DashboardController extends Controller
         // dd($set_balance);
 
         return view('pages.Dashboard', compact( 'receivable_total', 'receivable_duedate', 'set_balance', 'cash_out', 'cash_in', 'total_cash', 'bill_total', 'bill_due_date'));
+    }
+
+    public function staticOption() {
+        $branches = Branch::all();
+
+        if (!in_array(Auth::user()->role, self::$fullAccess))
+            $branches = $branches->where('id', Auth::user()->branch_id);
+
+        if ($branches->isNotEmpty()) {
+            $branches = $branches->map(function ($branch) {
+                return [
+                    'text' => $branch->name,
+                    'value' => $branch->id,
+                ];
+            });
+        }
+
+        $options = [
+            'branches' => $branches,
+        ];
+
+        return $options;
+
     }
 }
