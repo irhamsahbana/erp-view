@@ -60,10 +60,10 @@ class DashboardController extends Controller
         $bill_total = $bill->where('is_paid', false)->sum('amount');
         $bill_due_date = $bill->where('is_paid', false)->where('due_date', '<=', $date)->sum('amount');
 
-        // Laba
-        $subJoutnam = SubJournal::select("*");
 
+        $subJournal = SubJournal::select("*");
 
+        dd($set_balance);
 
         return view('pages.Dashboard', compact( 'receivable_total', 'receivable_duedate', 'set_balance', 'cash_out', 'cash_in', 'total_cash', 'bill_total', 'bill_due_date'));
     }

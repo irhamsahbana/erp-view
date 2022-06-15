@@ -74,16 +74,8 @@ class JournalController extends Controller
 
         $kredit = Category::where('slug', 'kredit')->first();
 
-        // foreach ($subJournal as $sub) {
-        //     if($sub->normal_balance_id == $kredit->id){
-        //         $totalSub -= $sub->amount;
-        //     }else{
-        //         $totalSub += $sub->amount;
-        //     }
-        // }
-
         $datas = $query->paginate(40);
-        $options = self::staticOptions();
+        $options = self::staticOptions()->withQueryString();
 
         return view('pages.JournalIndex', compact('datas', 'options', 'kredit'));
     }

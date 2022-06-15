@@ -23,7 +23,7 @@
                   <div class="small-box bg-primary">
                     <div class="inner">
                         <p>Saldo Kas Awal</p>
-                      <h3 class="text-right"> {{number_format($set_balance)}} </h3>
+                      {{-- <h3 class="text-right"> {{number_format($set_balance)}} </h3> --}}
 
                     </div>
                     <div class="icon">
