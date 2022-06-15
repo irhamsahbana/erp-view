@@ -14,9 +14,9 @@
         <section class="content">
           <div class="container-fluid">
             <!-- Small boxes (Stat box) -->
-
-              @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'cashier')
+            @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'cashier')
             <x-card-collapsible :title="'Kas Hari Ini'">
+
               <div class="row">
                   {{-- Kas Awal --}}
                 <div class="col-lg-3">
@@ -27,7 +27,8 @@
 
                     </div>
                     <div class="icon">
-                      <i class="ion ion-bag"></i>
+
+                      <i class="ion ion-wallet"></i>
                     </div>
 
                   </div>
@@ -41,7 +42,7 @@
 
                     </div>
                     <div class="icon">
-                      <i class="ion ion-bag"></i>
+                        <i class="ion ion-plus"></i>
                     </div>
 
                   </div>
@@ -55,7 +56,7 @@
 
                     </div>
                     <div class="icon">
-                      <i class="ion ion-bag"></i>
+                      <i class="ion ion-minus"></i>
                     </div>
 
                   </div>
@@ -69,7 +70,7 @@
 
                     </div>
                     <div class="icon">
-                      <i class="ion ion-bag"></i>
+                      <i class="ion ion-money"></i>
                     </div>
 
                   </div>
@@ -83,7 +84,7 @@
           {{-- Penagihan --}}
           @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'Account Receivable')
         <x-card-collapsible :title="'Piutang Usaha per hari ini'">
-          <div class="row">
+            <div class="row">
               <div class="col-lg-6">
 
                 <div class="small-box bg-info">
@@ -120,6 +121,46 @@
             </div>
         </x-card-collapsible>
             @endif
+            {{-- Bill --}}
+          @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'purchaser')
+        <x-card-collapsible :title="'Hutang Usaha per hari ini'">
+            <div class="row">
+              <div class="col-lg-6">
+
+                <div class="small-box bg-info">
+                  <div class="inner">
+                      <p>Hutang Belum Terbayarkan</p>
+                    <h3 class="text-right"> {{number_format($bill_total)}} </h3>
+
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-bag"></i>
+                  </div>
+                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+
+
+              <!-- ./col -->
+              <div class="col-lg-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                  <div class="inner">
+
+                      <p>Hutang Lewat Batas Waktu</p>
+                      <h3 class="text-right"> {{number_format($bill_due_date)}} </h3>
+
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                  </div>
+                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+              <!-- ./col -->
+            </div>
+        </x-card-collapsible>
+            @endif
 
 
         {{--  --}}
@@ -127,7 +168,8 @@
         </section>
         <!-- /.content -->
       </div>
+      <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+      <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </x-content>
-
 
 @endsection
