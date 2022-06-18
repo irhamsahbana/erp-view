@@ -141,15 +141,18 @@ class BillController extends Controller
                     ->first();
 
         $bill = Bill::where('id', $request->bill_id)->first();
-        $bill->amount += $request->total;
-        $balance->total += $request->total;
+        $total = $request->quantity * $request->unit_price;
+        $bill->amount += $total;
+        $balance->total += $total;
 
         $row=SubBill::findOrNew($request->id);
         $row->bill_item_id = $request->bill_item_id;
+        $row->unit = $request->unit;
         $row->bill_id = $request->bill_id;
         $row->bill_vendor_id = $request->bill_vendor_id;
         $row->quantity = $request->quantity;
-        $row->total = $request->total;
+        $row->unit_price = $request->unit_price;
+        $row->total = $total;
 
         $bill->save();
         $row->save();

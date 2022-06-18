@@ -26,71 +26,71 @@
 @section('content')
     <x-content>
         <x-row>
-        <x-card-collapsible :title="'Detai Nota'" :collapse="false">
-            <x-row>
-                <div class="row">
-                    <x-in-text
-                        :type="'text'"
-                        :label="'Cabang'"
-                        :col="4"
-                        :readonly="'true'"
-                        :value="$bill->branch->name">
-                    </x-in-text>
+            <x-card-collapsible :title="'Detai Nota'" :collapse="false">
+                <x-row>
+                    <div class="row">
+                        <x-in-text
+                            :type="'text'"
+                            :label="'Cabang'"
+                            :col="4"
+                            :readonly="'true'"
+                            :value="$bill->branch->name">
+                        </x-in-text>
 
-                    <x-in-text
-                        :type="'text'"
-                        :label="'Nomor Ref.'"
-                        :col="4"
-                        :readonly="'true'"
-                        :value="$bill->ref_no">
-                    </x-in-text>
+                        <x-in-text
+                            :type="'text'"
+                            :label="'Nomor Ref.'"
+                            :col="4"
+                            :readonly="'true'"
+                            :value="$bill->ref_no">
+                        </x-in-text>
 
-                    <x-in-text
-                        :type="'text'"
-                        :label="'Vendor'"
-                        :col="4"
-                        :readonly="'true'"
-                        :value="$bill->bill_vendor->name">
-                    </x-in-text>
+                        <x-in-text
+                            :type="'text'"
+                            :label="'Vendor'"
+                            :col="4"
+                            :readonly="'true'"
+                            :value="$bill->bill_vendor->name">
+                        </x-in-text>
 
-                    <x-in-text
-                        :type="'text'"
-                        :label="'Tanggal Nota'"
-                        :col="3"
-                        :readonly="'true'"
-                        :value="$bill->recive_date">
-                    </x-in-text>
-                    <x-in-text
-                        :type="'text'"
-                        :label="'Batas Waktu'"
-                        :col="3"
-                        :readonly="'true'"
-                        :value="$bill->due_date">
-                    </x-in-text>
+                        <x-in-text
+                            :type="'text'"
+                            :label="'Tanggal Nota'"
+                            :col="3"
+                            :readonly="'true'"
+                            :value="$bill->recive_date">
+                        </x-in-text>
+                        <x-in-text
+                            :type="'text'"
+                            :label="'Batas Waktu'"
+                            :col="3"
+                            :readonly="'true'"
+                            :value="$bill->due_date">
+                        </x-in-text>
 
 
-                    <x-in-text
-                        :type="'text'"
-                        :label="'Status Bayar'"
-                        :col="3"
-                        :readonly="'true'"
-                        :value="($bill->is_paid == 0) ? 'Belum Bayar' : 'Sudah Bayar'">
-                    </x-in-text>
-                    <x-in-text
-                        :type="'text'"
-                        :label="'Total'"
-                        :col="3"
-                        :readonly="'true'"
-                        :value="$bill->amount">
-                    </x-in-text>
+                        <x-in-text
+                            :type="'text'"
+                            :label="'Status Bayar'"
+                            :col="3"
+                            :readonly="'true'"
+                            :value="($bill->is_paid == 0) ? 'Belum Bayar' : 'Sudah Bayar'">
+                        </x-in-text>
+                        <x-in-text
+                            :type="'text'"
+                            :label="'Total'"
+                            :col="3"
+                            :readonly="'true'"
+                            :value="$bill->amount">
+                        </x-in-text>
 
-                    <div class="col-sm-12">
-                        <label for="">Catatan</label>
-                        <textarea class="form-control" name="" id="" cols="30" rows="5"
-                            readonly>{{ $bill->notes }}</textarea>
+                        <div class="col-sm-12">
+                            <label for="">Catatan</label>
+                            <textarea class="form-control" name="" id="" cols="30" rows="5"
+                                readonly>{{ $bill->notes }}</textarea>
+                        </div>
                     </div>
-                </div>
-            </x-row>
+                </x-row>
             </x-card-collapsible>
 
             <x-card-collapsible>
@@ -100,12 +100,15 @@
                     </x-col>
                     <x-col>
 
-                        <x-table :thead="['Ref', 'Item', 'Harga', 'Aksi']">
+                        <x-table :thead="[ 'Item','Satuan', 'Quantity', 'Harga Satuan', 'Total Harga', 'Aksi']">
                             @foreach($subBill as $sub)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $sub->bill_item->name }}</td>
+                                    <td>{{ $sub->unit }}</td>
                                     <td class="text-right">{{ $sub->quantity }}</td>
+                                    <td class="text-right">{{ 'Rp. ' . number_format($sub->unit_price) }}</td>
+
                                     <td class="text-right">{{ 'Rp. ' . number_format($sub->total) }}</td>
                                     <td>
                                         <form
@@ -149,21 +152,26 @@
                     :options="$options['items']"
                     :placeholder="'Pilih Item'"
                     :label="'Nama Barang'"
-                    :col="4"
+                    :col="3"
                     :name="'bill_item_id'"
                     :required="true"></x-in-select>
                 <x-in-text
-                    :type="'number'"
-                    :label="'Quantity'"
-                    :col="4"
-                    :name="'quantity'"
-                    :required="false"></x-in-text>
+
+                    :label="'Satuan'"
+                    :col="3"
+                    :name="'unit'"
+                    :required="true"></x-in-text>
                 <x-in-text
                     :type="'number'"
-                    :label="'Total Harga'"
-                    :col="4"
-                    :id="'total'"
-                    :name="'total'"
+                    :label="'Quantity'"
+                    :col="3"
+                    :name="'quantity'"
+                    :required="true"></x-in-text>
+                <x-in-text
+                    :type="'number'"
+                    :label="'Harga Satuan'"
+                    :col="3"
+                    :name="'unit_price'"
                     :required="true"></x-in-text>
 
                 <x-col class="text-right">

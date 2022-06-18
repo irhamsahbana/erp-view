@@ -35,7 +35,7 @@
             </x-card-collapsible>
             @endif
             <!-- Small boxes (Stat box) -->
-            @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'cashier')
+            @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'cashier'|| Auth::user()->role == 'accountant')
             <x-card-collapsible :title="'Kas Hari Ini'">
 
             <div class="row">
@@ -101,7 +101,7 @@
             </x-card-collapsible>
               @endif
             {{-- Profit --}}
-            @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'cashier')
+            @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'accountant')
             <x-card-collapsible :title="'Laba Rugi Saat ini'">
 
             <div class="row">
@@ -170,7 +170,7 @@
 
 
           {{-- Penagihan --}}
-          @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'Account Receivable')
+          @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'Account Receivable' || Auth::user()->role == 'accountant')
         <x-card-collapsible :title="'Piutang Usaha per hari ini'">
             <div class="row">
               <div class="col-lg-6">
@@ -210,7 +210,7 @@
         </x-card-collapsible>
             @endif
             {{-- Bill --}}
-          @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'purchaser')
+          @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'purchaser' || Auth::user()->role == 'accountant')
         <x-card-collapsible :title="'Hutang Usaha per hari ini'">
             <div class="row">
               <div class="col-lg-6">
