@@ -102,7 +102,7 @@
               @endif
             {{-- Profit --}}
             @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'cashier')
-            <x-card-collapsible :title="'Kas Hari Ini'">
+            <x-card-collapsible :title="'Laba Rugi Saat ini'">
 
             <div class="row">
 
