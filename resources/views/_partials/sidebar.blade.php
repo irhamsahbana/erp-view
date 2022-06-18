@@ -45,15 +45,15 @@ $optionsAuth['roles'] = [
   <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-
+        <x-nav-item :icon="'fas fa-home'" :text="'Dashboard'" :href="route('dashboard.view')" />
 
       @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner')
       <li class="nav-header">TRANSAKSI</li>
       <x-nav-item :icon="'fas fa-money-bill-alt'" :text="'Voucher'" :href="route('voucher.index')" />
       <x-nav-item :icon="'fas fa-shopping-cart'" :text="'Order'" :href="route('order.index')" />
       <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'" />
-      <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
-      <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}" />
+      {{-- <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
+      <x-nav-item :icon="'fas fa-money-bill'" :text="'Mutasi Hutang'" href="{{ route('debt-mutation.index') }}" /> --}}
       <x-nav-item :icon="'fas fa-money-bill'" :text="'Saldo Hutang'" href="{{ route('debt-mutation.balance') }}" />
       <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'"
         href="{{ route('rit-mutation.index') }}" />
@@ -75,8 +75,8 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-industry'" :text="'Saldo Piutang Usaha'" href="{{ route('receivable-balance.index') }}" />
       <x-nav-item :icon="'fas fa-industry'" :text="'Vendor Piutang Usaha'" href="{{ route('receivable-vendor.index') }}" />
 
-      <li class="nav-header">TRANSAKSI PEMBELIAN</li>
-      <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchase'" :href="route('purchasing.index')" />
+      {{-- <li class="nav-header">TRANSAKSI PEMBELIAN</li>
+      <x-nav-item :icon="'fas fa-credit-card'" :text="'Purchase'" :href="route('purchasing.index')" /> --}}
 
       <li class="nav-header">ANGGARAN</li>
       <x-nav-item :icon="'fas fa-calculator'" :text="'Anggaran'" :href="route('budget.index')" />
