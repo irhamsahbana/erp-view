@@ -13,11 +13,32 @@
         <!-- Main content -->
         <section class="content">
           <div class="container-fluid">
+            @if (Auth::user()->role == 'owner'  || Auth::user()->role == 'admin' )
+            <x-card-collapsible :title="'Pencarian'">
+                <form style="width: 100%">
+                    <x-row class="justify-content-md-center">
+                        <x-in-select
+                            :label="'Cabang'"
+                            :placeholder="'Pilih Cabang'"
+                            :col="4"
+                            :name="'branch_id'"
+                            {{-- :id="'branch_id'" --}}
+                            :options="$options['branches']"
+                            :value="app('request')->input('branch_id') ?? null"
+                            :required="false"></x-in-select>
+                        <x-col class="text-right">
+                            <a type="button" class="btn btn-default" href="{{ route('dashboard.view') }}">reset</a>
+                            <button type="submit" class="btn btn-primary">Cari</button>
+                        </x-col>
+                    </x-row>
+                </form>
+            </x-card-collapsible>
+            @endif
             <!-- Small boxes (Stat box) -->
             @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'cashier')
             <x-card-collapsible :title="'Kas Hari Ini'">
 
-              <div class="row">
+            <div class="row">
                   {{-- Kas Awal --}}
                 <div class="col-lg-3">
                   <div class="small-box bg-primary">
@@ -76,9 +97,76 @@
                   </div>
                 </div>
                 <!-- ./col -->
-              </div>
+            </div>
             </x-card-collapsible>
               @endif
+            {{-- Profit --}}
+            @if (Auth::user()->role == 'admin' ||  Auth::user()->role == 'owner' || Auth::user()->role == 'cashier')
+            <x-card-collapsible :title="'Kas Hari Ini'">
+
+            <div class="row">
+
+                {{-- Total Income --}}
+                <div class="col-lg-4">
+                    <div class="small-box bg-olive">
+                        <div class="inner">
+                            <p>Total Income sampai hari ini</p>
+                        <h3 class="text-right"> {{number_format($income)}} </h3>
+
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-plus"></i>
+                        </div>
+
+                    </div>
+                </div>
+                {{-- Kas Keluar --}}
+                <div class="col-lg-4">
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <p>Total Cost sampai hari ini</p>
+                        <h3 class="text-right"> {{number_format($cost)}} </h3>
+
+                        </div>
+                        <div class="icon">
+                        <i class="ion ion-minus"></i>
+                        </div>
+
+                    </div>
+                </div>
+                {{-- Kas Hari Ini --}}
+                <div class="col-lg-4">
+                    @if($profit >= 0)
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <p>Keuntungan Hari ini</p>
+                        <h3 class="text-right"> {{number_format($profit)}} </h3>
+
+                        </div>
+                        <div class="icon">
+                        <i class="ion ion-money"></i>
+                        </div>
+
+                    </div>
+                    @endif
+                    @if($profit < 0)
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <p>Kerugian sampai hari ini</p>
+                        <h3 class="text-right"> {{number_format($profit)}} </h3>
+
+                        </div>
+                        <div class="icon">
+                        <i class="ion ion-money"></i>
+                        </div>
+
+                    </div>
+                    @endif
+                </div>
+                <!-- ./col -->
+            </div>
+            </x-card-collapsible>
+            @endif
 
 
           {{-- Penagihan --}}

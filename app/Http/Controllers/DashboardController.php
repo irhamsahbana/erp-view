@@ -16,22 +16,17 @@ use Illuminate\Http\Request;
 class DashboardController extends Controller
 {
 
-    public function dashboard() {
+    public function dashboard(Request $request) {
         // dd("haloo");
 
 
         $date = Carbon::now()->format("Y-m-d");
-        // $date = "2022-6-11";
-        // dd($date);
-
-        // Cash
-
         $voucer = Voucher::select('*');
 
         if(Auth::user()->role !== "owner") {
             $voucer->where("branch_id", Auth::user()->branch_id);
         }
-
+        if($request->branch_id) $voucer->where('branch_id', $request->branch_id);
         $voucer = $voucer->get();
         $old_cash_out = $voucer->where('created',"<", $date)->where('type', 2)->sum('amount');
         $old_cash_in = $voucer->where('created',"<", $date)->where('type', 1)->sum('amount');
@@ -46,6 +41,7 @@ class DashboardController extends Controller
         $receivable = Receivable::select('*')->get();
         if (!in_array(Auth::user()->role, self::$fullAccess))
         $receivable->where('branch_id', Auth::user()->branch_id);
+        if($request->branch_id) $receivable->where('branch_id', $request->branch_id);
 
         $receivable_total = $receivable->where('is_paid', 0)->sum('amount');
         $receivable_duedate = $receivable->where('is_paid', 0)
@@ -57,19 +53,29 @@ class DashboardController extends Controller
         $bill = Bill::select("*");
         if (!in_array(Auth::user()->role, self::$fullAccess))
         $bill->where('branch_id', Auth::user()->branch_id);
+        if($request->branch_id) $bill->where('branch_id', $request->branch_id);
+
         $bill = $bill->get();
         $bill_total = $bill->where('is_paid', false)->sum('amount');
         $bill_due_date = $bill->where('is_paid', false)->where('due_date', '<=', $date)->sum('amount');
 
-
+        // Rugi Laba
         $subJournal = SubJournal::select("*");
 
-        // dd($set_balance);
 
-        return view('pages.Dashboard', compact( 'receivable_total', 'receivable_duedate', 'set_balance', 'cash_out', 'cash_in', 'total_cash', 'bill_total', 'bill_due_date'));
+        $subJournal = $subJournal->get();
+        $income = $subJournal->where('budget_item_group_id', 1)->where('normal_balance_id', 12)->sum('amount') - $subJournal->where('budget_item_group_id', 1)->where('normal_balance_id', 11)->sum('amount');
+        $cost = $subJournal->where('budget_item_group_id', 3)->where('normal_balance_id', 11)->sum('amount') + $subJournal->where('budget_item_group_id', 2)->where('normal_balance_id', 11)->sum('amount') - $subJournal->where('budget_item_group_id', 3)->where('normal_balance_id', 12)->sum('amount') - $subJournal->where('budget_item_group_id', 2)->where('normal_balance_id', 12)->sum('amount');
+
+        $profit = $income - $cost;
+        // dd($income);
+        // options
+        $options = self::staticOptions();
+
+        return view('pages.Dashboard', compact( 'income', 'cost', 'profit', 'options', 'receivable_total', 'receivable_duedate', 'set_balance', 'cash_out', 'cash_in', 'total_cash', 'bill_total', 'bill_due_date'));
     }
 
-    public function staticOption() {
+    public function staticOptions() {
         $branches = Branch::all();
 
         if (!in_array(Auth::user()->role, self::$fullAccess))
