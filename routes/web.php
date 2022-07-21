@@ -72,64 +72,65 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/', function() {
             return redirect('/');
         });
+        // Route::get('/warning', [DashboardController::class, 'warningPage'])->name('warning.index');
 
-        Route::get('cabang', [BranchController::class, 'index'])->name('branch.index');
-        Route::post('cabang', [BranchController::class, 'store'])->name('branch.store');
-        Route::get('cabang/{id}', [BranchController::class, 'show'])->name('branch.show');
-        Route::delete('cabang/{id}', [BranchController::class, 'destroy'])->name('branch.destroy');
+        // Route::get('cabang', [BranchController::class, 'index'])->name('branch.index');
+        // Route::post('cabang', [BranchController::class, 'store'])->name('branch.store');
+        // Route::get('cabang/{id}', [BranchController::class, 'show'])->name('branch.show');
+        // Route::delete('cabang/{id}', [BranchController::class, 'destroy'])->name('branch.destroy');
 
-        Route::get('pengguna/edit-password', [UserController::class, 'edit'])->name('user.edit-password');
-        Route::put('pengguna/update-password', [UserController::class, 'update'])->name('user.update');
-        Route::get('pengguna/{id}', [UserController::class, 'show'])->name('user.show');
-        Route::delete('pengguna/{id}', [UserController::class, 'destroy'])->name('user.destroy');
-        Route::get('pengguna', [UserController::class, 'index'])->name('user.index');
-        Route::post('pengguna', [UserController::class, 'store'])->name('user.store');
+        // Route::get('pengguna/edit-password', [UserController::class, 'edit'])->name('user.edit-password');
+        // Route::put('pengguna/update-password', [UserController::class, 'update'])->name('user.update');
+        // Route::get('pengguna/{id}', [UserController::class, 'show'])->name('user.show');
+        // Route::delete('pengguna/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+        // Route::get('pengguna', [UserController::class, 'index'])->name('user.index');
+        // Route::post('pengguna', [UserController::class, 'store'])->name('user.store');
 
-        Route::get('proyek', [ProjectController::class, 'index'])->name('project.index');
-        Route::post('proyek', [ProjectController::class, 'store'])->name('project.store');
-        Route::get('proyek/{id}', [ProjectController::class, 'show'])->name('project.show');
-        Route::delete('proyek/{id}', [ProjectController::class, 'destroy'])->name('project.destroy');
+        // Route::get('proyek', [ProjectController::class, 'index'])->name('project.index');
+        // Route::post('proyek', [ProjectController::class, 'store'])->name('project.store');
+        // Route::get('proyek/{id}', [ProjectController::class, 'show'])->name('project.show');
+        // Route::delete('proyek/{id}', [ProjectController::class, 'destroy'])->name('project.destroy');
 
-        Route::get('kendaraan', [VehicleController::class, 'index'])->name('vehicle.index');
-        Route::post('kendaraan', [VehicleController::class, 'store'])->name('vehicle.store');
-        Route::get('kendaraan/{id}', [VehicleController::class, 'show'])->name('vehicle.show');
-        Route::delete('kendaraan/{id}', [VehicleController::class, 'destroy'])->name('vehicle.destroy');
+        // Route::get('kendaraan', [VehicleController::class, 'index'])->name('vehicle.index');
+        // Route::post('kendaraan', [VehicleController::class, 'store'])->name('vehicle.store');
+        // Route::get('kendaraan/{id}', [VehicleController::class, 'show'])->name('vehicle.show');
+        // Route::delete('kendaraan/{id}', [VehicleController::class, 'destroy'])->name('vehicle.destroy');
 
-        Route::get('pengendara', [DriverController::class, 'index'])->name('driver.index');
-        Route::post('pengendara', [DriverController::class, 'store'])->name('driver.store');
-        Route::get('pengendara/{id}', [DriverController::class, 'show'])->name('driver.show');
-        Route::delete('pengendara/{id}', [DriverController::class, 'destroy'])->name('driver.destroy');
+        // Route::get('pengendara', [DriverController::class, 'index'])->name('driver.index');
+        // Route::post('pengendara', [DriverController::class, 'store'])->name('driver.store');
+        // Route::get('pengendara/{id}', [DriverController::class, 'show'])->name('driver.show');
+        // Route::delete('pengendara/{id}', [DriverController::class, 'destroy'])->name('driver.destroy');
 
-        Route::get('material', [MaterialController::class, 'index'])->name('material.index');
-        Route::post('material', [MaterialController::class, 'store'])->name('material.store');
-        Route::get('material/{id}', [MaterialController::class, 'show'])->name('material.show');
-        Route::delete('material/{id}', [MaterialController::class, 'destroy'])->name('material.destroy');
+        // Route::get('material', [MaterialController::class, 'index'])->name('material.index');
+        // Route::post('material', [MaterialController::class, 'store'])->name('material.store');
+        // Route::get('material/{id}', [MaterialController::class, 'show'])->name('material.show');
+        // Route::delete('material/{id}', [MaterialController::class, 'destroy'])->name('material.destroy');
 
-        Route::get('vendor', [VendorController::class, 'index'])->name('vendor.index');
-        Route::post('vendor', [VendorController::class, 'store'])->name('vendor.store');
-        Route::get('vendor/{id}', [VendorController::class, 'show'])->name('vendor.show');
-        Route::delete('vendor/{id}', [VendorController::class, 'destroy'])->name('vendor.destroy');
+        // Route::get('vendor', [VendorController::class, 'index'])->name('vendor.index');
+        // Route::post('vendor', [VendorController::class, 'store'])->name('vendor.store');
+        // Route::get('vendor/{id}', [VendorController::class, 'show'])->name('vendor.show');
+        // Route::delete('vendor/{id}', [VendorController::class, 'destroy'])->name('vendor.destroy');
 
-        Route::get('kategori/list', [CategoryController::class, 'list'])->name('category.list');
-        Route::get('kategori/{id}', [CategoryController::class, 'show'])->name('category.show');
-        Route::get('kategori', [CategoryController::class, 'index'])->name('category.index');
-        Route::post('kategori', [CategoryController::class, 'store'])->name('category.store');
-        Route::delete('kategori/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+        // Route::get('kategori/list', [CategoryController::class, 'list'])->name('category.list');
+        // Route::get('kategori/{id}', [CategoryController::class, 'show'])->name('category.show');
+        // Route::get('kategori', [CategoryController::class, 'index'])->name('category.index');
+        // Route::post('kategori', [CategoryController::class, 'store'])->name('category.store');
+        // Route::delete('kategori/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
 
-        Route::get('kelompok-mata-anggaran', [BudgetItemGroupController::class, 'index'])->name('big.index');
-        Route::post('kelompok-mata-anggaran', [BudgetItemGroupController::class, 'store'])->name('big.store');
-        Route::get('kelompok-mata-anggaran/{id}', [BudgetItemGroupController::class, 'show'])->name('big.show');
-        Route::delete('kelompok-mata-anggaran/{id}', [BudgetItemGroupController::class, 'destroy'])->name('big.destroy');
+        // Route::get('kelompok-mata-anggaran', [BudgetItemGroupController::class, 'index'])->name('big.index');
+        // Route::post('kelompok-mata-anggaran', [BudgetItemGroupController::class, 'store'])->name('big.store');
+        // Route::get('kelompok-mata-anggaran/{id}', [BudgetItemGroupController::class, 'show'])->name('big.show');
+        // Route::delete('kelompok-mata-anggaran/{id}', [BudgetItemGroupController::class, 'destroy'])->name('big.destroy');
 
-        Route::get('mata-anggaran', [BudgetItemController::class, 'index'])->name('bi.index');
-        Route::post('mata-anggaran', [BudgetItemController::class, 'store'])->name('bi.store');
-        Route::get('mata-anggaran/{id}', [BudgetItemController::class, 'show'])->name('bi.show');
-        Route::delete('mata-anggaran/{id}', [BudgetItemController::class, 'destroy'])->name('bi.destroy');
+        // Route::get('mata-anggaran', [BudgetItemController::class, 'index'])->name('bi.index');
+        // Route::post('mata-anggaran', [BudgetItemController::class, 'store'])->name('bi.store');
+        // Route::get('mata-anggaran/{id}', [BudgetItemController::class, 'show'])->name('bi.show');
+        // Route::delete('mata-anggaran/{id}', [BudgetItemController::class, 'destroy'])->name('bi.destroy');
 
-        Route::get('sub-mata-anggaran', [SubBudgetItemController::class, 'index'])->name('sbi.index');
-        Route::post('sub-mata-anggaran', [SubBudgetItemController::class, 'store'])->name('sbi.store');
-        Route::get('sub-mata-anggaran/{id}', [SubBudgetItemController::class, 'show'])->name('sbi.show');
-        Route::delete('sub-mata-anggaran/{id}', [SubBudgetItemController::class, 'destroy'])->name('sbi.destroy');
+        // Route::get('sub-mata-anggaran', [SubBudgetItemController::class, 'index'])->name('sbi.index');
+        // Route::post('sub-mata-anggaran', [SubBudgetItemController::class, 'store'])->name('sbi.store');
+        // Route::get('sub-mata-anggaran/{id}', [SubBudgetItemController::class, 'show'])->name('sbi.show');
+        // Route::delete('sub-mata-anggaran/{id}', [SubBudgetItemController::class, 'destroy'])->name('sbi.destroy');
     });
 
     Route::group(['prefix' => 'journal'], function() {

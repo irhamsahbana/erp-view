@@ -94,8 +94,6 @@ $query2 = $query2->get();
         }
         $query->orderBy('created', 'desc')->orderBy('id','desc');
         // dd($query);
-        if (!in_array(Auth::user()->role, self::$fullAccess))
-            $query->where('branch_id', Auth::user()->branch_id);
 
         $datas = $query->paginate(40)->withQueryString();
         $options = self::staticOptions();

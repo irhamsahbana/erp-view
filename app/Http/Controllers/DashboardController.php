@@ -15,7 +15,21 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    public function warningPage(Request $var) {
+        return view('pages.Warning');
+        DB::beginTransaction();
+        try {
+            setTimeout(myGreeting, 1000);
+            dd("Okkeeee");
+            DB::commit();
+        } catch (Error $e) {
+            DB::rollBack();
+            dd($e);
+        }
+        // return view();
+    }
 
+    // public
     public function dashboard(Request $request) {
         // dd("haloo");
 
