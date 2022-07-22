@@ -7,7 +7,7 @@
             'href' => '/'
         ],
         [
-            'name' => 'Detail Mutasi Material'
+            'name' => 'Detail Mutasi Sparepart'
         ],
     ];
 @endphp

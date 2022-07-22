@@ -28,7 +28,7 @@
                     </x-col>
 
                     <x-col>
-                        <x-table :thead="['Material', 'Aksi']">
+                        <x-table :thead="['Sparepart', 'Aksi']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
@@ -73,7 +73,7 @@
             <x-row>
                 <x-in-text
                     :label="'Nama'"
-                    :placeholder="'Masukkan Nama Material'"
+                    :placeholder="'Masukkan Nama Sparepart'"
                     :col="12"
                     :name="'name'"
                     :required="true"></x-in-text>
