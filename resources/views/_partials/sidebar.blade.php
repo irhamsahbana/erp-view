@@ -95,7 +95,7 @@ $optionsAuth['roles'] = [
       <x-nav-item :icon="'fas fa-truck-moving'" :text="'Kendaraan'" href="{{ route('vehicle.index') }}" />
       <x-nav-item :icon="'fas fa-address-book'" :text="'Pengendara'" href="{{ route('driver.index') }}" />
       <x-nav-item :icon="'fas fa-industry'" :text="'Vendor'" href="{{ route('vendor.index') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}" />
+      <x-nav-item :icon="'fas fa-cubes'" :text="'Sparepart'" href="{{ route('material.index') }}" />
 
       <x-nav-item :icon="'fas fa-list'" :text="'Kelompok Mata Anggaran'" href="{{ route('big.index') }}" />
       <x-nav-item :icon="'fas fa-list'" :text="'Mata Anggaran'" href="{{ route('bi.index') }}" />
@@ -135,16 +135,16 @@ $optionsAuth['roles'] = [
       <li class="nav-header">TRANSAKSI</li>
       <x-nav-item :icon="'fas fa-gas-pump'" :text="'Solar'" :href="'/transaksi/solar'" />
       <x-nav-item :icon="'fas fa-receipt'" :text="'Penggunaan Solar'" href="{{ route('fuel.report') }}" />
-      <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'"
+      {{-- <x-nav-item :icon="'fas fa-truck-loading'" :text="'Mutasi Hutang Ritase'"
         href="{{ route('rit-mutation.index') }}" />
       <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'"
-        href="{{ route('rit-mutation.balance') }}" />
+        href="{{ route('rit-mutation.balance') }}" /> --}}
       <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi SparePart'" href="{{ route('material-mutation.index') }}" />
       <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo SparePart'" href="{{ route('material-mutation.balance') }}" />
 
       <li class="nav-header">MASTER DATA</li>
       <x-nav-item :icon="'fas fa-truck-moving'" :text="'Kendaraan'" href="{{ route('vehicle.index') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Material'" href="{{ route('material.index') }}" />
+      <x-nav-item :icon="'fas fa-cubes'" :text="'Sparepart'" href="{{ route('material.index') }}" />
       @endif
 
       @if (Auth::user()->role == 'cashier')
