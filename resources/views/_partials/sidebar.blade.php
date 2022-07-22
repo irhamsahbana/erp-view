@@ -59,8 +59,8 @@ $optionsAuth['roles'] = [
         href="{{ route('rit-mutation.index') }}" />
       <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'"
         href="{{ route('rit-mutation.balance') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}" />
+      <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Sparepart'" href="{{ route('material-mutation.index') }}" />
+      <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Sparepart'" href="{{ route('material-mutation.balance') }}" />
 
 
 
@@ -139,8 +139,8 @@ $optionsAuth['roles'] = [
         href="{{ route('rit-mutation.index') }}" />
       <x-nav-item :icon="'fas fa-truck-loading'" :text="'Saldo Hutang Ritase'"
         href="{{ route('rit-mutation.balance') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi Material'" href="{{ route('material-mutation.index') }}" />
-      <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo Material'" href="{{ route('material-mutation.balance') }}" />
+      <x-nav-item :icon="'fas fa-cubes'" :text="'Mutasi SparePart'" href="{{ route('material-mutation.index') }}" />
+      <x-nav-item :icon="'fas fa-cubes'" :text="'Saldo SparePart'" href="{{ route('material-mutation.balance') }}" />
 
       <li class="nav-header">MASTER DATA</li>
       <x-nav-item :icon="'fas fa-truck-moving'" :text="'Kendaraan'" href="{{ route('vehicle.index') }}" />
