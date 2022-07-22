@@ -12,7 +12,7 @@
     ];
 @endphp
 
-@section('content-header', 'Material')
+@section('content-header', 'Sparepard')
 
 @section('breadcrumb')
     <x-breadcrumb :list="$breadcrumbList"/>

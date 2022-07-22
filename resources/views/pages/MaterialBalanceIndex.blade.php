@@ -7,7 +7,7 @@
             'href' => '/'
         ],
         [
-            'name' => 'Saldo Material'
+            'name' => 'Saldo Sparepart'
         ],
     ];
 @endphp
@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 @endpush
 
-@section('content-header', 'Saldo Material')
+@section('content-header', 'Saldo Sparepart')
 
 @section('breadcrumb')
     <x-breadcrumb :list="$breadcrumbList"/>
@@ -44,8 +44,8 @@
                             :name="'project_id'"
                             :required="false"></x-in-select>
                         <x-in-select
-                            :label="'Material'"
-                            :placeholder="'Pilih Material'"
+                            :label="'Sparepart'"
+                            :placeholder="'Pilih Sparepart'"
                             :col="4"
                             :name="'material_id'"
                             :required="false"></x-in-select>
@@ -60,7 +60,7 @@
             <x-card-collapsible>
                 <x-row>
                     <x-col>
-                        <x-table :thead="['Cabang', 'Proyek', 'Material', 'Kuantitas (Volume)', 'Total Harga Beli']">
+                        <x-table :thead="['Cabang', 'Proyek', 'Sparepart', 'Kuantitas (Volume)', 'Total Harga Beli']">
                             @foreach($datas as $data)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
