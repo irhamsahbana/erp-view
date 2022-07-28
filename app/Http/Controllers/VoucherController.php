@@ -23,6 +23,7 @@ class VoucherController extends Controller
         $totalCost = 0;
         $totalIncome = 0;
         $query = Model::select('*');
+        DD($query[0]);
         $query2 = Model::select('*');
         if(Auth::user()->role !== 'admin' || Auth::user()->role !== 'owner') {
             $query->where('branch_id', Auth::user()->branch_id);
