@@ -26,6 +26,8 @@ class VoucherController extends Controller
         $query2 = Model::select('*');
         if(Auth::user()->role !== 'admin' || Auth::user()->role !== 'owner') {
             $query->where('branch_id', Auth::user()->branch_id);
+        } else {
+            $query = Model::select('*');
         }
         // dd(Carbon::createFromFormat('Y-m-d', $item->created)->month);
         if (!in_array(Auth::user()->role, self::$fullAccess))
