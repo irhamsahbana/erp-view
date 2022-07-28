@@ -20,11 +20,13 @@ class VoucherController extends Controller
 
     public function index(Request $request)
     {
-
         $totalCost = 0;
         $totalIncome = 0;
         $query = Model::select('*');
         $query2 = Model::select('*');
+        if(Auth::user()->role !== 'admin' || Auth::user()->role !== 'owner') {
+            $query->where('branch_id', Auth::user()->branch_id);
+        }
         // dd(Carbon::createFromFormat('Y-m-d', $item->created)->month);
         if (!in_array(Auth::user()->role, self::$fullAccess))
         $query2->where('branch_id', Auth::user()->branch_id);
