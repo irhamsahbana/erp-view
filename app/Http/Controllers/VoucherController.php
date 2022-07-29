@@ -24,8 +24,8 @@ class VoucherController extends Controller
         $totalIncome = 0;
         $query = Model::select('*');
         $query2 = Model::select('*');
-        // if (!in_array(Auth::user()->role, self::$fullAccess))
-        // $query->where('branch_id', Auth::user()->branch_id);
+        if (!in_array(Auth::user()->role, self::$fullAccess))
+        $query->where('branch_id', Auth::user()->branch_id);
         // dd(Carbon::createFromFormat('Y-m-d', $item->created)->month);
         if (!in_array(Auth::user()->role, self::$fullAccess))
         $query2->where('branch_id', Auth::user()->branch_id);
