@@ -64,7 +64,7 @@ class ReceivableController extends Controller
             $total = $query->sum('amount');
             // echo($request->send_date_start);
             // dd($total);
-            $query->orderBy('send_date', 'desc')->orderBy('id','desc');
+            $query->orderBy('id','desc');
             $datas = $query->paginate(40)->withQueryString();
 
             $options = self::staticOptions();

@@ -54,7 +54,7 @@
         <img src="" alt="">
       </div>
       <div class="foot_box">
-          <p><em>Seek the LORD and His strength; seek His presence continually!
+          <p><em>Seek the LORD and His strength; seek His presence Continually!
               <br>
             (1 Chronicles 16:11) </em></p>
 
