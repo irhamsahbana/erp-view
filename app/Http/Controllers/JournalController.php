@@ -74,7 +74,7 @@ class JournalController extends Controller
 
         $kredit = Category::where('slug', 'kredit')->first();
 
-        $datas = $query->paginate(40);
+        $datas = $query->paginate(40)->withQueryString();
         $options = self::staticOptions();
 
         return view('pages.JournalIndex', compact('datas', 'options', 'kredit'));
